@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+        <meta name = "description" content = "Invite a friend to play a game of Hyper Chess!">
+
+        <title>Hyper Chess</title>
+        
+        <link href = "styles/warn-bar.css"      rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/annotations.css"   rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/invite.css"        rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/panel.css"         rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/pgn.css"           rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/peer-info.css"     rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/coords.css"        rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/game.css"          rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/game-elems.css"    rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/highlights.css"    rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/style.css"         rel = "stylesheet" type = "text/css"/>
+
+        <!-- Style styles. yup. styles that style styles. stylish. -->
+        <link href = "styles/board-styles.css"  rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/piece-styles.css"  rel = "stylesheet" type = "text/css"/>
+        
+        <!-- game scripts -->
+        <script src = "scripts/game/coords.js"></script>
+        <script src = "scripts/game/move.js"></script>
+        <script src = "scripts/game/pre-game.js"></script>
+        <script src = "scripts/game/piece.js"></script>
+        <script src = "scripts/game/game.js"></script>
+        <script src = "scripts/game/test-suite.js"></script>
+
+        <!-- graphics scripts -->
+        <script defer src = "scripts/pgn-view/pgn-data.js"></script>
+        <script defer src = "scripts/graphics/san.js"></script>
+        <script defer src = "scripts/graphics/graphicState.js"></script>
+        <script defer src = "scripts/graphics/input.js"></script>
+        <script defer src = "scripts/graphics/pool.js"></script>
+        <script defer src = "scripts/graphics/promotion.js"></script>
+        <script defer src = "scripts/graphics/graphics.js"></script>
+        <script defer src = "scripts/graphics/board.js"></script>
+        <script defer src = "scripts/graphics/dialog.js"></script>
+        <script defer src = "scripts/graphics/create-game.js"></script>
+        <script defer src = "scripts/graphics/resize.js"></script>
+        
+        <!-- graphical observers -->
+        <script defer src = "scripts/observers/audio.js"></script>
+        <script defer src = "scripts/observers/animations.js"></script>
+        <script defer src = "scripts/observers/annotator.js"></script>
+        <script defer src = "scripts/pgn-view/pgnviewer.js"></script>
+
+    </head>
+    <body>
+
+        <div id = "container" class = "game_container_container blue cburnett">
+            <div id = "black_player" class = "player">
+                <span class = "connection"></span>
+                <span class = "name">Anonymous</span>
+            </div>
+            <div id = "white_player" class = "player">
+                <span class = "connection"></span>
+                <span class = "name">Anonymous</span>
+            </div>
+            <div id = "game_container" class = "game_container">
+                <div id = "game" class = "game">
+
+                </div>
+                <div id = "ranks"></div>
+                <div id = "files"></div>
+                <div class = "promoting"></div>
+                <!-- user annotations are drawn on canvas -->
+                <canvas class = "annotations" width = 1200 height = 1200></canvas>
+            </div>
+            <div id = "panel">
+                <div id = "pre-game-controls">
+                    <button id = "panel_rematch" onclick = "offerRematch();">Offer Rematch</button>
+                    <button class = "font-icon" id = "panel_send-invite" onclick = "showCreateGamePopup();">
+                        <span>Invite someone to play!</span>
+                    </button>
+                </div>
+                <span id = "output"></span>
+                <div id = "pgn_control">
+                    <button onclick = "PGNMoveFirst();">&lt;&lt;</button>
+                    <button onclick = "PGNMoveBack();">&lt;</button>
+                    <button onclick = "PGNMoveForward();">&gt;</button>
+                    <button onclick = "PGNMoveLast();">&gt;&gt;</button>
+                </div>
+                <div id = "pgn"></div>
+                <div id = "play-game-controls">
+                    <button class = "font-icon" data-icon = "" onclick = "flipBoard();"></button>
+                    <button class = "font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
+                    <button id = "panel_draw" onclick = "offerDraw();"><span>½</span></button>
+                    <button class = "font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>
+                </div>
+            </div>
+            <div id = "extra">
+                <textarea id = "pgnText" onfocus = "this.select();" spellcheck = "false"></textarea>
+                <button id = "panel_set-pgn" onclick = "setPGN();">Set PGN</button>
+                <input id = "fenText" onfocus = "this.select();">
+                <button id = "panel_set-fen" onclick = "setFEN();" spellcheck = "false">Set FEN</button>
+            </div>
+
+            <div id = "dragging"></div>
+        </div>
+
+        <div id = "dialog-box-container">
+            <div id = "dialog-box">
+                <p id = "dialog_title">Connecting to user . . .</p>
+                <p id = "dialog_desc">This might take some time...</p>
+            </div>
+            <div id = "result-box">
+                <p id = "result-box_result">No one Wins</p>
+                <p id = "result-box_local">You <span id = "result_mewin">did not win</span> by <span id = "how_span">cheating</span></p>
+                <button onclick = "hideDialogBox();" style = "margin-top: 40px;">View Game</button><br />
+                <button id = "result-box_rematch" onclick = "offerRematch();">Offer Rematch</button>
+            </div>
+        </div>
+
+        <div id = "invite-popup-container">
+            <div id = "create-game-popup">
+                <h1>Create a game</h1>
+                <form id = "create-game-form">
+                    <div class = "input-pair">
+                        <label for = "color">You play as:</label>
+                        <select name = "color">
+                            <option value = 0>Random</option>
+                            <option value = 8>White</option>
+                            <option value = 16>Black</option>
+                        </select>
+                    </div>
+
+                    <div class = "input-pair">
+                        <span>
+                            <label for = "fen">FEN:</label>
+                            <input id = "create-game-fen" name = "fen">
+                            <!-- <input name = "starting-fen" type = "checkbox"><label for = "starting-fen">Starting FEN</label> -->
+                        </span>
+                    </div>
+
+                    <div class = "game_container_container blue cburnett" style = "display: block;">
+                        <div class = "game_container">
+                            <div class = "game">
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class = "input-pair">
+                        <input style = "width: 100%;" type = "submit" value = "Enter">
+                    </div>
+                </form>
+                <button onclick = "hideCreateGamePopup();" style = "margin-top: 5px; width: 100%;">Cancel</button>
+            </div>
+            <div id = "invite-popup">
+                <p>Send this link to a friend to play a game against them!</p>
+                <input id = "peer-id" readonly onfocus = "this.select();" onclick = "this.setSelectionRange(0, this.value.length)">
+                <button onclick = "cancelInvite();">Cancel Invite</button><button id = "invite_copy">Copy to Clipboard</button>
+                <button onclick = "shareInvite();">Share</button>
+            </div>
+        </div>
+
+        <div id = "warn-bar">
+            <button id = "warn-bar_close" onclick = "this.parentNode.style.display = 'none';">&#10006;</button>
+            This is a completed Hyper Chess game that was played between two anonymous players.
+        </div>
+
+    </body>
+</html>
