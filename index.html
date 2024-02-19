@@ -72,12 +72,6 @@
                 <canvas class = "annotations" width = 1200 height = 1200></canvas>
             </div>
             <div id = "panel">
-                <div id = "pre-game-controls">
-                    <button id = "panel_rematch" onclick = "offerRematch();">Offer Rematch</button>
-                    <button class = "font-icon" id = "panel_send-invite" onclick = "showCreateGamePopup();">
-                        <span>Invite someone to play!</span>
-                    </button>
-                </div>
                 <span id = "output"></span>
                 <div id = "pgn_control">
                     <button onclick = "PGNMoveFirst();">&lt;&lt;</button>
@@ -88,9 +82,7 @@
                 <div id = "pgn"></div>
                 <div id = "play-game-controls">
                     <button class = "font-icon" data-icon = "" onclick = "flipBoard();"></button>
-                    <button class = "font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
-                    <button id = "panel_draw" onclick = "offerDraw();"><span>½</span></button>
-                    <button class = "font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>
+                    <button id = "panel_draw" onclick = "offerDraw();" style = "display: none"><span>½</span></button>
                 </div>
             </div>
             <div id = "extra">
