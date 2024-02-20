@@ -64,7 +64,6 @@ class PGNData {
     }
 
     clear(){
-        delete this.pgnRoot;
         this.initHeaders();
     }
 
@@ -121,7 +120,7 @@ class PGNData {
                 count++;
 
                 for (let i = 1; i < iter.next.length; i++){
-                    san += `{ ${this.sanHelper(iter.next[i], count)}} `;
+                    san += `{ ${this.sanHelper(iter.next[i], count - 1)}} `;
                 }
 
                 iter = iter.next[0];

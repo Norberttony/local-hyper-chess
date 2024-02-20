@@ -26,7 +26,7 @@
     border-radius: 50px;
 }
 
-#pgn > *, #extra > * {
+#pgn > *:not(.pgn_variation), #extra > * {
     box-sizing: border-box;
     width: 100%;
 }
@@ -54,8 +54,17 @@
 }
 
 .pgn_variation {
+    display: flex;
+    flex-wrap: wrap;
+    
     grid-column-start: 1;
     grid-column-end: 4;
+
+    width: calc(100% - 28px);
+    box-sizing: border-box;
+    margin-left: 28px;
+    border: 1px solid white;
+
     font-size: medium;
 }
 

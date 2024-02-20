@@ -76,10 +76,24 @@ class GraphicalState {
     makeMove(move){
         let SAN = getMoveSAN(this.board, move);
         
-        const pgnMove = new PGN_Move(move);
-        pgnMove.san = SAN;
+        let pgnMove;
+        
+        // search for an existing pgnMove
+        for (const m of this.currentMove.next){
+            if (m.san == SAN){
+                pgnMove = m;
+                break;
+            }
+        }
+        
+        // create new pgnMove
+        if (!pgnMove){
+            pgnMove = new PGN_Move(move);
+            pgnMove.san = SAN;
 
-        pgnMove.attachTo(this.currentMove);
+            pgnMove.attachTo(this.currentMove);
+        }
+
         this.currentMove = pgnMove;
 
         // if the board state is following along, update it too
@@ -115,8 +129,10 @@ class GraphicalState {
         
         this.board.loadFEN(fen);
         this.latestBoard.loadFEN(fen);
-        this.currIndex = -1;
-        this.moves = [];
+        
+        // just get rid of everything after move root and have gc handle it
+        this.currentMove = this.moveRoot;
+        this.moveRoot.next = [];
 
         displayBoard();
         this.dispatchEvent("loadedFEN", {state: this, fen});

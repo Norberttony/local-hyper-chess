@@ -41,6 +41,14 @@ containerElem.addEventListener("madeMove", (event) => {
     // expects pgnMove to always have a prev
     const {state, board, san, move, pgnMove} = event.detail;
 
+    if (pgnMove.element)
+        return;
+
+    let selectedContainer = pgnElem;
+
+    // whether or not the pgn_san element itself needs a counter text added to it
+    let includeCounter = false;
+
     // Handle main variation moves!
     if (pgnMove.isMain()){
         // sometimes, a user loads a position where it is black to play, offsetting all PGN.
@@ -61,22 +69,105 @@ containerElem.addEventListener("madeMove", (event) => {
                 pgnElem.appendChild(pgn_elipsesElem);
             }
         }
-
-        // now add the move itself
-        const pgn_sanElem = document.createElement("div");
-        pgn_sanElem.classList.add("pgn_san");
-        pgn_sanElem.innerText = san;
-        pgnElem.appendChild(pgn_sanElem);
-
-        pgn_sanElem.addEventListener("click", () => {
-            state.setMoveIndex(pgnMove);
-        });
     }
     // Handle non-main variation moves!
     else{
         // is this a new variation?
-        
+        if (pgnMove.location[pgnMove.location.length - 1] > 0){
+            includeCounter = true;
+
+            // yes! yes it is!
+            const varElem = document.createElement("div");
+            varElem.classList.add("pgn_variation");
+
+            let beforeNode;
+            if (pgnMove.prev.next[0].next[0]){
+                console.log("select beforeNode by going prev next next");
+                beforeNode = pgnMove.prev.next[0].next[0].element;
+            }
+
+            // don't cut off the pgn fullmove counter from the SAN
+            if (beforeNode && beforeNode.previousSibling){
+                const prevNode = beforeNode.previousSibling;
+                if (prevNode.classList.contains("pgn_counter")){
+                    beforeNode = prevNode;
+                    console.log("changed my mind on beforeNode, do not cut off the fullmove counter");
+                }
+            }
+
+            console.log(beforeNode.previousSibling);
+
+            if (!beforeNode || beforeNode && beforeNode.previousSibling && beforeNode.previousSibling.classList.contains("pgn_san")){
+
+                console.log("passed 1");
+
+                // wait. no fullmove counter?! if this is the main variation, that means we're cutting off a move!
+                // make sure to only do this once per variation though
+                if (pgnMove.prev.isMain() && pgnMove.location[pgnMove.location.length - 1] == 1){
+                    console.log("passed 2");
+
+                    const container = pgnMove.prev.next[0].element.parentNode;
+
+                    const blankMove = document.createElement("div");
+                    blankMove.classList.add("pgn_san", "pgn_blank");
+                    blankMove.style.pointerEvents = "none";
+                    blankMove.innerText = "...";
+                    container.insertBefore(blankMove, beforeNode);
+
+                    const counterElem = document.createElement("div");
+                    counterElem.classList.add("pgn_counter");
+                    counterElem.innerText = `${board.fullmove}.`;
+                    container.insertBefore(counterElem, blankMove);
+
+                    beforeNode = counterElem;
+                    console.log("set beforeNode to a newly created counter that goes past this variation");
+                }
+            }
+
+            if (beforeNode){
+                console.log("beforeNode", beforeNode);
+                beforeNode.parentNode.insertBefore(varElem, beforeNode);
+            }else{
+                if (pgnMove.prev == gameState.moveRoot){
+                    console.log("is root");
+                    pgnElem.insertBefore(varElem, pgnElem.lastChild.previousSibling.previousSibling);
+                }else{
+                    pgnMove.prev.element.parentNode.appendChild(varElem);
+                }
+            }
+
+            selectedContainer = varElem;
+        }
+        // not a new variation
+        else{
+            selectedContainer = pgnMove.prev.element.parentNode;
+
+            // black just played a move
+            if (board.turn == Piece.black)
+                includeCounter = true;
+        }
     }
+
+    let counterText = "";
+    if (includeCounter){
+        // black just played a move
+        if (board.turn == Piece.black){
+            counterText = `${board.fullmove}. `;
+        }else{
+            counterText = `${board.fullmove - 1}... `;
+        }
+    }
+
+    // now add the move itself
+    const pgn_sanElem = document.createElement("div");
+    pgn_sanElem.classList.add("pgn_san");
+    pgn_sanElem.innerText = `${counterText}${san}`;
+    selectedContainer.appendChild(pgn_sanElem);
+    pgnMove.element = pgn_sanElem;
+
+    pgn_sanElem.addEventListener("click", () => {
+        state.setMove(pgnMove);
+    });
 
     pgnText.value = gameState.pgnData.toString();
 });
@@ -128,9 +219,9 @@ containerElem.addEventListener("loadedFEN", (event) => {
 });
 
 containerElem.addEventListener("movescroll", (event) => {
-    const {state, board, moveIndex} = event.detail;
+    const {state, board, pgnMove} = event.detail;
 
-    selectPGNElem(containerElem.getElementsByClassName("pgn_san")[moveIndex]);
+    selectPGNElem(pgnMove.element);
 
     fenText.value = board.getFEN();
 });
@@ -162,6 +253,21 @@ function PGNUpVariation(){
 
 function PGNDownVariation(){
     selectedVariation = (selectedVariation + 1) % gameState.currentMove.next.length;
+}
+
+function PGNMoveFirst(){
+    // displays position with no moves made on the board
+    gameState.setMove(gameState.moveRoot);
+}
+
+function PGNMoveLast(){
+    // displays position of the last committed move in the main variation
+    let iter = gameState.moveRoot;
+    while (iter.next[0]){
+        iter = iter.next[0];
+    }
+
+    gameState.setMove(iter);
 }
 
 // key binds for scrolling through moves
