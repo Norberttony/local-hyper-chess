@@ -6,12 +6,54 @@ const VALID_HEADERS = [
     "Event", "Site", "Round", "TimeControl", "Result", "Variant", "FEN"
 ];
 
+function copyArray(arr){
+    const nArr = [];
+    for (const v of arr){
+        nArr.push(v);
+    }
+    return nArr;
+}
+
+class PGN_Move {
+    constructor(move){
+        this.prev;
+        this.next = [];
+
+        this.location = [];
+
+        // reference to actual move object
+        this.move = move;
+    }
+
+    attachTo(move){
+        this.prev = move;
+        let l = move.next.push(this);
+        this.location = copyArray(move.location);
+        this.location.push(l - 1);
+    }
+
+    isBefore(move){
+        return this.location.length <= move.location.length;
+    }
+
+    // returns true if this move is in the main variation
+    isMain(){
+        for (const m of this.location){
+            if (m != 0)
+                return false;
+        }
+        return true;
+    }
+}
+
 class PGNData {
-    constructor(){
-        this.san = "";
+    constructor(pgnRoot){
+        // should be a sentinel node
+        this.pgnRoot = pgnRoot;
 
         this.initHeaders();
     }
+
     initHeaders(){
         this.headers = {
             "Event": "Hyper Chess Analysis",
@@ -20,29 +62,78 @@ class PGNData {
             "Variant": "Standard"
         };
     }
+
     clear(){
-        this.san = "";
+        delete this.pgnRoot;
         this.initHeaders();
     }
+
     setHeader(hdr, value){
         this.headers[hdr] = value;
     }
+
     unsetHeader(hdr){
         delete this.headers[hdr];
     }
-    addToSAN(txt){
-        this.san += txt + " ";
-    }
+
     toString(){
         let pgn = "";
         // show all valid headers
-        for (let i = 0; i < VALID_HEADERS.length; i++){
-            let hdr = VALID_HEADERS[i];
+        for (const hdr of VALID_HEADERS){
             if (this.headers[hdr])
                 pgn += `[${hdr} "${this.headers[hdr]}"]\n`;
         }
         pgn += `\n${this.san}`;
         return pgn;
+    }
+
+    // generates SAN for this descendant node
+    sanHelper(node, count){
+        let san = "";
+        let iter = node;
+
+        // add full move counter
+        if (count % 2 != 0){
+            san += `${Math.floor(count / 2) + 1}... `;
+        }
+
+        // just prevent crashing :)
+        let maxIters = 9999;
+
+        // loop through pgn moves
+        while (iter && --maxIters){
+            // fullmove
+            if (count % 2 == 0)
+                san += `${Math.floor(count / 2) + 1}. `;
+
+            san += `${iter.san} `;
+
+            count++;
+
+            // go through each variation and add it as a comment
+            if (iter.next.length > 1){
+                
+                // fullmove
+                if (count % 2 == 0)
+                    san += `${Math.floor(count / 2) + 1}. `;
+
+                san += `${iter.next[0].san} `;
+                count++;
+
+                for (let i = 1; i < iter.next.length; i++){
+                    san += `{ ${this.sanHelper(iter.next[i], count)}} `;
+                }
+
+                iter = iter.next[0];
+            }
+            iter = iter.next[0];
+        }
+
+        return san;
+    }
+
+    get san(){
+        return this.sanHelper(this.pgnRoot.next[0], 0);
     }
 }
 

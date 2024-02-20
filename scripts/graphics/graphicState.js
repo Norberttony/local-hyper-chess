@@ -10,13 +10,18 @@ class GraphicalState {
 
         this.board = new Board();
 
-        // latest board is meant to ALWAYS be the result of all moves played
+        // latest board is meant to ALWAYS be the result of the current game state (when playing
+        // against another player and verifying valid moves)
         this.latestBoard = new Board();
 
-        this.moves = [];
-        this.currIndex = -1;
-
         this.positions = {};
+
+        this.moveRoot = new PGN_Move();
+
+        this.pgnData = new PGNData(this.moveRoot);
+
+        // the move currently played out on the board
+        this.currentMove = this.moveRoot;
 
         // currently user can make moves for both sides
         this.allowedSides = {
@@ -25,34 +30,42 @@ class GraphicalState {
         };
     }
 
-    setMoveIndex(index){
-        if (index > this.currIndex){
-            // wow. how... neat and tidy...! and not confusing...! at all! :D
-            for (; this.currIndex++ < index;){
-                if (this.currIndex != -1){
-                    this.board.makeMove(this.moves[this.currIndex]);
-                }
-            }
-            this.currIndex--; // yup. might as well. heck this
-        }else{
-            for (; this.currIndex > index; this.currIndex--){
-                if (this.currIndex != -1){
-                    this.board.unmakeMove(this.moves[this.currIndex]);
-                }
-            }
+    // where move is PGN_Move
+    setMove(move){
+
+        // go back to the first move
+        while (this.previousMove()){}
+
+        // now go forward to the given move
+        for (const v of move.location){
+            this.nextMove(v);
         }
-        displayBoard(gameState.board, this.currIndex > -1 ? this.moves[this.currIndex] : false);
-        this.dispatchEvent("movescroll", {state: this, board: this.board, moveIndex: this.currIndex});
+
+        this.graphicsUpdate();
     }
 
-    nextMove(){
-        if (this.currIndex < this.moves.length - 1)
-            this.setMoveIndex(this.currIndex + 1);
+    graphicsUpdate(){
+        displayBoard();
+        this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: this.currentMove});
+    }
+
+    nextMove(variation = 0){
+        const move = this.currentMove.next[variation];
+        if (move){
+            this.board.makeMove(move.move);
+            this.currentMove = move;
+            return true;
+        }
+        return false;
     }
 
     previousMove(){
-        if (this.currIndex >= 0)
-            this.setMoveIndex(this.currIndex - 1);
+        if (this.currentMove.prev){
+            this.board.unmakeMove(this.currentMove.move);
+            this.currentMove = this.currentMove.prev;
+            return true;
+        }
+        return false;
     }
 
     dispatchEvent(name, detail){
@@ -61,32 +74,31 @@ class GraphicalState {
 
     // assumes move is legal
     makeMove(move){
-        this.moves.push(move);
+        let SAN = getMoveSAN(this.board, move);
+        
+        const pgnMove = new PGN_Move(move);
+        pgnMove.san = SAN;
+
+        pgnMove.attachTo(this.currentMove);
+        this.currentMove = pgnMove;
 
         // if the board state is following along, update it too
         let boardIsLatest = false;
-        if (this.moves.length - 2 == this.currIndex){
-            this.currIndex++;
-            this.board.makeMove(move);
-            displayBoard();
+        this.board.makeMove(move);
+        displayBoard(this.board, move);
 
-            // this means that the current board follows the latest board
-            boardIsLatest = true;
-        }
-
-        let SAN = getMoveSAN(this.latestBoard, move);
-        this.latestBoard.makeMove(move);
-
-        this.dispatchEvent("madeMove", {state: this, board: this.latestBoard, san: SAN, move: move});
-
-        // if the board is latest, let's indicate a move scroll
         if (boardIsLatest)
-            this.dispatchEvent("movescroll", {state: this, board: this.board, moveIndex: this.currIndex});
+            this.latestBoard.makeMove(move);
+
+        this.dispatchEvent("madeMove", {state: this, board: this.board, san: SAN, move: move, pgnMove: pgnMove});
+
+        // let's indicate a move scroll
+        this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: pgnMove});
 
         // keep track of repeated positions for three fold repetition
         let pos = this.latestBoard.getPosition();
-        if (this.positions[pos]) this.positions[pos]++;
-        else                     this.positions[pos] = 1;
+        //if (this.positions[pos]) this.positions[pos]++;
+        //else                     this.positions[pos] = 1;
 
         // the only issue is that this does not handle board (if moved to its latest state)
         if (this.positions[pos] >= 3)
@@ -146,10 +158,6 @@ class GraphicalState {
         
         // if user not allowed to make move for this side
         if (!this.allowedSides[this.board.turn])
-            return false;
-
-        // currently cannot make moves unless board matches latest board
-        if (this.currIndex + 1 < this.moves.length)
             return false;
         
         // user cannot make a second test move

@@ -11,7 +11,7 @@ let isDisplayFlipped = false;
 //  - flipped: whether or not the board is flipped
 //  - container: the game container HTML element
 // all of which are optional and default to the current game container stuff
-function displayBoard(board = gameState.board, lastMove = gameState.moves[gameState.moves.length - 1], flipped = isDisplayFlipped, container = gameElem){
+function displayBoard(board = gameState.board, lastMove = gameState.currentMove != gameState.moveRoot ? gameState.currentMove.move : undefined, flipped = isDisplayFlipped, container = gameElem){
     curBoardDisplay = board;
     isDisplayFlipped = flipped;
     lastMoveDisplay = lastMove; // terrible variable.
@@ -65,7 +65,7 @@ function makeMoveGraphically(move){
     let graphicalState = new Board();
     graphicalState.loadFEN(gameState.board.getFEN());
     graphicalState.makeMove(move);
-    displayBoard(graphicalState);
+    displayBoard(graphicalState, move);
     graphicalState.nextTurn(); //goofy.
 }
 

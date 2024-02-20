@@ -35,47 +35,50 @@ function selectPGNElem(elem){
     }
 }
 
-let pgnData = new PGNData();
-pgnText.value = pgnData.toString();
+pgnText.value = gameState.pgnData.toString();
 containerElem.addEventListener("madeMove", (event) => {
-    const {state, board, san, move} = event.detail;
 
-    // sometimes, a user loads a position where it is black to play, offsetting all PGN.
-    const isOffset = pgnData.san == "" && board.turn == Piece.white;
+    // expects pgnMove to always have a prev
+    const {state, board, san, move, pgnMove} = event.detail;
 
-    // adds counter (or number next to every two ply)
-    if (board.turn == Piece.black || isOffset){
-        let pgn_counterElem = document.createElement("pgn_counter");
-        pgn_counterElem.classList.add("pgn_counter");
-        pgn_counterElem.innerText = `${board.fullmove}.`;
-        pgnElem.appendChild(pgn_counterElem);
+    // Handle main variation moves!
+    if (pgnMove.isMain()){
+        // sometimes, a user loads a position where it is black to play, offsetting all PGN.
+        const isOffset = gameState.pgnData.san == "" && board.turn == Piece.white;
 
-        let str = `${board.fullmove}.`;
-        if (isOffset){
-            let pgn_elipsesElem = document.createElement("div");
-            pgn_elipsesElem.classList.add("pgn_counter");
-            pgn_elipsesElem.innerText = "...";
-            pgn_elipsesElem.style.textAlign = "left";
-            pgnElem.appendChild(pgn_elipsesElem);
-            str += "..";
+        // adds counter (or number next to every two ply)
+        if (board.turn == Piece.black || isOffset){
+            let pgn_counterElem = document.createElement("pgn_counter");
+            pgn_counterElem.classList.add("pgn_counter");
+            pgn_counterElem.innerText = `${board.fullmove}.`;
+            pgnElem.appendChild(pgn_counterElem);
+
+            if (isOffset){
+                let pgn_elipsesElem = document.createElement("div");
+                pgn_elipsesElem.classList.add("pgn_counter");
+                pgn_elipsesElem.innerText = "...";
+                pgn_elipsesElem.style.textAlign = "left";
+                pgnElem.appendChild(pgn_elipsesElem);
+            }
         }
-        pgnData.addToSAN(str);
+
+        // now add the move itself
+        const pgn_sanElem = document.createElement("div");
+        pgn_sanElem.classList.add("pgn_san");
+        pgn_sanElem.innerText = san;
+        pgnElem.appendChild(pgn_sanElem);
+
+        pgn_sanElem.addEventListener("click", () => {
+            state.setMoveIndex(pgnMove);
+        });
+    }
+    // Handle non-main variation moves!
+    else{
+        // is this a new variation?
+        
     }
 
-    // now add the move itself
-    const pgn_sanElem = document.createElement("div");
-    pgn_sanElem.classList.add("pgn_san");
-    pgn_sanElem.innerText = san;
-    pgnElem.appendChild(pgn_sanElem);
-
-    const index = state.moves.length - 1;
-    pgn_sanElem.addEventListener("click", () => {
-        state.setMoveIndex(index);
-    });
-
-    pgnData.addToSAN(san);
-
-    pgnText.value = pgnData.toString();
+    pgnText.value = gameState.pgnData.toString();
 });
 
 containerElem.addEventListener("result", (event) => {
@@ -87,7 +90,7 @@ containerElem.addEventListener("result", (event) => {
     else if (board.result == "#" && board.turn == Piece.white) result = "0 - 1";
     else if (board.result == "#" && board.turn == Piece.black) result = "1 - 0";
 
-    pgnData.addToSAN(result);
+    // gameState.pgnData.addToSAN(result);
 
     // get some flavor text based on result
     let flavorText;
@@ -105,7 +108,7 @@ containerElem.addEventListener("result", (event) => {
     pgn_resultElem.innerHTML = `<span>${result}</span><br /><span style = "font-size: large;">${flavorText} ${board.termination}</span>`;
     pgnElem.appendChild(pgn_resultElem);
 
-    pgnText.value = pgnData.toString();
+    pgnText.value = gameState.pgnData.toString();
 });
 
 containerElem.addEventListener("loadedFEN", (event) => {
@@ -113,15 +116,15 @@ containerElem.addEventListener("loadedFEN", (event) => {
 
     // none of the previous PGN is relevant to this new position, so...
     clearPGNView();
-    pgnData.clear();
+    gameState.pgnData.clear();
 
     if (fen.replace(/ /g, "") != StartingFEN.replace(/ /g, "")){
-        pgnData.setHeader("Variant", "From Position");
-        pgnData.setHeader("FEN", fen);
+        gameState.pgnData.setHeader("Variant", "From Position");
+        gameState.pgnData.setHeader("FEN", fen);
     }
 
     fenText.value = state.board.getFEN();
-    pgnText.value = pgnData.toString();
+    pgnText.value = gameState.pgnData.toString();
 });
 
 containerElem.addEventListener("movescroll", (event) => {
@@ -137,20 +140,28 @@ function clearPGNView(){
     pgnElem.innerHTML = "";
 }
 
+let selectedVariation = 0;
 function PGNMoveBack(){
-    gameState.previousMove();
+    if (gameState.previousMove())
+        gameState.graphicsUpdate();
+    selectedVariation = 0;
 }
 
 function PGNMoveForward(){
-    gameState.nextMove();
+    if (gameState.nextMove(selectedVariation))
+        gameState.graphicsUpdate();
+    selectedVariation = 0;
 }
 
-function PGNMoveFirst(){
-    gameState.setMoveIndex(-1);
+function PGNUpVariation(){
+    selectedVariation--;
+    if (selectedVariation < 0){
+        selectedVariation = gameState.currentMove.next.length - 1;
+    }
 }
 
-function PGNMoveLast(){
-    gameState.setMoveIndex(gameState.moves.length - 1);
+function PGNDownVariation(){
+    selectedVariation = (selectedVariation + 1) % gameState.currentMove.next.length;
 }
 
 // key binds for scrolling through moves
@@ -164,10 +175,12 @@ document.body.addEventListener("keydown", function(event){
                 PGNMoveForward();
                 break;
             case "arrowup":
-                PGNMoveFirst();
+                PGNUpVariation();
+                //PGNMoveFirst();
                 break;
             case "arrowdown":
-                PGNMoveLast();
+                PGNDownVariation();
+                //PGNMoveLast();
                 break;
 
             case "f":

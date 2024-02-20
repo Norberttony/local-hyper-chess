@@ -53,6 +53,12 @@
     background-color: #222;
 }
 
+.pgn_variation {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    font-size: medium;
+}
+
 .pgn_result {
     grid-column-start: 1;
     grid-column-end: 4;

@@ -8,27 +8,27 @@ containerElem.addEventListener("madeMove", (event) => {
 
     // a bad solution to handle moves played by an enemy player (network)
     // generally, I'd prefer if all of the observers everywhere were decoupled completely...
-    // but fatigue and laziness stopped me here.
     if (typeof socket !== "undefined" && lastPlayedSAN == san) return;
 
     playerMadeMove = true;
 });
 
-let prevMoveIndex = gameState.currIndex;
+let prevMove = gameState.currentMove;
 containerElem.addEventListener("movescroll", (event) => {
-    const {state, board, moveIndex} = event.detail;
+    const {state, board, pgnMove} = event.detail;
 
     if (playerMadeMove){
         playerMadeMove = false;
-        prevMoveIndex = moveIndex;
+        prevMove = pgnMove;
         return;
     }
 
     // display the board from just before the move was made.
-    let dir = Math.sign(moveIndex - prevMoveIndex);
-    prevMoveIndex = moveIndex;
-    let lastMadeMove = state.moves[moveIndex];
-    if (dir == -1) lastMadeMove = state.moves[moveIndex + 1];
+    let dir = prevMove.isBefore(pgnMove) == 1 ? 1 : -1;
+    let lastMadeMove = pgnMove.move;
+    if (dir == -1) lastMadeMove = prevMove.move;
+
+    prevMove = pgnMove;
 
     if (!lastMadeMove) return;
 

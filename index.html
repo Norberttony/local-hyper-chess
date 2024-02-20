@@ -40,7 +40,6 @@
         <script defer src = "scripts/graphics/graphics.js"></script>
         <script defer src = "scripts/graphics/board.js"></script>
         <script defer src = "scripts/graphics/dialog.js"></script>
-        <script defer src = "scripts/graphics/create-game.js"></script>
         <script defer src = "scripts/graphics/resize.js"></script>
         
         <!-- graphical observers -->
@@ -93,67 +92,6 @@
             </div>
 
             <div id = "dragging"></div>
-        </div>
-
-        <div id = "dialog-box-container">
-            <div id = "dialog-box">
-                <p id = "dialog_title">Connecting to user . . .</p>
-                <p id = "dialog_desc">This might take some time...</p>
-            </div>
-            <div id = "result-box">
-                <p id = "result-box_result">No one Wins</p>
-                <p id = "result-box_local">You <span id = "result_mewin">did not win</span> by <span id = "how_span">cheating</span></p>
-                <button onclick = "hideDialogBox();" style = "margin-top: 40px;">View Game</button><br />
-                <button id = "result-box_rematch" onclick = "offerRematch();">Offer Rematch</button>
-            </div>
-        </div>
-
-        <div id = "invite-popup-container">
-            <div id = "create-game-popup">
-                <h1>Create a game</h1>
-                <form id = "create-game-form">
-                    <div class = "input-pair">
-                        <label for = "color">You play as:</label>
-                        <select name = "color">
-                            <option value = 0>Random</option>
-                            <option value = 8>White</option>
-                            <option value = 16>Black</option>
-                        </select>
-                    </div>
-
-                    <div class = "input-pair">
-                        <span>
-                            <label for = "fen">FEN:</label>
-                            <input id = "create-game-fen" name = "fen">
-                            <!-- <input name = "starting-fen" type = "checkbox"><label for = "starting-fen">Starting FEN</label> -->
-                        </span>
-                    </div>
-
-                    <div class = "game_container_container blue cburnett" style = "display: block;">
-                        <div class = "game_container">
-                            <div class = "game">
-
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class = "input-pair">
-                        <input style = "width: 100%;" type = "submit" value = "Enter">
-                    </div>
-                </form>
-                <button onclick = "hideCreateGamePopup();" style = "margin-top: 5px; width: 100%;">Cancel</button>
-            </div>
-            <div id = "invite-popup">
-                <p>Send this link to a friend to play a game against them!</p>
-                <input id = "peer-id" readonly onfocus = "this.select();" onclick = "this.setSelectionRange(0, this.value.length)">
-                <button onclick = "cancelInvite();">Cancel Invite</button><button id = "invite_copy">Copy to Clipboard</button>
-                <button onclick = "shareInvite();">Share</button>
-            </div>
-        </div>
-
-        <div id = "warn-bar">
-            <button id = "warn-bar_close" onclick = "this.parentNode.style.display = 'none';">&#10006;</button>
-            This is a completed Hyper Chess game that was played between two anonymous players.
         </div>
 
     </body>
