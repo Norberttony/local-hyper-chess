@@ -27,7 +27,17 @@ class PGN_Move {
 
     attachTo(move){
         this.prev = move;
-        let l = move.next.push(this);
+
+        let l;
+
+        // special case
+        if (move.next[0] == -1){
+            move.next[0] = this;
+            l = 1;
+        }else{
+            l = move.next.push(this);
+        }
+
         this.location = copyArray(move.location);
         this.location.push(l - 1);
     }
@@ -51,6 +61,9 @@ class PGNData {
         // should be a sentinel node
         this.pgnRoot = pgnRoot;
 
+        // whether or not started as white to play
+        this.startedWTP = true;
+
         this.initHeaders();
     }
 
@@ -69,6 +82,14 @@ class PGNData {
 
     setHeader(hdr, value){
         this.headers[hdr] = value;
+
+        console.log(hdr, value);
+
+        if (hdr == "FEN"){
+            this.startedWTP = value.split(" ")[1] == "w";
+        }else if (hdr == "Variant" && value == "Standard"){
+            this.startedWTP = true;
+        }
     }
 
     unsetHeader(hdr){
@@ -91,6 +112,9 @@ class PGNData {
         let san = "";
         let iter = node;
 
+        if (!this.startedWTP && node && node == this.pgnRoot.next[0])
+            count++;
+
         // add full move counter
         if (count % 2 != 0){
             san += `${Math.floor(count / 2) + 1}... `;
@@ -109,7 +133,7 @@ class PGNData {
 
             count++;
 
-            // go through each variation and add it as a comment
+            // go through each variation and add it as a variation (enclosed in parentheses)
             if (iter.next.length > 1){
                 
                 // fullmove
@@ -120,7 +144,7 @@ class PGNData {
                 count++;
 
                 for (let i = 1; i < iter.next.length; i++){
-                    san += `{ ${this.sanHelper(iter.next[i], count - 1)}} `;
+                    san += `( ${this.sanHelper(iter.next[i], count - 1)}) `;
                 }
 
                 iter = iter.next[0];

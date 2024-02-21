@@ -52,7 +52,7 @@ containerElem.addEventListener("madeMove", (event) => {
     // Handle main variation moves!
     if (pgnMove.isMain()){
         // sometimes, a user loads a position where it is black to play, offsetting all PGN.
-        const isOffset = gameState.pgnData.san == "" && board.turn == Piece.white;
+        const isOffset = pgnMove.prev == gameState.moveRoot && !gameState.pgnData.startedWTP;
 
         // adds counter (or number next to every two ply)
         if (board.turn == Piece.black || isOffset){
@@ -67,6 +67,8 @@ containerElem.addEventListener("madeMove", (event) => {
                 pgn_elipsesElem.innerText = "...";
                 pgn_elipsesElem.style.textAlign = "left";
                 pgnElem.appendChild(pgn_elipsesElem);
+
+                pgn_counterElem.innerText = `${board.fullmove - 1}.`;
             }
         }
     }
@@ -93,19 +95,14 @@ containerElem.addEventListener("madeMove", (event) => {
                     beforeNode = prevNode;
                     console.log("changed my mind on beforeNode, do not cut off the fullmove counter");
                 }
+                console.log(beforeNode.previousSibling);
             }
 
-            console.log(beforeNode.previousSibling);
-
-            if (!beforeNode || beforeNode && beforeNode.previousSibling && beforeNode.previousSibling.classList.contains("pgn_san")){
-
-                console.log("passed 1");
+            if (pgnMove.prev.next[0].element.previousSibling.classList.contains("pgn_counter") || beforeNode && beforeNode.previousSibling && beforeNode.previousSibling.previousSibling && beforeNode.previousSibling.previousSibling.classList.contains("pgn_counter")){
 
                 // wait. no fullmove counter?! if this is the main variation, that means we're cutting off a move!
                 // make sure to only do this once per variation though
                 if (pgnMove.prev.isMain() && pgnMove.location[pgnMove.location.length - 1] == 1){
-                    console.log("passed 2");
-
                     const container = pgnMove.prev.next[0].element.parentNode;
 
                     const blankMove = document.createElement("div");

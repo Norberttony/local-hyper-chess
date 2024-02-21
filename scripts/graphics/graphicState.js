@@ -75,7 +75,7 @@ class GraphicalState {
     // assumes move is legal
     makeMove(move){
         let SAN = getMoveSAN(this.board, move);
-        
+
         let pgnMove;
         
         // search for an existing pgnMove
@@ -155,14 +155,56 @@ class GraphicalState {
         // remove any comments
         pgn = pgn.replace(/\{.+?\}\s*/g, "");
 
+        // remove full move counters
+        pgn = pgn.replace(/[0-9]+[\.]+/g, "");
+
+        // add a space before and after parentheses
+        pgn = pgn.replace(/\(/g, " ( ").replace(/\)/g, " ) ");
+
+        // make sure there is one space between each move
+        pgn = pgn.replace(/\s+/g, " ");
+        pgn = pgn.trim();
+
         // start reading san
         let pgnSplit = pgn.split(" ");
-        for (let i = 1; i < pgnSplit.length; i += 3){
-            let move1 = this.board.getMoveOfSAN(pgnSplit[i]);
-            if (move1) this.makeMove(move1);
-            let move2 = this.board.getMoveOfSAN(pgnSplit[i + 1]);
-            if (move2) this.makeMove(move2);
+        this.readVariation(pgnSplit, 0);
+    }
+
+    readVariation(pgnSplit, start){
+
+        let toUndo = 0;
+
+        for (let i = start; i < pgnSplit.length; i++){
+            
+            const pgn = pgnSplit[i];
+
+            if (pgn == "("){
+
+                this.previousMove();
+
+                // start a variation!
+                i = this.readVariation(pgnSplit, i + 1);
+
+                // continue with main variation
+                this.nextMove(0);
+
+            }else if (pgn == ")"){
+
+                for (let j = 0; j < toUndo; j++){
+                    this.previousMove();
+                }
+
+                return i;
+            }else{
+                const move = this.board.getMoveOfSAN(pgn);
+                if (move){
+                    this.makeMove(move);
+                    toUndo++;
+                }
+            }
+
         }
+
     }
 
     // returns true if the given piece at this square can move, and false if it cannot
