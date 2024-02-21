@@ -815,12 +815,16 @@ class Board {
     getMoveOfSAN(san){
         if (!san) return;
 
-        let moves = this.generateMoves(true);
+        const moves = this.generateMoves(true);
 
-        for (let m = 0; m < moves.length; m++){
-            let SAN = getMoveSAN(this, moves[m]);
+        //const start = performance.now();
+
+        for (const m of moves){
+            const SAN = getMoveSAN(this, m, moves);
             if (removeGlyphs(SAN) == removeGlyphs(san)){
-                return moves[m];
+                //const end = performance.now();
+                //console.log(end - start);
+                return m;
             }
         }
 

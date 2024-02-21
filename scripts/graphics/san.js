@@ -1,28 +1,23 @@
 
-function getMoveSAN(board, move){
+function getMoveSAN(board, move, moveList = board.generateMoves()){
     let SAN;
-
-    let moveList = board.generateMoves();
 
     /* collects information on move collision ambiguity */
     let sameMove = false;
     let sameFile = false;
     let sameRank = false;
-    if (!Piece.ofType(board.squares[move.from], Piece.pawn)){
-        for (let i = 0; i < moveList.length; i++){
-            let other = moveList[i];
-            if (!(move.from == other.from) && move.to == other.to && Piece.ofType(board.squares[move.from], board.squares[other.from])){
-                // oh no, the move is ambiguous!
-                sameMove = true;
+    for (const other of moveList){
+        if (!(move.from == other.from) && move.to == other.to && Piece.ofType(board.squares[move.from], board.squares[other.from])){
+            // oh no, the move is ambiguous!
+            sameMove = true;
 
-                // do we need to specify the rank (first & foremost?)
-                if (squareToAlgebraicRank(move.from) == squareToAlgebraicRank(other.from))
-                    sameRank = true;
-                
-                // what about the file
-                if (squareToAlgebraicFile(move.from) == squareToAlgebraicFile(other.from))
-                    sameFile = true;
-            }
+            // do we need to specify the rank (first & foremost?)
+            if (squareToAlgebraicRank(move.from) == squareToAlgebraicRank(other.from))
+                sameRank = true;
+            
+            // what about the file
+            if (squareToAlgebraicFile(move.from) == squareToAlgebraicFile(other.from))
+                sameFile = true;
         }
     }
 

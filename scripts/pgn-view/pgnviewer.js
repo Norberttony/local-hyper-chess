@@ -36,7 +36,7 @@ function selectPGNElem(elem){
 }
 
 pgnText.value = gameState.pgnData.toString();
-containerElem.addEventListener("madeMove", (event) => {
+containerElem.addEventListener("pgnMadeMove", (event) => {
 
     // expects pgnMove to always have a prev
     const {state, board, san, move, pgnMove} = event.detail;

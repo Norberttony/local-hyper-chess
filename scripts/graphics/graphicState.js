@@ -10,10 +10,6 @@ class GraphicalState {
 
         this.board = new Board();
 
-        // latest board is meant to ALWAYS be the result of the current game state (when playing
-        // against another player and verifying valid moves)
-        this.latestBoard = new Board();
-
         this.positions = {};
 
         this.moveRoot = new PGN_Move();
@@ -53,6 +49,10 @@ class GraphicalState {
         const move = this.currentMove.next[variation];
         if (move){
             this.board.makeMove(move.move);
+
+            // position reoccurs
+            this.positions[this.board.getPosition()]++;
+
             this.currentMove = move;
             return true;
         }
@@ -61,6 +61,9 @@ class GraphicalState {
 
     previousMove(){
         if (this.currentMove.prev){
+            // position "unoccurs"
+            this.positions[this.board.getPosition()]--;
+
             this.board.unmakeMove(this.currentMove.move);
             this.currentMove = this.currentMove.prev;
             return true;
@@ -73,7 +76,7 @@ class GraphicalState {
     }
 
     // assumes move is legal
-    makeMove(move){
+    makeMove(move, dispatchNonPGNEvents = true){
         let SAN = getMoveSAN(this.board, move);
 
         let pgnMove;
@@ -96,39 +99,39 @@ class GraphicalState {
 
         this.currentMove = pgnMove;
 
-        // if the board state is following along, update it too
-        let boardIsLatest = false;
         this.board.makeMove(move);
-        displayBoard(this.board, move);
 
-        if (boardIsLatest)
-            this.latestBoard.makeMove(move);
+        if (dispatchNonPGNEvents)
+            displayBoard(this.board, move);
 
-        this.dispatchEvent("madeMove", {state: this, board: this.board, san: SAN, move: move, pgnMove: pgnMove});
+        if (dispatchNonPGNEvents)
+            this.dispatchEvent("madeMove", {state: this, board: this.board, san: SAN, move: move, pgnMove: pgnMove});
+
+        this.dispatchEvent("pgnMadeMove", {state: this, board: this.board, san: SAN, move: move, pgnMove: pgnMove});
 
         // let's indicate a move scroll
-        this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: pgnMove});
+        if (dispatchNonPGNEvents)
+            this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: pgnMove});
 
         // keep track of repeated positions for three fold repetition
-        let pos = this.latestBoard.getPosition();
-        //if (this.positions[pos]) this.positions[pos]++;
-        //else                     this.positions[pos] = 1;
+        let pos = this.board.getPosition();
+        if (this.positions[pos]) this.positions[pos]++;
+        else                     this.positions[pos] = 1;
 
         // the only issue is that this does not handle board (if moved to its latest state)
         if (this.positions[pos] >= 3)
-            this.latestBoard.setResult("/", "three-fold repetition");
+            this.board.setResult("/", "three-fold repetition");
 
         // check and dispatch event for any results
-        this.latestBoard.isGameOver();
-        if (this.latestBoard.result)
-            this.dispatchEvent("result", {state: this, board: this.latestBoard});
+        this.board.isGameOver();
+        if (this.board.result)
+            this.dispatchEvent("result", {state: this, board: this.board});
     }
 
     loadFEN(fen){
         this.positions = {};
         
         this.board.loadFEN(fen);
-        this.latestBoard.loadFEN(fen);
         
         // just get rid of everything after move root and have gc handle it
         this.currentMove = this.moveRoot;
@@ -139,8 +142,6 @@ class GraphicalState {
     }
 
     loadPGN(pgn){
-        this.positions = {};
-
         // check if we have to load from position
         let fen = StartingFEN;
         const headers = extractHeaders(pgn);
@@ -168,6 +169,7 @@ class GraphicalState {
         // start reading san
         let pgnSplit = pgn.split(" ");
         this.readVariation(pgnSplit, 0);
+        displayBoard();
     }
 
     readVariation(pgnSplit, start){
@@ -198,7 +200,7 @@ class GraphicalState {
             }else{
                 const move = this.board.getMoveOfSAN(pgn);
                 if (move){
-                    this.makeMove(move);
+                    this.makeMove(move, false);
                     toUndo++;
                 }
             }
