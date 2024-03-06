@@ -173,10 +173,11 @@ function divide(state, depth, maxDepth = depth){
             moveCapturesAmt += mca;
             piecesCapturedAmt += pca;
             checkmatesAmt += ca;
-            console.log(m.uci, ma, mca, pca, ca);
+            console.log(m.uci, ma, mca, pca + m.captures.length, ca);
         }else{
             // well... it's still a valid move, so...
             movesAmt++;
+            console.log(m.uci, 1, 0, 0, 1);
         }
 
         state.unmakeMove(m);

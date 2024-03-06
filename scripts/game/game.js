@@ -580,17 +580,18 @@ class Board {
                     for (let i = chamStart; i < chamEnd; i++){
                         if (this.chameleons[i] == 255)
                             break;
-                        
+
                         const rank = getRankFromSq(this.chameleons[i]);
                         const file = getFileFromSq(this.chameleons[i]);
 
                         // forms death squares, but only against the enemy coordinator.
                         // and there's always only one enemy coordinator.
-                        if (rank == enemyCoordRank && thisFile == enemyCoordFile){
+                        // of course, the king isn't actually forming chameleon death squares if the two are aligned (rank/file)
+                        if (rank == enemyCoordRank && thisFile == enemyCoordFile && thisFile != file && thisRank != rank){
                             captures.push({sq: enemyCoordSq, captured: this.squares[enemyCoordSq]});
                             break;
                         }
-                        if (file == enemyCoordFile && thisRank == enemyCoordRank){
+                        if (file == enemyCoordFile && thisRank == enemyCoordRank && thisFile != file && thisRank != rank){
                             captures.push({sq: enemyCoordSq, captured: this.squares[enemyCoordSq]});
                             break;
                         }
@@ -707,16 +708,14 @@ class Board {
                 // remove chameleon from list
                 if (this.turn == Piece.white){
                     if (this.chameleons[2] == sq){
-                        this.chameleons[2] = 255;
-                    }else{
-                        this.chameleons[3] = 255;
+                        this.chameleons[2] = this.chameleons[3];
                     }
+                    this.chameleons[3] = 255;
                 }else{
                     if (this.chameleons[0] == sq){
-                        this.chameleons[0] = 255;
-                    }else{
-                        this.chameleons[1] = 255;
+                        this.chameleons[0] = this.chameleons[1];
                     }
+                    this.chameleons[1] = 255;
                 }
             }else if (Piece.ofType(captured, Piece.king)){
                 if (this.turn == Piece.white){

@@ -24,16 +24,16 @@ const test_suite = {
             fen: "unbqkbn1/pppppppp/3PPP2/3r1B2/8/8/PPP3PP/RNBQK1NU w 8",
             moveCounts:             [1, 63, 2067, 126668],
             captureCounts:          [0,  1,   83,   2549],
-            piecesCapturedCounts:   [0,  1,   83,   2570],
+            piecesCapturedCounts:   [0,  1,   83,   2549],
             checkmateCounts:        [0,  0,    0,      0]
         },
         {
             name: "Black king-chameleon death squares with king move",
             fen: "un1q1kb1/pp1ppppn/P2PPP1p/4RB1b/8/2p4P/1PPK2P1/1NBQ2NU b 16",
-            moveCounts:             [1, 41, 2889],
-            captureCounts:          [0,  2,   52],
-            piecesCapturedCounts:   [0,  2,   52],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 41, 2889, 119455],
+            captureCounts:          [0,  2,   52,   6145],
+            piecesCapturedCounts:   [0,  2,   52,   6146],
+            checkmateCounts:        [0,  0,    0,      0]
         },
 
         // === STRADDLERS === //
@@ -44,10 +44,10 @@ const test_suite = {
             */
             name: "straddler custodial capture only after move made",
             fen: "p1P5/4p3/Pp2P2p/3Pp3/p1Pp4/1Pp2P2/P2u4/3Pp3 w -",
-            moveCounts:             [1, 45, 2738],
-            captureCounts:          [0,  8,  212],
-            piecesCapturedCounts:   [0, 10,  216],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 45, 2738, 123051],
+            captureCounts:          [0,  8,  212,  18035],
+            piecesCapturedCounts:   [0, 10,  216,  21305],
+            checkmateCounts:        [0,  0,    0,      0]
         },
         {
             /*
@@ -60,10 +60,10 @@ const test_suite = {
             */
             name: "straddler and chameleon duo",
             fen: "p1PP1P2/4pp2/Pp2P2p/3Pp3/p1Pq1P2/1Bp2B2/P2p4/3Pp1p1 w -",
-            moveCounts:             [1, 55, 3506],
-            captureCounts:          [0, 12,  234],
-            piecesCapturedCounts:   [0, 14,  236],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 55, 3506, 201804],
+            captureCounts:          [0, 12,  234,  37293],
+            piecesCapturedCounts:   [0, 14,  236,  42033],
+            checkmateCounts:        [0,  0,    0,      0]
         },
         {
             /*
@@ -73,18 +73,18 @@ const test_suite = {
             */
             name: "straddlers only work with other friendly straddlers",
             fen: "p1P5/4p2N/Ppp1P2p/3Pp3/p1Pp4/1Pp2P1P/P2u4/3Pp2N w -",
-            moveCounts:             [1, 59, 3206],
-            captureCounts:          [0,  7,  359],
-            piecesCapturedCounts:   [0,  9,  411],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 59, 3206, 190460],
+            captureCounts:          [0,  7,  359,  21110],
+            piecesCapturedCounts:   [0,  9,  411,  25782],
+            checkmateCounts:        [0,  0,    0,      0]
         },
         {
             name: "straddler-chameleon duo and co (cannot work with them though)",
             fen: "p1PP1P2/4pp1N/Pp2P2p/3Pp3/p1Pq1P2/1Bp2B1B/P2p4/3Pp1p1 w -",
-            moveCounts:             [1, 73, 4202],
-            captureCounts:          [0, 13,  312],
-            piecesCapturedCounts:   [0, 15,  314],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 73, 4202, 310195],
+            captureCounts:          [0, 13,  312,  50730],
+            piecesCapturedCounts:   [0, 15,  314,  57088],
+            checkmateCounts:        [0,  0,    0,      0]
         },
 
         // === SPRINGER === //
@@ -96,10 +96,10 @@ const test_suite = {
             */
             name: "springer test 1",
             fen: "4p3/1b2p3/6p1/5p2/1p1pN2p/8/2n1P3/7n w -",
-            moveCounts:             [1, 19, 2016],
-            captureCounts:          [0,  3,   60],
-            piecesCapturedCounts:   [0,  3,   60],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 19, 2016, 48699],
+            captureCounts:          [0,  3,   60,  4683],
+            piecesCapturedCounts:   [0,  3,   60,  4683],
+            checkmateCounts:        [0,  0,    0,     0]
         },
         {
             /*
@@ -108,10 +108,10 @@ const test_suite = {
             */
             name: "chameleon-springer test",
             fen: "4p3/1b2p3/6p1/5p2/1p1pB2p/8/2n1P3/7n w -",
-            moveCounts:             [1, 17, 1800],
-            captureCounts:          [0,  1,   45],
-            piecesCapturedCounts:   [0,  1,   45],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 17, 1800, 39548],
+            captureCounts:          [0,  1,   45,   796],
+            piecesCapturedCounts:   [0,  1,   45,   796],
+            checkmateCounts:        [0,  0,    0,     0]
         },
 
         // === KING AND COORDINATOR === //
@@ -125,10 +125,10 @@ const test_suite = {
             */
             name: "king and coordinator basics",
             fen: "Pk5p/r7/8/8/p4R2/8/8/K4n1p w -",
-            moveCounts:             [1, 23, 1258],
-            captureCounts:          [0, 16,  104],
-            piecesCapturedCounts:   [0, 18,  107],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 23, 1258, 30237],
+            captureCounts:          [0, 16,  104,  7225],
+            piecesCapturedCounts:   [0, 18,  107,  7908],
+            checkmateCounts:        [0,  0,    0,     0]
         },
         {
             /*
@@ -138,10 +138,10 @@ const test_suite = {
             */
             name: "king-chameleon duo",
             fen: "Pk5p/r6B/8/8/p4B2/8/8/K4n1p w -",
-            moveCounts:             [1, 41, 2064],
-            captureCounts:          [0,  9,  198],
-            piecesCapturedCounts:   [0,  9,  198],
-            checkmateCounts:        [0,  0,    0]
+            moveCounts:             [1, 41, 2064, 86100],
+            captureCounts:          [0,  9,  198, 10267],
+            piecesCapturedCounts:   [0,  9,  198, 10287],
+            checkmateCounts:        [0,  0,    0,     1]
         },
         {
             /*
@@ -151,10 +151,10 @@ const test_suite = {
             */
             name: "coordinator-chameleon duo",
             fen: "R5k1/8/8/B7/p3B3/8/8/K4n1P w -",
-            moveCounts:             [1, 60, 1426],
-            captureCounts:          [0,  1,   17],
-            piecesCapturedCounts:   [0,  1,   17],
-            checkmateCounts:        [0,  1,    1]
+            moveCounts:             [1, 60, 1426, 91295],
+            captureCounts:          [0,  1,   17,  2394],
+            piecesCapturedCounts:   [0,  1,   17,  2432],
+            checkmateCounts:        [0,  1,    1,   846]
         },
 
         // === IMMOBILIZER === //
@@ -167,10 +167,10 @@ const test_suite = {
             */
             name: "immobilizer checkmates",
             fen: "N4B1B/8/4k3/3u1U2/4K3/8/8/8 w -",
-            moveCounts:             [1, 55, 784],
-            captureCounts:          [0,  0,   0],
-            piecesCapturedCounts:   [0,  0,   0],
-            checkmateCounts:        [0,  1,   1]
+            moveCounts:             [1, 55, 784, 48377],
+            captureCounts:          [0,  0,   0,   164],
+            piecesCapturedCounts:   [0,  0,   0,   164],
+            checkmateCounts:        [0,  1,   1,  1171]
         },
         {
             /*
@@ -179,10 +179,10 @@ const test_suite = {
             */
             name: "immobilized immobilizer",
             fen: "N4B1B/8/4k3/4uU2/4K3/8/8/8 w -",
-            moveCounts:             [1, 38,  38],
-            captureCounts:          [0,  0,   0],
-            piecesCapturedCounts:   [0,  0,   0],
-            checkmateCounts:        [0,  5,   5]
+            moveCounts:             [1, 38, 38, 38],
+            captureCounts:          [0,  0,  0,  0],
+            piecesCapturedCounts:   [0,  0,  0,  0],
+            checkmateCounts:        [0,  5,  5,  5]
         },
         {
             /*
@@ -192,10 +192,10 @@ const test_suite = {
             */
             name: "chameleoned immobilizer",
             fen: "N4B1B/8/4k3/4bU2/4K3/8/8/8 w -",
-            moveCounts:             [1, 45,  45],
-            captureCounts:          [0,  1,   1],
-            piecesCapturedCounts:   [0,  1,   1],
-            checkmateCounts:        [0, 11,  11]
+            moveCounts:             [1, 45, 45, 45],
+            captureCounts:          [0,  1,  1,  1],
+            piecesCapturedCounts:   [0,  1,  1,  1],
+            checkmateCounts:        [0, 11, 11, 11]
         },
 
         // === RETRACTOR === //
@@ -232,10 +232,10 @@ const test_suite = {
         {
             name: "one move. five pieces. all captured.",
             fen: "k3r2K/8/8/4P3/4p3/2Pp1pP1/4B3/4q3 w -",
-            moveCounts:             [1, 6, 246],
-            captureCounts:          [0, 2,   2],
-            piecesCapturedCounts:   [0, 6,   6],
-            checkmateCounts:        [0, 0,   0]
+            moveCounts:             [1, 6, 246, 8750],
+            captureCounts:          [0, 2,   2,  701],
+            piecesCapturedCounts:   [0, 6,   6, 1229],
+            checkmateCounts:        [0, 0,   0,    0]
         },
         {
             name: "woops",
