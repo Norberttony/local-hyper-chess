@@ -1,5 +1,5 @@
 
-const workerURL = location.toString();
+const workerURL = location.toString().replace("/test-suite-worker.js", "");
 
 importScripts(
     `${workerURL}/coords.js`,
