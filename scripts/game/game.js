@@ -571,7 +571,6 @@ class Board {
                 }
 
                 // test for king-chameleon death squares
-                // to-do: check if this causes the very odd "double-move"
                 if (enemyCoordSq != 255){
                     const thisRank = getRankFromSq(target);
                     const thisFile = getFileFromSq(target);
@@ -585,12 +584,15 @@ class Board {
                         const rank = getRankFromSq(this.chameleons[i]);
                         const file = getFileFromSq(this.chameleons[i]);
 
-                        // forms death squares
+                        // forms death squares, but only against the enemy coordinator.
+                        // and there's always only one enemy coordinator.
                         if (rank == enemyCoordRank && thisFile == enemyCoordFile){
                             captures.push({sq: enemyCoordSq, captured: this.squares[enemyCoordSq]});
+                            break;
                         }
                         if (file == enemyCoordFile && thisRank == enemyCoordRank){
                             captures.push({sq: enemyCoordSq, captured: this.squares[enemyCoordSq]});
+                            break;
                         }
                     }
                 }
@@ -642,7 +644,7 @@ class Board {
 
         return !attacksKing;
     }
-    // checks if a certain square be attacked
+    // checks if a certain square is attacked
     isAttacked(sq){
 
         // go through every move

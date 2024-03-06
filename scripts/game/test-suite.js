@@ -15,8 +15,8 @@ const test_suite = {
             name: "Chameleon-coordinator checkmate",
             fen: "k5R1/p7/8/8/7K/8/8/5B2 w -",
             moveCounts:             [1, 46, 608],
-            captureCounts:          [0,  0,   3],
-            piecesCapturedCounts:   [0,  0,   5],
+            captureCounts:          [0,  0,   1],
+            piecesCapturedCounts:   [0,  0,   1],
             checkmateCounts:        [0,  3,   3]
         },
         {

@@ -1,11 +1,13 @@
 
+const workerURL = location.toString();
+
 importScripts(
-    "/scripts/game/coords.js",
-    "/scripts/game/pre-game.js",
-    "/scripts/game/move.js",
-    "/scripts/game/piece.js",
-    "/scripts/game/game.js",
-    "/scripts/game/test-suite.js"
+    `${workerURL}/coords.js`,
+    `${workerURL}/pre-game.js`,
+    `${workerURL}/move.js`,
+    `${workerURL}/piece.js`,
+    `${workerURL}/game.js`,
+    `${workerURL}/test-suite.js`,
 );
 
 onmessage = (e) => {
@@ -122,6 +124,56 @@ function countStats(state, depth, maxDepth = depth){
             moveCapturesAmt += mca;
             piecesCapturedAmt += pca;
             checkmatesAmt += ca;
+        }else{
+            // well... it's still a valid move, so...
+            movesAmt++;
+        }
+
+        state.unmakeMove(m);
+
+        if (depth == maxDepth){
+            //console.log(`Progress: ${(moves.indexOf(m) + 1) / moves.length * 100}%`);
+            //console.log(`${m.uci} ${movesAmt - prevMovesAmt}`);
+            prevMovesAmt = movesAmt;
+        }
+    }
+
+    return [movesAmt, moveCapturesAmt, piecesCapturedAmt, checkmatesAmt];
+}
+
+function divide(state, depth, maxDepth = depth){
+    if (depth == 0){
+        return [1, 0, 0, 0];
+    }
+
+    // counters
+    let prevMovesAmt = 0;
+    let movesAmt = 0;
+    let moveCapturesAmt = 0;
+    let piecesCapturedAmt = 0;
+    let checkmatesAmt = 0;
+
+    const moves = state.generateMoves(true);
+    for (const m of moves){
+        state.makeMove(m);
+
+        // count capture info
+        if (m.captures.length > 0){
+            moveCapturesAmt++;
+            piecesCapturedAmt += m.captures.length;
+        }
+        if (state.isGameOver() == "#"){
+            checkmatesAmt++;
+        }
+
+        // search node
+        if (!state.result){
+            const [ma, mca, pca, ca] = countStats(state, depth - 1, maxDepth);
+            movesAmt += ma;
+            moveCapturesAmt += mca;
+            piecesCapturedAmt += pca;
+            checkmatesAmt += ca;
+            console.log(m.uci, ma, mca, pca, ca);
         }else{
             // well... it's still a valid move, so...
             movesAmt++;
