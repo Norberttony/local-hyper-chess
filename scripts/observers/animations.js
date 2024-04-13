@@ -2,22 +2,12 @@
 
 var containerElem = document.getElementById("container");
 
-let playerMadeMove = false;
-containerElem.addEventListener("madeMove", (event) => {
-    const {state, board, san, move} = event.detail;
-
-    // a bad solution to handle moves played by an enemy player (network)
-    // generally, I'd prefer if all of the observers everywhere were decoupled completely...
-    if (typeof socket !== "undefined" && lastPlayedSAN == san) return;
-
-    playerMadeMove = true;
-});
-
 let prevMove = gameState.currentMove;
 containerElem.addEventListener("movescroll", (event) => {
     const {state, board, pgnMove} = event.detail;
 
     if (playerMadeMove){
+        console.log("player made move");
         playerMadeMove = false;
         prevMove = pgnMove;
         return;

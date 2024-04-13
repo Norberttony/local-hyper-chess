@@ -54,6 +54,22 @@ class PGN_Move {
         }
         return true;
     }
+
+    // returns the current variation as text
+    toText(deleteGlyphs = false){
+        let moves = "";
+
+        // go back to the first moves and collect them first
+        if (this.prev && this.prev.san){
+            moves += this.prev.toText(deleteGlyphs) + " ";
+        }
+
+        // append this move after those first moves
+        let san = deleteGlyphs ? removeGlyphs(this.san) : this.san;
+        moves += san;
+
+        return moves;
+    }
 }
 
 class PGNData {

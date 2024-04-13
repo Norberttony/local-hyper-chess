@@ -1,5 +1,8 @@
+
 var pgnText = document.getElementById("pgnText");
 var fenText = document.getElementById("fenText");
+
+let playerMadeMove = false;
 
 // Graphical state connects any graphical interfaces or inputs to the Board object.
 // It does this by dispatching various events onto the main container element.
@@ -24,6 +27,10 @@ class GraphicalState {
             [Piece.white]: true,
             [Piece.black]: true
         };
+    }
+
+    get turn(){
+        return this.board.turn;
     }
 
     // where move is PGN_Move
@@ -100,6 +107,10 @@ class GraphicalState {
         this.currentMove = pgnMove;
 
         this.board.makeMove(move);
+
+        // used for turning off animations if the user made this move.
+        // it is assumed by default that the user made the move.
+        playerMadeMove = true;
 
         if (dispatchNonPGNEvents)
             displayBoard(this.board, move);

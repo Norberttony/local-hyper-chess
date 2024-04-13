@@ -16,6 +16,7 @@
         <link href = "styles/game.css"          rel = "stylesheet" type = "text/css"/>
         <link href = "styles/game-elems.css"    rel = "stylesheet" type = "text/css"/>
         <link href = "styles/highlights.css"    rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/puzzles.css"       rel = "stylesheet" type = "text/css"/>
         <link href = "styles/style.css"         rel = "stylesheet" type = "text/css"/>
 
         <!-- Style styles. yup. styles that style styles. stylish. -->
@@ -48,6 +49,10 @@
         <script defer src = "scripts/observers/annotator.js"></script>
         <script defer src = "scripts/pgn-view/pgnviewer.js"></script>
 
+        <!-- puzzles!! -->
+        <script src = "scripts/game/puzzles-data.js"></script>
+        <script defer src = "scripts/game/puzzles.js"></script>
+
     </head>
     <body>
 
@@ -56,10 +61,12 @@
                 <span class = "connection"></span>
                 <span class = "name">Anonymous</span>
             </div>
+
             <div id = "white_player" class = "player">
                 <span class = "connection"></span>
                 <span class = "name">Anonymous</span>
             </div>
+
             <div id = "game_container" class = "game_container">
                 <div id = "game" class = "game">
 
@@ -70,6 +77,7 @@
                 <!-- user annotations are drawn on canvas -->
                 <canvas class = "annotations" width = 1200 height = 1200></canvas>
             </div>
+
             <div id = "panel">
                 <span id = "output"></span>
                 <div id = "pgn_control">
@@ -84,6 +92,16 @@
                     <button id = "panel_draw" onclick = "offerDraw();" style = "display: none"><span>½</span></button>
                 </div>
             </div>
+
+            <div id = "puzzles">
+                <img id = "puzzles_image" src = "">
+                <button id = "puzzles_rdm" onclick = "randomPuzzle();">Click to go a random puzzle</button>
+                <div id = "puzzles_title">TITLE</div>
+                <div id = "puzzles_diff">Intermediate</div>
+                <div id = "puzzles_solved">Unsolved</div>
+                <div id = "puzzles_desc">The board unlocks after the puzzle is solved or the FEN/PGN is loaded</div>
+            </div>
+
             <div id = "extra">
                 <textarea id = "pgnText" onfocus = "this.select();" spellcheck = "false"></textarea>
                 <button id = "panel_set-pgn" onclick = "setPGN();">Set PGN</button>

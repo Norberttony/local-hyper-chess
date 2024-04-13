@@ -1,0 +1,141 @@
+
+const puzzlesTitleElem = document.getElementById("puzzles_title");
+const puzzlesDiffElem = document.getElementById("puzzles_diff");
+const puzzlesSolvedElem = document.getElementById("puzzles_solved");
+const puzzlesImgElem = document.getElementById("puzzles_image");
+
+const PUZZLE = {
+    checkSrc:   "images/puzzles/checkmark.svg",
+    xSrc:       "images/puzzles/x.svg",
+    starSrc:    "images/puzzles/star.svg"
+};
+
+// global variables for puzzles
+let userSide;
+let oppSide;
+let moveIndex;
+let puzzle;
+
+// check if the URL indicates that a puzzle should be played.
+if (window.location.search.startsWith("?puzzle_id=")){
+    // this relies on there being a single search parameter.
+    const id = parseInt(window.location.search.substring(11));
+    if (id !== NaN){
+        loadPuzzle(id);
+    }
+}
+
+function loadPuzzle(id){
+    puzzle = PUZZLES[id];
+
+    // display stats
+    puzzlesTitleElem.innerText = puzzle.title;
+    puzzlesDiffElem.innerText = puzzle.difficulty;
+
+    // load FEN
+    gameState.loadFEN(puzzle.fen);
+
+    // disallow moving for enemy side
+    userSide = gameState.turn;
+    oppSide = gameState.turn == Piece.white ? Piece.black : Piece.white;
+    gameState.allowedSides[userSide] = true;
+    gameState.allowedSides[oppSide] = false;
+
+    // flip the board to the user's perspective
+    setFlip(userSide == Piece.black);
+
+    // add an observer that will listen for specific moves from the user
+    moveIndex = 0; // index of currently expected move
+    containerElem.addEventListener("madeMove", puzzleOnMadeMove);
+}
+
+function puzzleOnMadeMove(event){
+    const {state, board, san, move, pgnMove} = event.detail;
+
+    // we don't make moves for the user
+    if (board.turn == userSide){
+        // this ensures that animations play, though it isn't pretty.
+        // to-do: fix this coupling issue
+        playerMadeMove = false;
+        return;
+    }
+
+    let pgn = removeGlyphs(san);
+    const correctMove = puzzle.solution[moveIndex];
+
+    // ensure player is actually following the puzzle's correct variation.
+    const correctVariation =
+        !pgnMove.prev || !pgnMove.prev.prev ||
+        removeGlyphs(pgnMove.prev.prev.san) == puzzle.solution[moveIndex - 2];
+
+    if (correctMove && pgn == removeGlyphs(correctMove) && correctVariation){
+        moveIndex++;
+        puzzlesImgElem.src = PUZZLE.checkSrc;
+        
+        // play opponent's next move
+        if (moveIndex < puzzle.solution.length){
+            puzzlePlayMove(puzzle.solution[moveIndex]);
+            moveIndex++;
+        }else{
+            // check if finished puzzle
+            puzzlesImgElem.src = PUZZLE.starSrc;
+            puzzlesSolvedElem.innerText = "Solved";
+        }
+    }else{
+        puzzlesImgElem.src = PUZZLE.xSrc;
+
+        // try to match as much of the PGN to the correct PGN
+        const triedPGN = pgnMove.toText(true).split(" ");
+
+        // get the move index based on the number of correct PGNs
+        let triedMoveIndex = 0;
+        for (const correctSAN of puzzle.solution){
+            if (correctSAN == triedPGN[0]){
+                triedPGN.shift();
+                triedMoveIndex++;
+            }else{
+                break;
+            }
+        }
+
+        // find the first mistake the user made
+        const firstMistake = triedPGN.shift();
+
+        // go through the refutation line
+        let refutationLine = puzzle.responses[triedMoveIndex][firstMistake];
+        let refutationOffset = 0;
+        for (let i = 0; i < triedPGN.length; i++){
+            let refutation = refutationLine[refutationOffset];
+            if (typeof refutation == "string" && refutation == triedPGN[i]){
+                // good, keep going
+                refutationOffset++;
+            }else if (typeof refutation == "object" && refutation[triedPGN[i]]){
+                // we've reached a variation within the refutation line
+                refutationLine = refutation[triedPGN[i]];
+                refutationOffset = 0;
+            }else{
+                // no response for this variation.
+                refutationOffset = -1;
+                break;
+            }
+        }
+
+        // show the opponent's response, if exists
+        if (refutationOffset > -1){
+            console.log("Refutation:", refutationLine[refutationOffset]);
+            puzzlePlayMove(refutationLine[refutationOffset]);
+        }
+    }
+}
+
+function puzzlePlayMove(san){
+    setTimeout(() => {
+        const move = gameState.board.getMoveOfSAN(san);
+        gameState.makeMove(move);
+    }, 800);
+}
+
+function randomPuzzle(){
+    const id = Math.floor(Math.random() * PUZZLES.length);
+    window.location.search = `?puzzle_id=${id}`;
+}

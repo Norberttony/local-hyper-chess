@@ -1,0 +1,43 @@
+
+#puzzles {
+    grid-area: puzzles;
+    display: grid;
+    grid-template-areas:
+        'img title'
+        'img diff'
+        'img solved'
+        'rdm rdm'
+        'desc desc';
+    grid-template-columns: min-content auto;
+    gap: 10%;
+    margin-left: 3%;
+}
+
+#puzzles_image {
+    grid-area: img;
+    height: 100%;
+}
+
+#puzzles_title {
+    grid-area: title;
+}
+
+#puzzles_diff {
+    grid-area: diff;
+}
+
+#puzzles_solved {
+    grid-area: solved;
+}
+
+#puzzles_title, #puzzles_diff, #puzzles_solved {
+    font-size: 1.5vw;
+}
+
+#puzzles_rdm {
+    grid-area: rdm;
+}
+
+#puzzles_desc {
+    grid-area: desc;
+}
