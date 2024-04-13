@@ -38,13 +38,7 @@
 }
 
 #puzzles_title, #puzzles_diff, #puzzles_solved {
-    font-size: 1.5vw;
-}
-
-@media (max-width: 1110px){
-    #puzzles_title, #puzzles_diff, #puzzles_solved {
-        font-size: 3vh;
-    }
+    font-size: 30px;
 }
 
 #puzzles_rdm {
