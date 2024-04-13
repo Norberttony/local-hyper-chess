@@ -1,4 +1,5 @@
 
+const puzzlesElem = document.getElementById("puzzles");
 const puzzlesTitleElem = document.getElementById("puzzles_title");
 const puzzlesDiffElem = document.getElementById("puzzles_diff");
 const puzzlesSolvedElem = document.getElementById("puzzles_solved");
@@ -7,7 +8,8 @@ const puzzlesImgElem = document.getElementById("puzzles_image");
 const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
     xSrc:       "images/puzzles/x.svg",
-    starSrc:    "images/puzzles/star.svg"
+    starSrc:    "images/puzzles/star.svg",
+    id: 0
 };
 
 // global variables for puzzles
@@ -16,16 +18,31 @@ let oppSide;
 let moveIndex;
 let puzzle;
 
+const puzzlesSolved = loadPuzzlesSolvedData();
+// user might have missed new puzzles
+while (puzzlesSolved.length != PUZZLES.length){
+    puzzlesSolved.push("0");
+}
+
 // check if the URL indicates that a puzzle should be played.
+clearPuzzles();
 if (window.location.search.startsWith("?puzzle_id=")){
     // this relies on there being a single search parameter.
     const id = parseInt(window.location.search.substring(11));
     if (id !== NaN){
+        PUZZLE.id = id;
         loadPuzzle(id);
     }
 }
 
 function loadPuzzle(id){
+    if (puzzlesSolved[id] == "1"){
+        puzzlesImgElem.src = PUZZLE.starSrc;
+        puzzlesSolvedElem.innerText = "Solved";
+    }else{
+        puzzlesSolvedElem.innerText = "Unsolved";
+    }
+
     puzzle = PUZZLES[id];
 
     // display stats
@@ -47,6 +64,23 @@ function loadPuzzle(id){
     // add an observer that will listen for specific moves from the user
     moveIndex = 0; // index of currently expected move
     containerElem.addEventListener("madeMove", puzzleOnMadeMove);
+
+    puzzlesElem.style.display = "";
+}
+
+function clearPuzzles(){
+    // clear puzzle info
+    puzzlesImgElem.src = "";
+    puzzlesDiffElem.innerText = "";
+    puzzlesSolvedElem.innerText = "";
+    puzzlesTitleElem.innerText = "";
+}
+
+function stopSolvingPuzzle(){
+    // unlock board and stop listening for moves
+    containerElem.removeEventListener("madeMove", puzzleOnMadeMove);
+    gameState.allowedSides[Piece.white] = true;
+    gameState.allowedSides[Piece.black] = true;
 }
 
 function puzzleOnMadeMove(event){
@@ -80,6 +114,9 @@ function puzzleOnMadeMove(event){
             // check if finished puzzle
             puzzlesImgElem.src = PUZZLE.starSrc;
             puzzlesSolvedElem.innerText = "Solved";
+            puzzlesSolved[PUZZLE.id] = "1";
+            savePuzzlesSolvedData(puzzlesSolved);
+            stopSolvingPuzzle();
         }
     }else{
         puzzlesImgElem.src = PUZZLE.xSrc;
@@ -122,7 +159,6 @@ function puzzleOnMadeMove(event){
 
         // show the opponent's response, if exists
         if (refutationOffset > -1){
-            console.log("Refutation:", refutationLine[refutationOffset]);
             puzzlePlayMove(refutationLine[refutationOffset]);
         }
     }
@@ -136,6 +172,38 @@ function puzzlePlayMove(san){
 }
 
 function randomPuzzle(){
-    const id = Math.floor(Math.random() * PUZZLES.length);
-    window.location.search = `?puzzle_id=${id}`;
+    let unsolvedPuzzlesAmt = 0;
+    for (const a of puzzlesSolved){
+        if (a == 0)
+            unsolvedPuzzlesAmt++;
+    }
+    if (unsolvedPuzzlesAmt > 0){
+        let unsolvedNum = Math.floor(Math.random() * unsolvedPuzzlesAmt);
+        let id = 0;
+        for (let i = 0; i < puzzlesSolved.length; i++){
+            if (puzzlesSolved[i] == 0)
+            unsolvedNum--;
+            if (unsolvedNum < 0){
+                break;
+            }
+            id++;
+        }
+        window.location.search = `?puzzle_id=${id}`;
+    }else{
+        alert("You've solved all of the puzzles so far! Well done!");
+    }
 }
+
+function loadPuzzlesSolvedData(){
+    const puzzlesSolved = localStorage.getItem("puzzles_solved");
+    if (puzzlesSolved){
+        return puzzlesSolved.split("");
+    }
+    return [];
+}
+
+function savePuzzlesSolvedData(data){
+    localStorage.setItem("puzzles_solved", data.join(""));
+}
+
+containerElem.addEventListener("loadedFEN", stopSolvingPuzzle);

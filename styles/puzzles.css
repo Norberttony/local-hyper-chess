@@ -1,5 +1,7 @@
 
 #puzzles {
+    display: none;
+    
     grid-area: puzzles;
     display: grid;
     grid-template-areas:
@@ -9,7 +11,7 @@
         'rdm rdm'
         'desc desc';
     grid-template-columns: min-content auto;
-    gap: 10%;
+    column-gap: 10%;
     margin-left: 3%;
 }
 
