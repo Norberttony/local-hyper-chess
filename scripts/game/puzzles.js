@@ -9,7 +9,7 @@ const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
     xSrc:       "images/puzzles/x.svg",
     starSrc:    "images/puzzles/star.svg",
-    id: 0
+    id: -1
 };
 
 // global variables for puzzles
@@ -20,7 +20,7 @@ let puzzle;
 
 const puzzlesSolved = loadPuzzlesSolvedData();
 // user might have missed new puzzles
-while (puzzlesSolved.length != PUZZLES.length){
+while (puzzlesSolved.length < PUZZLES.length){
     puzzlesSolved.push("0");
 }
 
@@ -97,12 +97,22 @@ function puzzleOnMadeMove(event){
     let pgn = removeGlyphs(san);
     const correctMove = puzzle.solution[moveIndex];
 
+    // check if the move that the user played is one of the correct moves.
+    let isCorrectMove = false;
+    if (correctMove){
+        if (typeof correctMove == "string"){
+            isCorrectMove = pgn == correctMove;
+        }else if (typeof correctMove == "object"){
+            isCorrectMove = correctMove.indexOf(pgn) > -1;
+        }
+    }
+
     // ensure player is actually following the puzzle's correct variation.
     const correctVariation =
         !pgnMove.prev || !pgnMove.prev.prev ||
         removeGlyphs(pgnMove.prev.prev.san) == puzzle.solution[moveIndex - 2];
 
-    if (correctMove && pgn == removeGlyphs(correctMove) && correctVariation){
+    if (isCorrectMove && correctVariation){
         moveIndex++;
         puzzlesImgElem.src = PUZZLE.checkSrc;
         
@@ -192,6 +202,16 @@ function randomPuzzle(){
     }else{
         alert("You've solved all of the puzzles so far! Well done!");
     }
+}
+
+function nextPuzzle(){
+    let nextId = (PUZZLE.id + 1) % PUZZLES.length;
+    window.location.search = `?puzzle_id=${nextId}`;
+}
+
+function backPuzzle(){
+    let backId = (PUZZLE.id - 1 + PUZZLES.length) % PUZZLES.length;
+    window.location.search = `?puzzle_id=${backId}`;
 }
 
 function loadPuzzlesSolvedData(){

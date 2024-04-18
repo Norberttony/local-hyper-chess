@@ -97,7 +97,11 @@
                 <div id = "puzzles_image_container">
                     <img id = "puzzles_image" src = "">
                 </div>
-                <button id = "puzzles_rdm" onclick = "randomPuzzle();">Click to go a random puzzle</button>
+                <div id = "puzzles_control">
+                    <button id = "puzzles_back" onclick = "backPuzzle();">&lt;</button>
+                    <button id = "puzzles_rdm" onclick = "randomPuzzle();">Click to go to a random puzzle</button>
+                    <button id = "puzzles_next" onclick = "nextPuzzle();">&gt;</button>
+                </div>
                 <div id = "puzzles_title">TITLE</div>
                 <div id = "puzzles_diff">Intermediate</div>
                 <div id = "puzzles_solved">Unsolved</div>

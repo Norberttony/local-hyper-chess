@@ -8,7 +8,7 @@
         'img title'
         'img diff'
         'img solved'
-        'rdm rdm'
+        'control control'
         'desc desc';
     grid-template-columns: min-content auto;
     column-gap: 10%;
@@ -41,8 +41,18 @@
     font-size: 30px;
 }
 
+#puzzles_control {
+    grid-area: control;
+    display: flex;
+}
+
 #puzzles_rdm {
-    grid-area: rdm;
+    width: 100%;
+    margin: 0% 2%;
+}
+
+#puzzles_back, #puzzles_next {
+    width: 50px;
 }
 
 #puzzles_desc {

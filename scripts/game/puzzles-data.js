@@ -92,23 +92,6 @@ const PUZZLES = [
         ]
     },
     {
-        title: "WTP Mate in 2",
-        fen: "2q2b1k/2p3p1/b2N3p/1p1R4/PPN3PP/8/4BP2/2B3K1 w 53",
-        difficulty: "intermediate",
-        solution: ["Be8", "Kh7", "Bh5"],
-        responses: [
-            {
-                "Rh5": ["Bxf5"]
-            },
-            {},
-            {
-                "Rh5": ["Bxf5"],
-                "Kh2": ["Kg6"],
-                "Kh1": ["Kg6"]
-            }
-        ]
-    },
-    {
         title: "BTP Mate in 2",
         fen: "2bqk3/3p4/rp1b4/p5p1/P1BQ3N/R7/7P/3K4 b 47",
         difficulty: "hard",
@@ -122,7 +105,108 @@ const PUZZLES = [
             {}
         ]
     },
+    {
+        title: "BTP Mate in 2",
+        fen: "2b2bn1/1p1P3r/2p5/p1p1p3/PPU2k2/1N6/2P1P3/B2QK3 b 33",
+        difficulty: "intermediate",
+        solution: ["Rh1", "Kd2", ["Bfd8", "Bd6"]],
+        responses: [
+            // Rh1
+            {},
+            {},
+            // Bfd8 or Bd6
+            {
+                "Bcd8": ["Kc3"]
+            }
+        ]
+    },
+    {
+        title: "WTP Mate in 2",
+        fen: "6k1/2R5/6rb/p2P1BUp/PP4P1/2p5/5K1b/8 w 102",
+        difficulty: "hard",
+        solution: ["Bf8", "Kh7", "Bg7"],
+        responses: [
+            {
+                "Bf7": ["Kh8", "Bg7", "Kxh7"],
+            },
+            {},
+            {}
+        ]
+    },
+    {
+        title: "WTP Mate in 2",
+        fen: "1nbqkb2/p1ppp1p1/1uPP1R2/pP3N2/5p1r/pQ5n/5PPP/2B1KBNU w 14",
+        difficulty: "intermediate",
+        solution: ["Rh6", "Ph7", "Qf7"],
+        responses: [
+            // Rh6
+            {
+                "Bc8": ["Kh7"]
+            },
+            {},
+            // Qf7
+            {
+                "Rxg7": ["Kf7"]
+            }
+        ]
+    },
+    {
+        title: "BTP Mate in 3",
+        fen: "N1bk1b2/p1p2r2/8/pp4pp/3P3U/4KP2/n2BP2P/R1nQ1B2 b 40",
+        difficulty: "hard",
+        solution: ["Ba3", "Ke4", "Bd3", "Kxe5", ["Ke7", "Bf5", "Nxe3"]],
+        responses: [
+            // Ba3
+            {},
+            {},
+            // Bd3
+            {
+                "Ncb1": ["Kxe3"],
+                "Nab1": ["Kxe3"],
+                "Nxe3": ["Kxe3"]
+            },
+            {},
+            {
+                "Ke8": ["Kf6"]
+            }
+        ]
+    },
+    {
+        title: "WTP Mate in 2",
+        fen: "b2k1r2/6N1/2bB4/pp5p/P4QP1/8/2P5/2K2B2 w 67",
+        difficulty: "intermediate",
+        solution: ["Bc7", "Ke8", "Bd7"],
+        responses: [
+            {
+                "Bd7": ["Rxe7", "Nxd7", "Kxd7"]
+            },
+            {},
+            {
+                "Qf7": ["Bg6"]
+            }
+        ]
+    },
+    {
+        title: "WTP and win material",
+        fen: "u1bqkb2/pppp2p1/3p2rP/5BR1/P1BPQ1P1/8/1P1P3P/1K5U w 62",
+        difficulty: "insane",
+        solution: ["Bg8", "Ke7", "Bh7", "Rxh5", ["Pgxh4", "Phxh4"]],
+        responses: [
+            // Bg8
+            {},
+            {},
+            // Bh7
+            {
+                "Bf7": ["Rxf6"]
+            },
+            {},
+            // Pgxh4 or Phxh4
+            {}
+        ]
+    },
+    
     /* multiple solutions D:
+       this one has multiple variations, so really no good.
     {
         title: "BTP Mate in 2",
         fen: "5b2/2p1p1p1/8/2P1k1pp/1PB1n3/8/3K4/2B2b2 b 35",
@@ -137,14 +221,6 @@ const PUZZLES = [
         ]
     },
     */
-    {
-        title: "BTP Mate in 2",
-        fen: "2b2bn1/1p1P3r/2p5/p1p1p3/PPU2k2/1N6/2P1P3/B2QK3 b 33",
-        difficulty: "Intermediate",
-        solution: ["Rh1", "Kd2", "Bfd8"],
-        responses: []
-    },
-
     // GENERIC FORMAT
     /*
     {
