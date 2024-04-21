@@ -1,0 +1,108 @@
+// handles certain elements pertaining to the network
+// of course, things such as offering a draw or rematch, or player names and connections.
+// just functions that manipulate elements to display information relating to the network...
+
+var outputElem = document.getElementById("output");
+
+var whiteInfoElem = document.getElementById("white_player");
+var blackInfoElem = document.getElementById("black_player");
+
+function resign(){
+    //socket.emit("issueCommand", commands.resign);
+}
+
+function setConn(elem, conn){
+    let connElem = elem.getElementsByClassName("connection")[0];
+    connElem.className = "connection";
+    connElem.classList.add(conn);
+}
+
+function setName(elem, name){
+    elem.getElementsByClassName("name")[0].innerText = name;
+}
+
+// elements to disable once a game begins
+let pregameControls = [
+    document.getElementById("panel_send-invite"),
+    document.getElementById("panel_set-fen"),
+    document.getElementById("panel_set-pgn")
+];
+// elements to enable once a game begins
+let gameControls = [
+    document.getElementById("panel_resign"),
+    document.getElementById("panel_draw"),
+    document.getElementById("panel_takeback")
+];
+
+// disable current game controls and enable pregame controls
+function activatePreGameControls(){
+    for (let i = 0; i < gameControls.length; i++){
+        gameControls[i].disabled = true;
+    }
+    for (let i = 0; i < pregameControls.length; i++){
+        pregameControls[i].disabled = false;
+    }
+}
+
+// disable pregame controls and enable game controls
+function activateGameControls(){
+    for (let i = 0; i < gameControls.length; i++){
+        gameControls[i].disabled = false;
+    }
+    for (let i = 0; i < pregameControls.length; i++){
+        pregameControls[i].disabled = true;
+    }
+}
+
+activatePreGameControls();
+
+// sets up board and starts the game
+// side is -1 for black, 1 for white, and 0 for spectator
+function setUpBoard(side){
+    // clear controls and views
+    document.getElementById("output").innerText = "";
+    document.getElementById("result-box_rematch").innerText = "Offer Rematch";
+    document.getElementById("panel_rematch").innerText = "Offer Rematch";
+
+    // clears board
+    gameState.loadFEN(StartingFEN);
+
+    if (side != 0){
+        setFlip(side == -1);
+        if (side == 1)
+            gameState.setSide(Piece.white);
+        else
+            gameState.setSide(Piece.black);
+    }else{
+        gameState.allowedSides[Piece.white] = false;
+        gameState.allowedSides[Piece.black] = false;
+    }
+
+    whiteInfoElem.style.display = "flex";
+    blackInfoElem.style.display = "flex";
+
+    // set up names.
+    if (side == 1){
+        setName(whiteInfoElem, "Anonymous (You)");
+        setName(blackInfoElem, "Anonymous (Opponent)");
+    }else if (side == -1){
+        setName(whiteInfoElem, "Anonymous (Opponent)");
+        setName(blackInfoElem, "Anonymous (You)");
+    }else{
+        setName(whiteInfoElem, "Anonymous");
+        setName(blackInfoElem, "Anonymous");
+    }
+
+    // set up connections. currently everyone is just assumed to be automatically connected (even
+    // from spectator's perspectives). even though this isn't entirely accurate... uh...
+    // to-do: fix this
+    // and we can call it done.
+    setConn(whiteInfoElem, "connected");
+    setConn(blackInfoElem, "connected");
+
+    // disables any elements that should not be active during a live game.
+    if (side != 0)
+        activateGameControls();
+    else
+        activatePreGameControls();
+}
