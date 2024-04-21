@@ -2,6 +2,18 @@
 
 var containerElem = document.getElementById("container");
 
+let stopAnimations = false;
+containerElem.addEventListener("madeMove", (event) => {
+    const {san} = event.detail;
+
+    if (san == lastPlayedSAN && NETWORK.gameId)
+        playerMadeMove = false;
+
+    if (stopAnimations)
+        playerMadeMove = true;
+
+});
+
 let prevMove = gameState.currentMove;
 containerElem.addEventListener("movescroll", (event) => {
     const {state, board, pgnMove} = event.detail;
@@ -12,6 +24,8 @@ containerElem.addEventListener("movescroll", (event) => {
         prevMove = pgnMove;
         return;
     }
+
+    console.log("play animation");
 
     // display the board from just before the move was made.
     let dir = prevMove.isBefore(pgnMove) == 1 ? 1 : -1;

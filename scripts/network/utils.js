@@ -1,9 +1,10 @@
-const DB_URL = "";
+const DB_URL = "https://script.google.com/macros/s/AKfycbwsO2Eo4GkfH43xAx2_cU4JVWzb9L2BfAQxK0yDC9P49G7ed-oj70DNFiTu7JMbNXNm/exec";
 
 const NETWORK = {
     gameId: undefined,
     userId: undefined,
-    refNum: undefined
+    refNum: undefined,
+    moveNum: undefined
 };
 if (localStorage.getItem("userId"))
     NETWORK.userId = localStorage.getItem("userId");

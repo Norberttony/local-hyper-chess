@@ -17,6 +17,8 @@ class GraphicalState {
 
         this.moveRoot = new PGN_Move();
 
+        this.lastMainMove = this.moveRoot;
+
         this.pgnData = new PGNData(this.moveRoot);
 
         // the move currently played out on the board
@@ -33,8 +35,25 @@ class GraphicalState {
         return this.board.turn;
     }
 
+    addMoveToEnd(san){
+        stopAnimations = true;
+        const previous = this.currentMove;
+
+        this.setMove(this.lastMainMove);
+        
+        stopAnimations = true;
+        const move = this.board.getMoveOfSAN(san);
+        console.log("add to end", san, move);
+        this.makeMove(move);
+
+        this.setMove(previous);
+        stopAnimations = false;
+    }
+
     // where move is PGN_Move
     setMove(move){
+
+        stopAnimations = true;
 
         // go back to the first move
         while (this.previousMove()){}
@@ -44,7 +63,9 @@ class GraphicalState {
             this.nextMove(v);
         }
 
-        this.graphicsUpdate();
+        //this.graphicsUpdate();
+        displayBoard();
+        stopAnimations = false;
     }
 
     graphicsUpdate(){
@@ -105,6 +126,9 @@ class GraphicalState {
         }
 
         this.currentMove = pgnMove;
+
+        if (pgnMove.isMain())
+            this.lastMainMove = pgnMove;
 
         this.board.makeMove(move);
 
