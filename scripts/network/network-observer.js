@@ -23,7 +23,14 @@ containerElem.addEventListener("madeMove", (event) => {
 });
 
 let keepGettingOffers = true;
+let hasSetResult = false;
+let startGettingOffersActive = false;
 async function startGettingOffers(){
+    // to-do: figure out what's causing this shifty code :)
+    if (startGettingOffersActive)
+        return;
+    startGettingOffersActive = true;
+    
     keepGettingOffers = true;
     while (keepGettingOffers){
         const offers = JSON.parse(await pollDatabase("GET", {
@@ -48,13 +55,22 @@ async function startGettingOffers(){
             // new game id to go to!
             window.location.search = `?game_id=${offers.rematch}`;
         }
+        if (offers.result != "*" && !hasSetResult){
+            const i = offers.result.indexOf(" ");
+            setResult(offers.result.substring(0, i), offers.result.substring(i + 1));
+        }
 
         await sleep(2000);
     }
+    startGettingOffersActive = false;
 }
 
 let keepWaitingForMove = true;
+let waitForMoveActive = false;
 function waitForMove(){
+    if (waitForMoveActive)
+        return;
+    waitForMoveActive = true;
     keepWaitingForMove = true;
     return new Promise(async (res, rej) => {
         while (keepWaitingForMove){
@@ -85,6 +101,7 @@ function waitForMove(){
                 break;
             }
         }
+        waitForMoveActive = false;
         res();
     });
 }
