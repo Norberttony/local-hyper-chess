@@ -182,11 +182,11 @@ containerElem.addEventListener("result", (event) => {
 
     // get some flavor text based on result
     let flavorText;
-    if (result == "0 - 1"){
+    if (result == "0-1"){
         flavorText = "Black wins by";
-    }else if (result == "1 - 0"){
+    }else if (result == "1-0"){
         flavorText = "White wins by";
-    }else if (result == "1/2 - 1/2"){
+    }else if (result == "1/2-1/2"){
         flavorText = "Game ended by";
     }
 

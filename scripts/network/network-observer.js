@@ -3,13 +3,6 @@ var containerElem = document.getElementById("container");
 
 // used to prevent network from resending the move (though this could be useful for confirmation)
 let lastPlayedSAN;
-/*
-socket.on("move", (moveSAN) => {
-    lastPlayedSAN = moveSAN;
-    let move = gameState.latestBoard.getMoveOfSAN(moveSAN);
-    gameState.makeMove(move);
-});
-*/
 
 containerElem.addEventListener("madeMove", (event) => {
     const {state, board, san, move, pgnMove} = event.detail;
@@ -29,6 +22,37 @@ containerElem.addEventListener("madeMove", (event) => {
     }
 });
 
+let keepGettingOffers = true;
+async function startGettingOffers(){
+    keepGettingOffers = true;
+    while (keepGettingOffers){
+        const offers = JSON.parse(await pollDatabase("GET", {
+            type: "offers",
+            id: getMyId()
+        }));
+
+        console.log(offers);
+
+        if (offers.draw != "false"){
+            if (offers.draw == "offered")
+                outputElem.innerText = "Draw has been offered";
+            else if (offers.draw == "accepted")
+                setResult("1/2-1/2", "agreement");
+        }else{
+            outputElem.innerText = "";
+        }
+        if (offers.rematch == "true"){
+            document.getElementById("result-box_rematch").innerText = "Accept rematch?";
+            document.getElementById("panel_rematch").innerText = "Accept rematch?";
+        }else if (offers.rematch != "false"){
+            // new game id to go to!
+            window.location.search = `?game_id=${offers.rematch}`;
+        }
+
+        await sleep(2000);
+    }
+}
+
 let keepWaitingForMove = true;
 function waitForMove(){
     keepWaitingForMove = true;
@@ -47,9 +71,11 @@ function waitForMove(){
             }else{
                 NETWORK.moveNum++;
                 lastPlayedSAN = san;
-                if (san == "1-0" || san == "0-1" || san == "1/2-1/2"){
+                if (san.startsWith("1-0") || san.startsWith("0-1") || san.startsWith("1/2-1/2")){
                     // result!
-                    setResult(san);
+                    const result = san.substring(0, san.indexOf(" "));
+                    const termination = san.substring(san.indexOf(" ") + 1);
+                    setResult(result, termination);
                 }else{
                     if (gameState.currentMove.isMain() && gameState.currentMove.next.length == 0)
                         gameState.makeMove(gameState.board.getMoveOfSAN(san));
@@ -67,9 +93,11 @@ function setResult(result, termination){
     // when there is a checkmate or a draw by either threefold or fifty move rule, then that result
     // will already be calculated by the game state, and isn't necessary to represent over the
     // network (unlike resignation or draws by agreement)
-    if (!gameState.latestBoard.result){
-        gameState.latestBoard.setResult(result, termination);
-        gameState.dispatchEvent("result", {state: gameState, board: gameState.latestBoard});
+    if (!gameState.board.result){
+        gameState.board.setResult(result, termination);
+        gameState.dispatchEvent("result", {state: gameState, board: gameState.board});
+
+        keepWaitingForMove = false;
     }
 };
 
@@ -85,8 +113,8 @@ containerElem.addEventListener("result", (event) => {
 
     // get result text of game
     let result;
-    if      (board.result == "0 - 1" || (board.result == "#" && board.turn == Piece.white)) result = -1;
-    else if (board.result == "1 - 0" || (board.result == "#" && board.turn == Piece.black)) result = 1;
+    if      (board.result == "0-1" || (board.result == "#" && board.turn == Piece.white)) result = -1;
+    else if (board.result == "1-0" || (board.result == "#" && board.turn == Piece.black)) result = 1;
     else    result = 0;
 
     // an on-board result will either be / or #, whereas a result from the server will either

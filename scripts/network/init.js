@@ -32,9 +32,14 @@ if (window.location.search != ""){
             for (const m of gameInfo.moves){
                 console.log(m);
                 if (m != ""){
-                    lastPlayedSAN = m;
-                    const move = gameState.board.getMoveOfSAN(m);
-                    gameState.makeMove(move);
+                    if (m.startsWith("1-0") || m.startsWith("0-1") || m.startsWith("1/2-1/2")){
+                        let s = m.indexOf(" ");
+                        setResult(m.substring(0, s), m.substring(s + 1));
+                    }else{
+                        lastPlayedSAN = m;
+                        const move = gameState.board.getMoveOfSAN(m);
+                        gameState.makeMove(move);
+                    }
                 }
             }
             stopAnimations = false;
@@ -42,12 +47,13 @@ if (window.location.search != ""){
             console.log(gameInfo.result);
 
             console.log(gameState.board.turn, gameInfo.color);
-            if (gameInfo.color != "none"){
+            if (gameInfo.color != "none" && gameInfo.archived == false){
                 console.log(gameState.board.turn, gameInfo.color == "white" ? Piece.white : Piece.black);
                 if (gameState.board.turn != (gameInfo.color == "white" ? Piece.white : Piece.black)){
                     console.log("awaiting opponent's move");
                     waitForMove();
                 }
+                startGettingOffers();
             }
 
         }else{
@@ -79,6 +85,7 @@ if (window.location.search != ""){
                     if (!gameState.allowedSides[challengeInfo.color == "white" ? Piece.white : Piece.black]){
                         waitForMove();
                     }
+                    startGettingOffers();
                 }
             }else{
                 alert("Invalid ID, it's possible the room has expired.");

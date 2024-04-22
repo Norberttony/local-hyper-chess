@@ -7,10 +7,6 @@ var outputElem = document.getElementById("output");
 var whiteInfoElem = document.getElementById("white_player");
 var blackInfoElem = document.getElementById("black_player");
 
-function resign(){
-    //socket.emit("issueCommand", commands.resign);
-}
-
 function setConn(elem, conn){
     let connElem = elem.getElementsByClassName("connection")[0];
     connElem.className = "connection";
@@ -105,4 +101,28 @@ function setUpBoard(side){
         activateGameControls();
     else
         activatePreGameControls();
+}
+
+function resign(){
+    pollDatabase("POST", {
+        type: "resign",
+        id: getMyId()
+    });
+
+    // wait for server to interpret resignation
+    waitForMove();
+}
+
+function offerDraw(){
+    pollDatabase("POST", {
+        type: "draw",
+        id: getMyId()
+    });
+}
+
+function offerRematch(){
+    pollDatabase("POST", {
+        type: "rematch",
+        id: getMyId()
+    });
 }
