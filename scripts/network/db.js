@@ -33,6 +33,7 @@ async function generateInvite(gameConfig){
     }
 
     // extract information from server
+    console.log(fullId);
     setMyId(fullId);
 
     peer_idElem.value = `https://norberttony.github.io/local-hyper-chess?game_id=${NETWORK.gameId}_${NETWORK.refNum}`;
@@ -48,6 +49,10 @@ async function generateInvite(gameConfig){
 
     const gameId = await checkIfAccepted();
     console.log(gameId);
+
+    // now, the challenge ID has a different ref number than the game ID's ref number...
+    localStorage.setItem(`${gameId}_userId`, NETWORK.userId);
+
     window.location.search = `?game_id=${gameId}`;
 }
 

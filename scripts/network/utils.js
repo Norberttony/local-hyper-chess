@@ -41,6 +41,7 @@ function getMyId(){
 }
 
 function setMyId(id){
+    console.log(`Set ID ${id}`);
     const parts = id.split("_");
     if (parts.length == 2){
         // game id and ref num
