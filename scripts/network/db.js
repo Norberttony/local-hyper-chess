@@ -35,8 +35,6 @@ async function generateInvite(gameConfig){
     // extract information from server
     setMyId(fullId);
 
-    console.log(fullId);
-
     peer_idElem.value = `https://norberttony.github.io/local-hyper-chess?game_id=${NETWORK.gameId}_${NETWORK.refNum}`;
 
     gameState.loadFEN(StartingFEN);

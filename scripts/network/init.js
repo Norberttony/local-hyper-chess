@@ -5,7 +5,9 @@ if (window.location.search != ""){
     NETWORK.gameId = fullGameId[0];
     NETWORK.refNum = parseInt(fullGameId[1]);
 
-    console.log(getMyId());
+    const localFetch = localStorage.getItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`);
+    if (localFetch)
+        NETWORK.userId = localFetch;
 
     // try to fetch game OR fetch challenge
     (async () => {

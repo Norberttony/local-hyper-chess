@@ -1,4 +1,4 @@
-const DB_URL = "https://script.google.com/macros/s/AKfycbzofab9SjhPzAKtb8oo0cN3SYJ8Ks4kC7EZhXX4DidG-1qGuadDi1lTTv-lDPdjZS4yHw/exec";
+const DB_URL = "https://script.google.com/macros/s/AKfycbxAS7GWD7Zwc664HJbxG1g3lxexRc7Sb6290FIvW8lUJVGshZlc1Q7SGZYfEQnZVVk2-w/exec";
 
 const NETWORK = {
     gameId: undefined,
@@ -6,8 +6,6 @@ const NETWORK = {
     refNum: undefined,
     moveNum: undefined
 };
-if (localStorage.getItem("userId"))
-    NETWORK.userId = localStorage.getItem("userId");
 
 
 function pollDatabase(method, params){
@@ -54,6 +52,6 @@ function setMyId(id){
         NETWORK.userId = parts[1];
         NETWORK.refNum = parseInt(parts[2]);
 
-        localStorage.setItem("userId", parts[1]);
+        localStorage.setItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`, parts[1]);
     }
 }
