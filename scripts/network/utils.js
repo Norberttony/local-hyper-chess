@@ -1,4 +1,4 @@
-const DB_URL = "https://script.google.com/macros/s/AKfycbxAS7GWD7Zwc664HJbxG1g3lxexRc7Sb6290FIvW8lUJVGshZlc1Q7SGZYfEQnZVVk2-w/exec";
+const DB_URL = "https://script.google.com/macros/s/AKfycbxQ0d17dXeeWDj_EbBKXc11C7ydqAbPM_IyU8M1FwM06tlyuynFgidSF4VvlOv63JkCeg/exec";
 
 const NETWORK = {
     gameId: undefined,
@@ -30,12 +30,14 @@ function pollDatabase(method, params){
 
 function getMyId(){
     let id = "";
-    if (NETWORK.gameId && NETWORK.refNum){
+    if (NETWORK.gameId){
         id = `${NETWORK.gameId}`;
         if (NETWORK.userId){
-            id = `${id}_${NETWORK.userId}`;
+            id += `_${NETWORK.userId}`;
         }
-        id = `${id}_${NETWORK.refNum}`;
+        if (NETWORK.refNum){
+            id += `_${NETWORK.refNum}`;
+        }
     }
     return id;
 }
@@ -43,16 +45,24 @@ function getMyId(){
 function setMyId(id){
     console.log(`Set ID ${id}`);
     const parts = id.split("_");
-    if (parts.length == 2){
-        // game id and ref num
-        NETWORK.gameId = parts[0];
-        NETWORK.refNum = parseInt(parts[1]);
-    }else if (parts.length == 3){
-        // game id, user id, and ref num
-        NETWORK.gameId = parts[0];
-        NETWORK.userId = parts[1];
-        NETWORK.refNum = parseInt(parts[2]);
+    const lastPart = parts[parts.length - 1];
 
-        localStorage.setItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`, parts[1]);
+    if (!isNaN(lastPart)){
+        if (parts.length == 3){
+            NETWORK.gameId = parts[0];
+            NETWORK.userId = parts[1];
+            NETWORK.refNum = parseInt(parts[2]);
+        }else if (parts.length == 2){
+            NETWORK.gameId = parts[0];
+            NETWORK.refNum = parseInt(parts[1]);
+        }
+    }else{
+        // game id, user id, and ref num
+        if (parts.length == 2){
+            NETWORK.gameId = parts[0];
+            NETWORK.userId = parts[1];
+        }else{
+            NETWORK.gameId = parts[0];
+        }
     }
 }

@@ -7,7 +7,9 @@ let lastPlayedSAN;
 containerElem.addEventListener("madeMove", (event) => {
     const {state, board, san, move, pgnMove} = event.detail;
     // ensure user is playing om main variation
-    if (san != lastPlayedSAN && pgnMove.isMain()){
+    // to-do: probably don't depend on this being the case:
+    // gameState.allowVariations is only false when a game is actually being played...
+    if (san != lastPlayedSAN && pgnMove.isMain() && !gameState.allowVariations){
         // the move wasn't from this user. let's send it over to the other user.
         console.log("SEND MOVE TO USER", san);
         pollDatabase("POST", {
@@ -75,7 +77,7 @@ function waitForMove(){
     return new Promise(async (res, rej) => {
         while (keepWaitingForMove){
             const san = await pollDatabase("GET", {
-                type: "move",
+                type: "gameStatus",
                 moveNum: NETWORK.moveNum,
                 id: getMyId()
             });

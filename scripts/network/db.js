@@ -36,7 +36,7 @@ async function generateInvite(gameConfig){
     console.log(fullId);
     setMyId(fullId);
 
-    peer_idElem.value = `https://norberttony.github.io/local-hyper-chess?game_id=${NETWORK.gameId}_${NETWORK.refNum}`;
+    peer_idElem.value = `https://norberttony.github.io/local-hyper-chess?challenge_id=${NETWORK.gameId}`;
 
     gameState.loadFEN(StartingFEN);
     displayBoard();
@@ -47,7 +47,7 @@ async function generateInvite(gameConfig){
     // now that a new game is starting, there is no need for this "offer rematch" button
     panel_rematchElem.style.display = "none";
 
-    const gameId = await checkIfAccepted();
+    const { gameId } = JSON.parse(await checkIfAccepted());
     console.log(gameId);
 
     // now, the challenge ID has a different ref number than the game ID's ref number...
@@ -60,9 +60,11 @@ async function checkIfAccepted(){
     return new Promise(async (res, rej) => {
         while (true){
             const val = await pollDatabase("GET", {
-                type: "challengeAccepted",
-                id: `${NETWORK.gameId}_${NETWORK.userId}_${NETWORK.refNum}`
+                type: "challengeStatus",
+                id: `${NETWORK.gameId}_${NETWORK.userId}`
             });
+
+            console.log("Challenge accepted?", val);
 
             if (val == "false")
                 await sleep(1000);

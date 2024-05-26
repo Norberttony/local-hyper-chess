@@ -7,12 +7,6 @@ var outputElem = document.getElementById("output");
 var whiteInfoElem = document.getElementById("white_player");
 var blackInfoElem = document.getElementById("black_player");
 
-function setConn(elem, conn){
-    let connElem = elem.getElementsByClassName("connection")[0];
-    connElem.className = "connection";
-    connElem.classList.add(conn);
-}
-
 function setName(elem, name){
     elem.getElementsByClassName("name")[0].innerText = name;
 }
@@ -73,6 +67,7 @@ function setUpBoard(side){
         gameState.allowedSides[Piece.white] = false;
         gameState.allowedSides[Piece.black] = false;
     }
+    gameState.allowVariations = false;
 
     whiteInfoElem.style.display = "flex";
     blackInfoElem.style.display = "flex";
@@ -88,13 +83,6 @@ function setUpBoard(side){
         setName(whiteInfoElem, "Anonymous");
         setName(blackInfoElem, "Anonymous");
     }
-
-    // set up connections. currently everyone is just assumed to be automatically connected (even
-    // from spectator's perspectives). even though this isn't entirely accurate... uh...
-    // to-do: fix this
-    // and we can call it done.
-    setConn(whiteInfoElem, "connected");
-    setConn(blackInfoElem, "connected");
 
     // disables any elements that should not be active during a live game.
     if (side != 0)

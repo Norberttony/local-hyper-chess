@@ -29,6 +29,9 @@ class GraphicalState {
             [Piece.white]: true,
             [Piece.black]: true
         };
+
+        // whether or not the user is allowed to try out variations in the past
+        this.allowVariations = true;
     }
 
     get turn(){
@@ -265,6 +268,11 @@ class GraphicalState {
 
         // cannot move a piece if the result is determined
         if (this.board.result)
+            return false;
+
+        // cannot move a piece if user is trying to make a move in the past when variations
+        // aren't allowed
+        if (!this.allowVariations && this.currentMove.next.length > 0)
             return false;
 
         // otherwise we're good :)
