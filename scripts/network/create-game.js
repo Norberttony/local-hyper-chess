@@ -30,7 +30,8 @@ createGameFormElem.addEventListener("submit", (event) => {
 
     const gameConfig = {
         color: createGameFormElem.color.value,
-        fen: createGameFormElem.fen.value
+        fen: createGameFormElem.fen.value,
+        visibility: createGameFormElem.visibility.value
     };
 
     hideCreateGamePopup();

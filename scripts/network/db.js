@@ -22,11 +22,8 @@ invite_copyElem.addEventListener("click", () => {
 // retrieves invite from server
 async function generateInvite(gameConfig){
     // send request to server
-    const fullId = await pollDatabase("POST", {
-        type: "challenge",
-        fen: gameConfig.fen,
-        color: gameConfig.color
-    });
+    gameConfig.type = "challenge";
+    const fullId = await pollDatabase("POST", gameConfig);
 
     if (!fullId){
         alert("Something went wrong in creating the game");
