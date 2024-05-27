@@ -43,7 +43,7 @@ async function initFetchGame(){
         }
 
         stopAnimations = true;
-        for (const m of gameInfo.moves){
+        for (const m of gameInfo.moves.split(" ")){
             console.log(m);
             if (m != ""){
                 if (m.startsWith("1-0") || m.startsWith("0-1") || m.startsWith("1/2-1/2")){
@@ -68,6 +68,9 @@ async function initFetchGame(){
                 waitForMove();
             }
             startGettingOffers();
+        }else{
+            // disallow both sides from moving
+            gameState.setSide();
         }
     }
 }

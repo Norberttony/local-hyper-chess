@@ -78,13 +78,13 @@ function waitForMove(){
         while (keepWaitingForMove){
             const san = await pollDatabase("GET", {
                 type: "gameStatus",
-                moveNum: NETWORK.moveNum,
+                moveNum: NETWORK.moveNum + 1,
                 id: getMyId()
             });
 
             console.log(san);
 
-            if (san == ""){
+            if (san == "" || san == "false"){
                 await sleep(1000);
             }else{
                 NETWORK.moveNum++;
