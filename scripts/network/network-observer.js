@@ -138,12 +138,24 @@ containerElem.addEventListener("result", (event) => {
 
     // an on-board result will either be / or #, whereas a result from the server will either
     // be 1-0, 0-1, or 1/2-1/2. It is a bit confusing and likely needs reworking, but... this works
-    if (board.result == "/" || board.result == "#")
+    if (board.result){
+        let resultText;
+
+        if (result == -1){
+            resultText = "0-1";
+        }else if (result == 1){
+            resultText = "1-0";
+        }else{
+            resultText = "1/2-1/2";
+        }
+
         pollDatabase("POST", {
+            id: getMyId(),
             type: "result",
-            result,
+            result: resultText,
             termination: board.termination
         });
+    }
 
     let resultText;
     switch(result){

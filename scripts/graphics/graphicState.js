@@ -170,6 +170,10 @@ class GraphicalState {
         this.positions = {};
         
         this.board.loadFEN(fen);
+
+        let pos = this.board.getPosition();
+        if (this.positions[pos]) this.positions[pos]++;
+        else                     this.positions[pos] = 1;
         
         // just get rid of everything after move root and have gc handle it
         this.currentMove = this.moveRoot;
