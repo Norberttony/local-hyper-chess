@@ -155,6 +155,10 @@ containerElem.addEventListener("result", (event) => {
             result: resultText,
             termination: board.termination
         });
+
+        gameState.allowedSides[Piece.white] = true;
+        gameState.allowedSides[Piece.black] = true;
+        gameState.allowVariations = true;
     }
 
     let resultText;

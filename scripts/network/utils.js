@@ -1,4 +1,4 @@
-const DB_URL = "https://script.google.com/macros/s/AKfycbySLxk64kjk7h8a5hXLvhSsErk_cly6274xgky69rWu67fvbLzK2mrZye78tIxQYWPTCA/exec";
+const DB_URL = "https://script.google.com/macros/s/AKfycbyts7wD_yD0r_Alv92C1AyAhH87Cl5nYhMDP47-eWVOjfl-eBU3WYy7kVrp7CE3RZWJbg/exec";
 
 const NETWORK = {
     gameId: undefined,

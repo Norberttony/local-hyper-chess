@@ -68,7 +68,7 @@ async function initFetchGame(){
                 waitForMove();
             }
             startGettingOffers();
-        }else{
+        }else if (!gameInfo.archived){
             // disallow both sides from moving
             gameState.setSide();
         }
