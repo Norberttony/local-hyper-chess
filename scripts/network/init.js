@@ -5,15 +5,32 @@ if (window.location.search != ""){
     
     if (fullGameId){
         const fullGameIdParts = fullGameId.split("_");
-        NETWORK.gameId = fullGameIdParts[0];
-        NETWORK.refNum = parseInt(fullGameIdParts[1]);
 
-        // try to fetch stored user id
-        const localFetch = localStorage.getItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`);
-        if (localFetch)
-            NETWORK.userId = localFetch;
+        if (!isNaN(fullGameIdParts[1])){
+            NETWORK.gameId = fullGameIdParts[0];
+            NETWORK.refNum = parseInt(fullGameIdParts[1]);
 
-        initFetchGame();
+            // try to fetch stored user id
+            const localFetch = localStorage.getItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`);
+            if (localFetch)
+                NETWORK.userId = localFetch;
+
+            initFetchGame();
+        }else{
+            // retrieve info
+            NETWORK.gameId = fullGameIdParts[0];
+            NETWORK.userId = fullGameIdParts[1];
+            NETWORK.refNum = parseInt(fullGameIdParts[2]);
+
+            // if does not have a valid user id for this game, set it now
+            const key = `${NETWORK.gameId}_${NETWORK.refNum}_userId`;
+            const localFetch = localStorage.getItem(key);
+            if (!localFetch)
+                localStorage.setItem(key, NETWORK.userId);
+
+            // fetch game
+            initFetchGame();
+        }
     }else if (fullChallengeId){
         const fullChallengeIdParts = fullChallengeId.split("_");
         NETWORK.gameId = fullChallengeIdParts[0];
