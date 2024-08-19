@@ -1,4 +1,5 @@
-// handles elements going in and out of the pool.
+// handles generating elements to represent the pieces. Whenever a piece is taken, its element
+// is put into a pool for later use.
 
 var draggingElem = document.getElementById("dragging");
 var gameElem = document.getElementById("game");

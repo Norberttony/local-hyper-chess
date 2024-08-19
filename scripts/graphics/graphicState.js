@@ -2,8 +2,6 @@
 var pgnText = document.getElementById("pgnText");
 var fenText = document.getElementById("fenText");
 
-let playerMadeMove = false;
-
 // Graphical state connects any graphical interfaces or inputs to the Board object.
 // It does this by dispatching various events onto the main container element.
 class GraphicalState {
@@ -15,14 +13,14 @@ class GraphicalState {
 
         this.positions = {};
 
-        this.moveRoot = new PGN_Move();
+        this.variationRoot = new Variation();
 
-        this.lastMainMove = this.moveRoot;
+        this.mainVariation = this.variationRoot;
 
-        this.pgnData = new PGNData(this.moveRoot);
+        this.pgnData = new PGNData(this.variationRoot);
 
-        // the move currently played out on the board
-        this.currentMove = this.moveRoot;
+        // the variation currently active on the board
+        this.currentVariation = this.variationRoot;
 
         // currently user can make moves for both sides
         this.allowedSides = {
@@ -30,7 +28,7 @@ class GraphicalState {
             [Piece.black]: true
         };
 
-        // whether or not the user is allowed to try out variations in the past
+        // whether or not the user is allowed to create new variations
         this.allowVariations = true;
     }
 
@@ -40,9 +38,9 @@ class GraphicalState {
 
     addMoveToEnd(san){
         stopAnimations = true;
-        const previous = this.currentMove;
+        const previous = this.currentVariation;
 
-        this.setMove(this.lastMainMove);
+        this.setMove(this.mainVariation);
         
         stopAnimations = true;
         const move = this.board.getMoveOfSAN(san);
@@ -53,22 +51,27 @@ class GraphicalState {
         stopAnimations = false;
     }
 
-    // where move is PGN_Move
-    setMove(move){
+    // board jumps to the given variation
+    jumpToVariation(variation){
+        const ca = this.currentVariation.findCommonAncestor(variation);
 
-        stopAnimations = true;
-
-        // go back to the first move
-        while (this.previousMove()){}
-
-        // now go forward to the given move
-        for (const v of move.location){
-            this.nextMove(v);
+        // build the path of nodes from the common ancestor to the given variation
+        const path = [];
+        let iter = variation;
+        while (iter != ca){
+            path.unshift(iter.location);
+            iter = iter.prev;
         }
 
-        //this.graphicsUpdate();
+        // go to the common ancestor
+        while (this.currentVariation != ca)
+            this.previousVariation();
+
+        // go forth to the given variation
+        for (const n of path)
+            this.nextVariation(n.location);
+
         displayBoard();
-        stopAnimations = false;
     }
 
     graphicsUpdate(){
@@ -76,80 +79,59 @@ class GraphicalState {
         this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: this.currentMove});
     }
 
-    nextMove(variation = 0){
-        const move = this.currentMove.next[variation];
-        if (move){
-            this.board.makeMove(move.move);
+    // chooses one of the next variations to play
+    nextVariation(index = 0){
+        const variation = this.currentVariation.next[index];
+        if (variation){
+            this.board.makeMove(variation.move);
 
             // position reoccurs
             this.positions[this.board.getPosition()]++;
 
-            this.currentMove = move;
+            this.currentVariation = variation;
             return true;
         }
         return false;
     }
 
-    previousMove(){
-        if (this.currentMove.prev){
+    // goes back a variation
+    previousVariation(){
+        if (this.currentVariation.prev){
             // position "unoccurs"
             this.positions[this.board.getPosition()]--;
 
-            this.board.unmakeMove(this.currentMove.move);
-            this.currentMove = this.currentMove.prev;
+            this.board.unmakeMove(this.currentVariation.move);
+            this.currentVariation = this.currentVariation.prev;
             return true;
         }
         return false;
     }
 
-    dispatchEvent(name, detail){
-        this.containerElem.dispatchEvent(new CustomEvent(name, {detail}));
-    }
-
     // assumes move is legal
-    makeMove(move, dispatchNonPGNEvents = true){
-        let SAN = getMoveSAN(this.board, move);
-
-        let pgnMove;
+    makeMove(move){
+        const SAN = getMoveSAN(this.board, move);
         
-        // search for an existing pgnMove
-        for (const m of this.currentMove.next){
-            if (m.san == SAN){
-                pgnMove = m;
-                break;
+        // search for an existing variation
+        for (const v of this.currentVariation.next){
+            if (v.san == SAN){
+                this.nextVariation(v.location);
+                return;
             }
         }
         
-        // create new pgnMove
-        if (!pgnMove){
-            pgnMove = new PGN_Move(move);
-            pgnMove.san = SAN;
+        // otherwise create a new variation
+        const variation = new Variation(move);
+        variation.san = SAN;
 
-            pgnMove.attachTo(this.currentMove);
-        }
+        variation.attachTo(this.currentVariation);
 
-        this.currentMove = pgnMove;
+        this.currentVariation = variation;
 
-        if (pgnMove.isMain())
-            this.lastMainMove = pgnMove;
+        // continue the main variation if necessary
+        if (variation.prev == this.mainVariation)
+            this.mainVariation = variation;
 
         this.board.makeMove(move);
-
-        // used for turning off animations if the user made this move.
-        // it is assumed by default that the user made the move.
-        playerMadeMove = true;
-
-        if (dispatchNonPGNEvents)
-            displayBoard(this.board, move);
-
-        if (dispatchNonPGNEvents)
-            this.dispatchEvent("madeMove", {state: this, board: this.board, san: SAN, move: move, pgnMove: pgnMove});
-
-        this.dispatchEvent("pgnMadeMove", {state: this, board: this.board, san: SAN, move: move, pgnMove: pgnMove});
-
-        // let's indicate a move scroll
-        if (dispatchNonPGNEvents)
-            this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: pgnMove});
 
         // keep track of repeated positions for three fold repetition
         let pos = this.board.getPosition();
@@ -167,17 +149,16 @@ class GraphicalState {
     }
 
     loadFEN(fen){
-        this.positions = {};
-        
         this.board.loadFEN(fen);
-
-        let pos = this.board.getPosition();
-        if (this.positions[pos]) this.positions[pos]++;
-        else                     this.positions[pos] = 1;
         
-        // just get rid of everything after move root and have gc handle it
-        this.currentMove = this.moveRoot;
-        this.moveRoot.next = [];
+        // clear the positions table
+        this.positions = {};
+        let pos = this.board.getPosition();
+        this.positions[pos] = 1;
+        
+        // just get rid of everything after variation root and have gc handle it
+        this.currentVariation = this.variationRoot;
+        this.variationRoot.next = [];
 
         displayBoard();
         this.dispatchEvent("loadedFEN", {state: this, fen});
@@ -214,6 +195,7 @@ class GraphicalState {
         displayBoard();
     }
 
+    // parses a list of PGN tokens
     readVariation(pgnSplit, start){
 
         let toUndo = 0;
@@ -224,31 +206,37 @@ class GraphicalState {
 
             if (pgn == "("){
 
-                this.previousMove();
+                this.previousVariation();
 
                 // start a variation!
                 i = this.readVariation(pgnSplit, i + 1);
 
                 // continue with main variation
-                this.nextMove(0);
+                this.nextVariation(0);
 
             }else if (pgn == ")"){
 
                 for (let j = 0; j < toUndo; j++){
-                    this.previousMove();
+                    this.previousVariation();
                 }
 
                 return i;
+            }else if (pgn == ""){
+                // avoid having to search for a move that clearly doesn't exist.
+                continue;
             }else{
                 const move = this.board.getMoveOfSAN(pgn);
                 if (move){
-                    this.makeMove(move, false);
+                    this.makeMove(move);
                     toUndo++;
                 }
             }
 
         }
+    }
 
+    dispatchEvent(name, detail){
+        this.containerElem.dispatchEvent(new CustomEvent(name, {detail}));
     }
 
     // returns true if the given piece at this square can move, and false if it cannot

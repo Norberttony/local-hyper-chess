@@ -36,9 +36,6 @@ function displayBoard(board = gameState.board, lastMove = gameState.currentMove 
             }
         }
     }
-
-    // hide promotion...
-    hidePromotion();
 }
 
 displayBoard();

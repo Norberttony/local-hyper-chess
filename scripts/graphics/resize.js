@@ -5,8 +5,8 @@
 // animation, causing a "bounce").
 //
 // Therefore, until rounding is fully supported, this will have to be the solution...
-// Of course, this entire project was built with the goal of just handling board rendering
-// calculations, so I apologize if this solution feels rather hacky.
+// Of course, this entire file was built with the goal of just handling board rendering
+// calculations.
 
 var containerElem = document.getElementById("container");
 

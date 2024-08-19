@@ -1,5 +1,6 @@
-// Contains all logic for pieces, such as their numerical representations. FEN to piece conversions
-// are also stored here.
+// Contains helper functions for pieces, such as their numerical representations. FEN to piece
+// conversions are also stored here.
+
 const Piece = {
     none: 0,
     king: 1,

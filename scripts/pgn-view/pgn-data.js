@@ -6,75 +6,8 @@ const VALID_HEADERS = [
     "Event", "Site", "Round", "TimeControl", "Result", "Variant", "FEN"
 ];
 
-function copyArray(arr){
-    const nArr = [];
-    for (const v of arr){
-        nArr.push(v);
-    }
-    return nArr;
-}
-
-class PGN_Move {
-    constructor(move){
-        this.prev;
-        this.next = [];
-
-        this.location = [];
-
-        // reference to actual move object
-        this.move = move;
-    }
-
-    attachTo(move){
-        this.prev = move;
-
-        let l;
-
-        // special case
-        if (move.next[0] == -1){
-            move.next[0] = this;
-            l = 1;
-        }else{
-            l = move.next.push(this);
-        }
-
-        this.location = copyArray(move.location);
-        this.location.push(l - 1);
-    }
-
-    isBefore(move){
-        return this.location.length <= move.location.length;
-    }
-
-    // returns true if this move is in the main variation
-    isMain(){
-        for (const m of this.location){
-            if (m != 0)
-                return false;
-        }
-        return true;
-    }
-
-    // returns the current variation as text
-    toText(deleteGlyphs = false){
-        let moves = "";
-
-        // go back to the first moves and collect them first
-        if (this.prev && this.prev.san){
-            moves += this.prev.toText(deleteGlyphs) + " ";
-        }
-
-        // append this move after those first moves
-        let san = deleteGlyphs ? removeGlyphs(this.san) : this.san;
-        moves += san;
-
-        return moves;
-    }
-}
-
 class PGNData {
     constructor(pgnRoot){
-        // should be a sentinel node
         this.pgnRoot = pgnRoot;
 
         // whether or not started as white to play

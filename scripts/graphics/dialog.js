@@ -1,3 +1,6 @@
+
+// handles displaying the dialog box to the user.
+
 var preGameControlsElem = document.getElementById("pre-game-controls");
 
 var dialog_box_containerElem = document.getElementById("dialog-box-container");

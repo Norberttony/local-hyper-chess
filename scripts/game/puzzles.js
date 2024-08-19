@@ -1,3 +1,4 @@
+// handles the client side of puzzles
 
 const puzzlesElem = document.getElementById("puzzles");
 const puzzlesTitleElem = document.getElementById("puzzles_title");
