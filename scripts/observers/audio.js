@@ -33,12 +33,10 @@ function makeNoise(move){
 }
 
 let prevIndex = -1;
-containerElem.addEventListener("movescroll", (event) => {
-    let {state, board, san, moveIndex} = event.detail;
+containerElem.addEventListener("single-scroll", (event) => {
+    let { prevVariation, variation, userInput } = event.detail;
     
     // only play audio if move scrolling is going forward by exactly 1
-    if (moveIndex - prevIndex == 1){
-        makeNoise(state.moves[moveIndex]);
-    }
+    makeNoise(variation.move);
     prevIndex = moveIndex;
 });

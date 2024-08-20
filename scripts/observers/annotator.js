@@ -127,4 +127,4 @@ gameElem.addEventListener("contextmenu", (event) => {
 });
 
 // observe custom events
-containerElem.addEventListener("movescroll", clearUserAnnotations);
+containerElem.addEventListener("variation-change", clearUserAnnotations);

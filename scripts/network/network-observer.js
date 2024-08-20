@@ -130,8 +130,10 @@ function setResult(result, termination){
 // displays a result box
 containerElem.addEventListener("result", (event) => {
     // if player can play both sides at once, they're not spectating or playing a multiplayer game
-    if (gameState.allowedSides[Piece.white] && gameState.allowedSides[Piece.black])
+    if (gameState.allowedSides[Piece.white] && gameState.allowedSides[Piece.black] || gameState.allowVariations)
         return;
+
+    console.log("ok gotta report it ig idk");
 
     keepWaitingForMove = false;
 

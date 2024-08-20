@@ -64,7 +64,7 @@ function loadPuzzle(id){
 
     // add an observer that will listen for specific moves from the user
     moveIndex = 0; // index of currently expected move
-    containerElem.addEventListener("madeMove", puzzleOnMadeMove);
+    containerElem.addEventListener("single-scroll", puzzleOnMadeMove);
 
     puzzlesElem.style.display = "";
 }
@@ -79,23 +79,23 @@ function clearPuzzles(){
 
 function stopSolvingPuzzle(){
     // unlock board and stop listening for moves
-    containerElem.removeEventListener("madeMove", puzzleOnMadeMove);
+    containerElem.removeEventListener("single-scroll", puzzleOnMadeMove);
     gameState.allowedSides[Piece.white] = true;
     gameState.allowedSides[Piece.black] = true;
 }
 
 function puzzleOnMadeMove(event){
-    const {state, board, san, move, pgnMove} = event.detail;
+    const { prevVariation, variation, userInput } = event.detail;
+
+    if (!userInput)
+        return;
 
     // we don't make moves for the user
-    if (board.turn == userSide){
-        // this ensures that animations play, though it isn't pretty.
-        // to-do: fix this coupling issue
-        playerMadeMove = false;
+    if (gameState.board.turn == userSide){
         return;
     }
 
-    let pgn = removeGlyphs(san);
+    let pgn = removeGlyphs(variation.san);
     const correctMove = puzzle.solution[moveIndex];
 
     // check if the move that the user played is one of the correct moves.
@@ -110,8 +110,8 @@ function puzzleOnMadeMove(event){
 
     // ensure player is actually following the puzzle's correct variation.
     const correctVariation =
-        !pgnMove.prev || !pgnMove.prev.prev ||
-        removeGlyphs(pgnMove.prev.prev.san) == puzzle.solution[moveIndex - 2];
+        !variation.prev || !variation.prev.prev ||
+        removeGlyphs(variation.prev.prev.san) == puzzle.solution[moveIndex - 2];
 
     if (isCorrectMove && correctVariation){
         moveIndex++;
@@ -133,7 +133,7 @@ function puzzleOnMadeMove(event){
         puzzlesImgElem.src = PUZZLE.xSrc;
 
         // try to match as much of the PGN to the correct PGN
-        const triedPGN = pgnMove.toText(true).split(" ");
+        const triedPGN = variation.toText(true).split(" ");
 
         // get the move index based on the number of correct PGNs
         let triedMoveIndex = 0;
@@ -151,6 +151,10 @@ function puzzleOnMadeMove(event){
 
         // go through the refutation line
         let refutationLine = puzzle.responses[triedMoveIndex][firstMistake];
+
+        if (!refutationLine)
+            return;
+
         let refutationOffset = 0;
         for (let i = 0; i < triedPGN.length; i++){
             let refutation = refutationLine[refutationOffset];
@@ -228,4 +232,4 @@ function savePuzzlesSolvedData(data){
     localStorage.setItem("puzzles_solved", data.join(""));
 }
 
-containerElem.addEventListener("loadedFEN", stopSolvingPuzzle);
+containerElem.addEventListener("loadFEN", stopSolvingPuzzle);
