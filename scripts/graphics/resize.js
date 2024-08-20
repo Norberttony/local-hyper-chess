@@ -11,7 +11,7 @@
 var containerElem = document.getElementById("container");
 
 function roundToNearest8(n){
-    return 8 * Math.round(n / 8);
+    return 8 * Math.floor(n / 8);
 }
 
 function resizeBoard(){

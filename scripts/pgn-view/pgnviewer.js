@@ -330,17 +330,19 @@ function PGNDownVariation(){
 
 function PGNMoveFirst(){
     // displays position with no moves made on the board
-    gameState.jumpToVariation(gameState.moveRoot);
+    gameState.jumpToVariation(gameState.variationRoot);
+    gameState.applyChanges();
 }
 
 function PGNMoveLast(){
     // displays position of the last committed move in the main variation
-    let iter = gameState.moveRoot;
+    let iter = gameState.currentVariation;
     while (iter.next[0]){
         iter = iter.next[0];
     }
 
     gameState.jumpToVariation(iter);
+    gameState.applyChanges();
 }
 
 // key binds for scrolling through moves
@@ -355,11 +357,9 @@ document.body.addEventListener("keydown", function(event){
                 break;
             case "arrowup":
                 PGNUpVariation();
-                //PGNMoveFirst();
                 break;
             case "arrowdown":
                 PGNDownVariation();
-                //PGNMoveLast();
                 break;
 
             case "f":

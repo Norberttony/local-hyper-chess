@@ -37,6 +37,8 @@ if (window.location.search.startsWith("?puzzle_id=")){
 }
 
 function loadPuzzle(id){
+    document.getElementById("puzzles_rdm").innerText = "Click to return to the analysis board";
+
     if (puzzlesSolved[id] == "1"){
         puzzlesImgElem.src = PUZZLE.starSrc;
         puzzlesSolvedElem.innerText = "Solved";
@@ -188,25 +190,30 @@ function puzzlePlayMove(san){
 }
 
 function randomPuzzle(){
-    let unsolvedPuzzlesAmt = 0;
-    for (const a of puzzlesSolved){
-        if (a == 0)
-            unsolvedPuzzlesAmt++;
-    }
-    if (unsolvedPuzzlesAmt > 0){
-        let unsolvedNum = Math.floor(Math.random() * unsolvedPuzzlesAmt);
-        let id = 0;
-        for (let i = 0; i < puzzlesSolved.length; i++){
-            if (puzzlesSolved[i] == 0)
-            unsolvedNum--;
-            if (unsolvedNum < 0){
-                break;
-            }
-            id++;
+    if (!puzzle){
+        let unsolvedPuzzlesAmt = 0;
+        for (const a of puzzlesSolved){
+            if (a == 0)
+                unsolvedPuzzlesAmt++;
         }
-        window.location.search = `?puzzle_id=${id}`;
+        if (unsolvedPuzzlesAmt > 0){
+            let unsolvedNum = Math.floor(Math.random() * unsolvedPuzzlesAmt);
+            let id = 0;
+            for (let i = 0; i < puzzlesSolved.length; i++){
+                if (puzzlesSolved[i] == 0)
+                unsolvedNum--;
+                if (unsolvedNum < 0){
+                    break;
+                }
+                id++;
+            }
+            window.location.search = `?puzzle_id=${id}`;
+        }else{
+            alert("You've solved all of the puzzles so far! Well done!");
+        }
     }else{
-        alert("You've solved all of the puzzles so far! Well done!");
+        // return back to the analysis  board
+        window.location.search = "";
     }
 }
 

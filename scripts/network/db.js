@@ -30,7 +30,6 @@ async function generateInvite(gameConfig){
     }
 
     // extract information from server
-    console.log(fullId);
     setMyId(fullId);
 
     peer_idElem.value = `https://norberttony.github.io/local-hyper-chess?challenge_id=${NETWORK.gameId}`;
@@ -45,7 +44,6 @@ async function generateInvite(gameConfig){
     panel_rematchElem.style.display = "none";
 
     const { gameId } = JSON.parse(await checkIfAccepted());
-    console.log(gameId);
 
     // now, the challenge ID has a different ref number than the game ID's ref number...
     localStorage.setItem(`${gameId}_userId`, NETWORK.userId);
@@ -60,8 +58,6 @@ async function checkIfAccepted(){
                 type: "challengeStatus",
                 id: `${NETWORK.gameId}_${NETWORK.userId}`
             });
-
-            console.log("Challenge accepted?", val);
 
             if (val == "false")
                 await sleep(1000);

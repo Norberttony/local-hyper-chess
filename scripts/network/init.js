@@ -57,6 +57,9 @@ async function initFetchGame(){
         console.log(gameInfo.color);
         if (gameInfo.color != "none"){
             setUpBoard(gameInfo.color == "white" ? 1 : -1);
+            setNames(gameInfo.color == "white" ? "You" : "Anonymous", gameInfo.color == "black" ? "You" : "Anonymous");
+        }else{
+            setNames("Anonymous", "Anonymous");
         }
 
         for (const m of gameInfo.moves.split(" ")){
@@ -118,4 +121,12 @@ async function initFetchChallenge(){
     }else{
         alert("Invalid ID, it's possible the room has expired.");
     }
+}
+
+function setNames(whiteName, blackName){
+    whiteInfoElem.style.display = "block";
+    whiteInfoElem.getElementsByClassName("name")[0].innerText = whiteName;
+
+    blackInfoElem.style.display = "block";
+    blackInfoElem.getElementsByClassName("name")[0].innerText = blackName;
 }

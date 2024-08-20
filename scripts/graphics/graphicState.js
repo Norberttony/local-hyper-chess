@@ -85,8 +85,6 @@ class GraphicalState {
         while (this.currentVariation != ca)
             this.previousVariation();
 
-        console.log("From", ca, "to", path);
-
         // go forth to the given variation
         for (const n of path)
             this.nextVariation(n);

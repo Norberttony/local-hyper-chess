@@ -133,8 +133,6 @@ containerElem.addEventListener("result", (event) => {
     if (gameState.allowedSides[Piece.white] && gameState.allowedSides[Piece.black] || gameState.allowVariations)
         return;
 
-    console.log("ok gotta report it ig idk");
-
     keepWaitingForMove = false;
 
     const { result, turn, termination } = event.detail;

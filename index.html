@@ -66,12 +66,10 @@
 
         <div id = "container" class = "game_container_container blue cburnett">
             <div id = "black_player" class = "player">
-                <span class = "connection"></span>
                 <span class = "name">Anonymous</span>
             </div>
 
             <div id = "white_player" class = "player">
-                <span class = "connection"></span>
                 <span class = "name">Anonymous</span>
             </div>
 
@@ -172,9 +170,10 @@
                         <span>
                             <label for = "fen">FEN:</label>
                             <input id = "create-game-fen" name = "fen">
-                            <!-- <input name = "starting-fen" type = "checkbox"><label for = "starting-fen">Starting FEN</label> -->
                         </span>
                     </div>
+                    <input id = "starting-fen" name = "starting-fen" type = "checkbox">
+                    <label for = "starting-fen">Use starting FEN instead</label>
 
                     <div class = "game_container_container blue cburnett" style = "display: block;">
                         <div class = "game_container">

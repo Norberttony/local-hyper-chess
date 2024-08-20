@@ -818,13 +818,9 @@ class Board {
 
         const moves = this.generateMoves(true);
 
-        //const start = performance.now();
-
         for (const m of moves){
             const SAN = getMoveSAN(this, m, moves);
             if (removeGlyphs(SAN) == removeGlyphs(san)){
-                //const end = performance.now();
-                //console.log(end - start);
                 return m;
             }
         }

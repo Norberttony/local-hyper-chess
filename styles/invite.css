@@ -68,6 +68,10 @@
     max-width: 100%;
 }
 
+#create-game-fen:read-only {
+    opacity: 0.5;
+}
+
 .input-pair {
     display: flex;
     flex-direction: column;
