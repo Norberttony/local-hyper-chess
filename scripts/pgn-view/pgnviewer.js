@@ -1,3 +1,4 @@
+
 // handles displaying any of the moves in a separate panel, allowing the user to not only scroll
 // through the various moves, but also scroll to a specific move. Most of the "move scrolling"
 // logic is performed in a global instance of class GraphicalState.
@@ -35,172 +36,246 @@ function selectPGNElem(elem){
     }
 }
 
+// creates and returns the new moveline with the given number and white elem.
+function newMovelineElem(num, whiteSANElem){
+    const moveline = document.createElement("div");
+
+    moveline.classList.add("pgn_moveline");
+
+    const numElem = document.createElement("div");
+    numElem.classList.add("pgn_num");
+    numElem.innerText = `${num}.`;
+    
+    moveline.appendChild(numElem);
+    moveline.appendChild(whiteSANElem);
+
+    return moveline;
+}
+
+// returns a list of two elements, the first moveline element and the second moveline element
+// if the given moveline elem is already split, this returns an empty list.
+function splitMovelineElem(movelineElem){
+    console.log("Splitting", movelineElem);
+    // cannot split a moveline that is already split.
+    if (movelineElem.classList.contains("pgn_split-moveline"))
+        return [];
+
+    movelineElem.classList.add("pgn_split-moveline");
+
+    const elem1 = movelineElem;
+
+    const numText = elem1.getElementsByClassName("pgn_num")[0].innerText;
+    const elem2 = newMovelineElem(numText.substring(0, numText.length - 1), newBlankSANElem());
+
+    const nextElem = elem1.nextElementSibling;
+    if (nextElem)
+        nextElem.parentNode.insertBefore(elem2, nextElem);
+    else
+        elem1.parentNode.appendChild(elem2);
+
+    // swap the second move elem in the first moveline with a blank elem
+    const blackMove = elem1.getElementsByClassName("pgn_san")[1];
+    if (blackMove){
+        elem2.appendChild(blackMove);
+    }
+    elem1.appendChild(newBlankSANElem());
+
+    return [ elem1, elem2 ];
+}
+
+function newSANElem(san, variation){
+    const div = document.createElement("div");
+    div.classList.add("pgn_san");
+    div.innerText = san;
+
+    if (variation){
+        div.addEventListener("click", () => {
+            console.log(variation);
+            gameState.jumpToVariation(variation);
+            displayBoard();
+            selectPGNElem(div);
+        });
+    }
+
+    return div;
+}
+
+function newBlankSANElem(){
+    const div = newSANElem("...");
+    div.classList.add("pgn_blank");
+    return div;
+}
+
+function newVariationElem(){
+    const div = document.createElement("div");
+    div.classList.add("pgn_variation");
+    return div;
+}
+
+function isPGNSpecialBlock(elem){
+    return elem.classList.contains("pgn_moveline") || elem.classList.contains("pgn_result");
+}
+
 pgnText.value = gameState.pgnData.toString();
-containerElem.addEventListener("pgnMadeMove", (event) => {
 
-    // expects pgnMove to always have a prev
-    const {state, board, san, move, pgnMove} = event.detail;
+containerElem.addEventListener("new-variation", (event) => {
+    const { variation } = event.detail;
 
-    if (pgnMove.element)
-        return;
+    // determine move number
+    const moveNum = Math.floor((variation.level + 1) / 2);
 
-    let selectedContainer = pgnElem;
+    // determine the player who made this move
+    const turn = variation.level % 2 == 1 ? Piece.white : Piece.black;
 
-    // whether or not the pgn_san element itself needs a counter text added to it
-    let includeCounter = false;
+    // create a new SAN elem for this variation
+    const sanElem = newSANElem(variation.san, variation);
+    variation.element = sanElem;
 
-    // Handle main variation moves!
-    if (pgnMove.isMain()){
-        // sometimes, a user loads a position where it is black to play, offsetting all PGN.
-        const isOffset = pgnMove.prev == gameState.moveRoot && !gameState.pgnData.startedWTP;
+    if (variation.isMain()){
+        if (turn == Piece.black){
+            // add this move to the previous move line
+            const prevMoveline = variation.prev.element.parentNode;
+            prevMoveline.appendChild(sanElem);
 
-        // adds counter (or number next to every two ply)
-        if (board.turn == Piece.black || isOffset){
-            let pgn_counterElem = document.createElement("pgn_counter");
-            pgn_counterElem.classList.add("pgn_counter");
-            pgn_counterElem.innerText = `${board.fullmove}.`;
-            pgnElem.appendChild(pgn_counterElem);
-
-            if (isOffset){
-                let pgn_elipsesElem = document.createElement("div");
-                pgn_elipsesElem.classList.add("pgn_counter");
-                pgn_elipsesElem.innerText = "...";
-                pgn_elipsesElem.style.textAlign = "left";
-                pgnElem.appendChild(pgn_elipsesElem);
-
-                pgn_counterElem.innerText = `${board.fullmove - 1}.`;
-            }
-        }
-    }
-    // Handle non-main variation moves!
-    else{
-        // is this a new variation?
-        if (pgnMove.location[pgnMove.location.length - 1] > 0){
-            includeCounter = true;
-
-            // yes! yes it is!
-            const varElem = document.createElement("div");
-            varElem.classList.add("pgn_variation");
-
-            let beforeNode;
-            if (pgnMove.prev.next[0].next[0]){
-                console.log("select beforeNode by going prev next next");
-                beforeNode = pgnMove.prev.next[0].next[0].element;
-            }
-
-            // don't cut off the pgn fullmove counter from the SAN
-            if (beforeNode && beforeNode.previousSibling){
-                const prevNode = beforeNode.previousSibling;
-                if (prevNode.classList.contains("pgn_counter")){
-                    beforeNode = prevNode;
-                    console.log("changed my mind on beforeNode, do not cut off the fullmove counter");
+            // if the next element does not exist or is not a moveline, this must be the very end
+            // of the pgn and a skip is required.
+            const nextElem = prevMoveline.nextElementSibling;
+            console.log(nextElem);
+            if (prevMoveline.getElementsByClassName("pgn_blank")[0]){
+                // fetch next available moveline
+                let nextMovelineElem = nextElem;
+                while (!nextMovelineElem.classList.contains("pgn_moveline")){
+                    nextMovelineElem = nextMovelineElem.nextElementSibling;
                 }
-                console.log(beforeNode.previousSibling);
-            }
 
-            if (pgnMove.prev.next[0].element.previousSibling.classList.contains("pgn_counter") || beforeNode && beforeNode.previousSibling && beforeNode.previousSibling.previousSibling && beforeNode.previousSibling.previousSibling.classList.contains("pgn_counter")){
-
-                // wait. no fullmove counter?! if this is the main variation, that means we're cutting off a move!
-                // make sure to only do this once per variation though
-                if (pgnMove.prev.isMain() && pgnMove.location[pgnMove.location.length - 1] == 1){
-                    const container = pgnMove.prev.next[0].element.parentNode;
-
-                    const blankMove = document.createElement("div");
-                    blankMove.classList.add("pgn_san", "pgn_blank");
-                    blankMove.style.pointerEvents = "none";
-                    blankMove.innerText = "...";
-                    container.insertBefore(blankMove, beforeNode);
-
-                    const counterElem = document.createElement("div");
-                    counterElem.classList.add("pgn_counter");
-                    counterElem.innerText = `${board.fullmove}.`;
-                    container.insertBefore(counterElem, blankMove);
-
-                    beforeNode = counterElem;
-                    console.log("set beforeNode to a newly created counter that goes past this variation");
+                if (nextMovelineElem){
+                    nextMovelineElem.appendChild(sanElem);
                 }
-            }
+            }else if (nextElem && !isPGNSpecialBlock(nextElem)){
+                const blankSANElem = newBlankSANElem();
+                prevMoveline.appendChild(blankSANElem);
 
-            if (beforeNode){
-                console.log("beforeNode", beforeNode);
-                beforeNode.parentNode.insertBefore(varElem, beforeNode);
-            }else{
-                if (pgnMove.prev == gameState.moveRoot){
-                    console.log("is root");
-                    pgnElem.insertBefore(varElem, pgnElem.lastChild.previousSibling.previousSibling);
+                const moveline = newMovelineElem(moveNum, newBlankSANElem());
+                moveline.appendChild(sanElem);
+
+                // insert either after the special elements or just at the end.
+                if (!nextElem || !nextElem.nextElementSibling){
+                    pgnElem.appendChild(moveline);
                 }else{
-                    pgnMove.prev.element.parentNode.appendChild(varElem);
+                    // keep searching for the next moveline element
+                    let nextMoveline = nextElem;
+                    while (nextMoveline && !nextMoveline.classList.contains("pgn_moveline"))
+                        nextMoveline = nextMoveline.nextElementSibling;
+
+                    // either moveline exists or we've reached the end of the pgn
+                    if (nextMoveline)
+                        pgnElem.insertBefore(moveline, nextMoveline);
+                    else
+                        pgnElem.appendChild(moveline);
                 }
             }
-
-            selectedContainer = varElem;
-        }
-        // not a new variation
-        else{
-            selectedContainer = pgnMove.prev.element.parentNode;
-
-            // black just played a move
-            if (board.turn == Piece.black)
-                includeCounter = true;
-        }
-    }
-
-    let counterText = "";
-    if (includeCounter){
-        // black just played a move
-        if (board.turn == Piece.black){
-            counterText = `${board.fullmove}. `;
         }else{
-            counterText = `${board.fullmove - 1}... `;
+            // create a new move line for this variation
+            const moveline = newMovelineElem(moveNum, sanElem);
+            const resultElem = document.getElementsByClassName("pgn_result")[0];
+            if (resultElem)
+                pgnElem.insertBefore(moveline, resultElem);
+            else
+                pgnElem.appendChild(moveline);
         }
+    }else{
+
+        if (variation.location == 0){
+            // same variation line
+            const variationElem = variation.prev.element.parentNode;
+            variationElem.appendChild(sanElem);
+        }else{
+            // create a new variation object to contain all of the variations after the previous
+            // moveline
+            const variationLineElem = document.createElement("div");
+            variationLineElem.classList.add("pgn_variation-line");
+
+            variationLineElem.appendChild(sanElem);
+            
+            let previousContainer = variation.prev.next[0].element.parentNode;
+
+            console.log(previousContainer);
+
+            if (previousContainer.classList.contains("pgn_moveline")){
+                // do we split the moveline or not?
+                if (turn == Piece.white){
+                    // split!!!
+                    const nextElem = previousContainer.nextElementSibling;
+                    if (nextElem && nextElem.classList.contains("pgn_variation")){
+                        nextElem.appendChild(variationLineElem);
+                    }else{
+                        const variationElem = newVariationElem();
+                        variationElem.appendChild(variationLineElem);
+
+                        const [ m1, m2 ] = splitMovelineElem(previousContainer);
+                        m1.parentNode.insertBefore(variationElem, m2);
+                    }
+                }else{
+                    const variationElem = newVariationElem();
+                    variationElem.appendChild(variationLineElem);
+
+                    // no split needed, just insert after moveline
+                    const nextElem = previousContainer.nextElementSibling;
+                    console.log(nextElem);
+                    if (nextElem)
+                        pgnElem.insertBefore(variationElem, nextElem);
+                    else
+                        pgnElem.appendChild(variationElem);
+                }
+            }else{
+                // this must be another simple variation element, so let's just add a variation to the variation
+                const variationElem = newVariationElem();
+                variationElem.appendChild(variationLineElem);
+                
+                previousContainer.appendChild(variationElem);
+            }
+        }
+
     }
-
-    // now add the move itself
-    const pgn_sanElem = document.createElement("div");
-    pgn_sanElem.classList.add("pgn_san");
-    pgn_sanElem.innerText = `${counterText}${san}`;
-    selectedContainer.appendChild(pgn_sanElem);
-    pgnMove.element = pgn_sanElem;
-
-    pgn_sanElem.addEventListener("click", () => {
-        state.setMove(pgnMove);
-    });
-
-    pgnText.value = gameState.pgnData.toString();
 });
 
 containerElem.addEventListener("result", (event) => {
-    const {state, board} = event.detail;
+    const { result, turn, termination } = event.detail;
 
-    // convert symbols of / and # into words
-    let result = board.result;
-    if (result == "/") result = "1/2 - 1/2";
-    else if (board.result == "#" && board.turn == Piece.white) result = "0 - 1";
-    else if (board.result == "#" && board.turn == Piece.black) result = "1 - 0";
+    // 0 for draw, 1 if white wins, -1 if black wins
+    let resultNum;
+    if (result == "/")
+        resultNum = 0;
+    else if (result == "#" && turn == Piece.white)
+        resultNum = -1;
+    else if (result == "#" && turn == Piece.black)
+        resultNum = 1;
 
-    // gameState.pgnData.addToSAN(result);
-
-    // get some flavor text based on result
+    // based on the result number, add some result text and flavor text
+    let resultText;
     let flavorText;
-    if (result == "0-1"){
-        flavorText = "Black wins by";
-    }else if (result == "1-0"){
-        flavorText = "White wins by";
-    }else if (result == "1/2-1/2"){
+    if (resultNum == 0){
+        resultText = "1/2 - 1/2";
         flavorText = "Game ended by";
+    }else if (resultNum == -1){
+        resultText = "0 - 1";
+        flavorText = "Black wins by";
+    }else if (resultNum == 1){
+        resultText = "1 - 0";
+        flavorText = "White wins by";
     }
 
     // displays result
     const pgn_resultElem = document.createElement("div");
     pgn_resultElem.classList.add("pgn_result");
-    pgn_resultElem.innerHTML = `<span>${result}</span><br /><span style = "font-size: large;">${flavorText} ${board.termination}</span>`;
+    pgn_resultElem.innerHTML = `<span>${resultText}</span><br /><span style = "font-size: large;">${flavorText} ${termination}</span>`;
     pgnElem.appendChild(pgn_resultElem);
 
     pgnText.value = gameState.pgnData.toString();
 });
 
-containerElem.addEventListener("loadedFEN", (event) => {
-    const {state, fen} = event.detail;
+containerElem.addEventListener("loadFEN", (event) => {
+    const { fen } = event.detail;
 
     // none of the previous PGN is relevant to this new position, so...
     clearPGNView();
@@ -211,16 +286,17 @@ containerElem.addEventListener("loadedFEN", (event) => {
         gameState.pgnData.setHeader("FEN", fen);
     }
 
-    fenText.value = state.board.getFEN();
+    fenText.value = fen;
     pgnText.value = gameState.pgnData.toString();
 });
 
-containerElem.addEventListener("movescroll", (event) => {
-    const {state, board, pgnMove} = event.detail;
+containerElem.addEventListener("variation-change", (event) => {
+    const { variation } = event.detail;
 
-    selectPGNElem(pgnMove.element);
+    selectPGNElem(variation.element);
 
-    fenText.value = board.getFEN();
+    // display new FEN (since variation changed)
+    fenText.value = gameState.board.getFEN();
 });
 fenText.value = StartingFEN;
 
@@ -230,31 +306,31 @@ function clearPGNView(){
 
 let selectedVariation = 0;
 function PGNMoveBack(){
-    if (gameState.previousMove())
-        gameState.graphicsUpdate();
+    if (gameState.previousVariation())
+        gameState.applyChanges();
     selectedVariation = 0;
 }
 
 function PGNMoveForward(){
-    if (gameState.nextMove(selectedVariation))
-        gameState.graphicsUpdate();
+    if (gameState.nextVariation(selectedVariation))
+        gameState.applyChanges();
     selectedVariation = 0;
 }
 
 function PGNUpVariation(){
     selectedVariation--;
     if (selectedVariation < 0){
-        selectedVariation = gameState.currentMove.next.length - 1;
+        selectedVariation = gameState.currentVariation.next.length - 1;
     }
 }
 
 function PGNDownVariation(){
-    selectedVariation = (selectedVariation + 1) % gameState.currentMove.next.length;
+    selectedVariation = (selectedVariation + 1) % gameState.currentVariation.next.length;
 }
 
 function PGNMoveFirst(){
     // displays position with no moves made on the board
-    gameState.setMove(gameState.moveRoot);
+    gameState.jumpToVariation(gameState.moveRoot);
 }
 
 function PGNMoveLast(){
@@ -264,7 +340,7 @@ function PGNMoveLast(){
         iter = iter.next[0];
     }
 
-    gameState.setMove(iter);
+    gameState.jumpToVariation(iter);
 }
 
 // key binds for scrolling through moves

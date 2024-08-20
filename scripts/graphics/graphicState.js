@@ -22,6 +22,9 @@ class GraphicalState {
         // the variation currently active on the board
         this.currentVariation = this.variationRoot;
 
+        // the variation currently displayed on screen
+        this.graphicalVariation = this.currentVariation;
+
         // currently user can make moves for both sides
         this.allowedSides = {
             [Piece.white]: true,
@@ -36,19 +39,34 @@ class GraphicalState {
         return this.board.turn;
     }
 
+    applyChanges(){
+        displayBoard();
+
+        const cv = this.currentVariation;
+        const gv = this.graphicalVariation;
+
+        // no variation changes!
+        if (cv == gv)
+            return;
+        
+        // check if one of the variations follows the other
+        if (cv.prev == gv || gv.prev == cv)
+            this.dispatchEvent("single-scroll", { variation: this.graphicalVariation });
+        
+        this.graphicalVariation = this.currentVariation;
+
+        this.dispatchEvent("variation-change", { variation: this.currentVariation });
+    }
+
     addMoveToEnd(san){
-        stopAnimations = true;
         const previous = this.currentVariation;
 
-        this.setMove(this.mainVariation);
+        this.jumpToVariation(this.mainVariation);
         
-        stopAnimations = true;
         const move = this.board.getMoveOfSAN(san);
-        console.log("add to end", san, move);
         this.makeMove(move);
 
-        this.setMove(previous);
-        stopAnimations = false;
+        this.jumpToVariation(previous);
     }
 
     // board jumps to the given variation
@@ -67,16 +85,11 @@ class GraphicalState {
         while (this.currentVariation != ca)
             this.previousVariation();
 
+        console.log("From", ca, "to", path);
+
         // go forth to the given variation
         for (const n of path)
-            this.nextVariation(n.location);
-
-        displayBoard();
-    }
-
-    graphicsUpdate(){
-        displayBoard();
-        this.dispatchEvent("movescroll", {state: this, board: this.board, pgnMove: this.currentMove});
+            this.nextVariation(n);
     }
 
     // chooses one of the next variations to play
@@ -108,10 +121,11 @@ class GraphicalState {
     }
 
     // assumes move is legal
+    // performs the move without making any graphical updates.
     makeMove(move){
         const SAN = getMoveSAN(this.board, move);
         
-        // search for an existing variation
+        // search for an existing variation with this move
         for (const v of this.currentVariation.next){
             if (v.san == SAN){
                 this.nextVariation(v.location);
@@ -126,6 +140,9 @@ class GraphicalState {
         variation.attachTo(this.currentVariation);
 
         this.currentVariation = variation;
+
+        this.dispatchEvent("new-variation", { variation });
+        this.dispatchEvent("single-scroll", { variation });
 
         // continue the main variation if necessary
         if (variation.prev == this.mainVariation)
@@ -144,8 +161,13 @@ class GraphicalState {
 
         // check and dispatch event for any results
         this.board.isGameOver();
-        if (this.board.result)
-            this.dispatchEvent("result", {state: this, board: this.board});
+        if (this.board.result){
+            this.dispatchEvent("result", {
+                result:         this.board.result,
+                turn:           this.board.turn,
+                termination:    this.board.termination
+            });
+        }
     }
 
     loadFEN(fen){
@@ -161,7 +183,7 @@ class GraphicalState {
         this.variationRoot.next = [];
 
         displayBoard();
-        this.dispatchEvent("loadedFEN", {state: this, fen});
+        this.dispatchEvent("loadFEN", { fen });
     }
 
     loadPGN(pgn){

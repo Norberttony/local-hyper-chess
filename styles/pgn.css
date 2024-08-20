@@ -5,9 +5,6 @@
 
 #pgn {
     background-color: black;
-    display: grid;
-    grid-template-columns: 15% 42.5% 42.5%;
-    grid-template-rows: repeat(30, min-content);
     color: #EEE;
     min-height: 100px;
     overflow-y: scroll;
@@ -26,12 +23,19 @@
     border-radius: 50px;
 }
 
-#pgn > *:not(.pgn_variation), #extra > * {
+.pgn_moveline {
+    width: 100%;
+    display: grid;
+
+    grid-template-columns: 20% 40% 40%;
+}
+
+#extra > * {
     box-sizing: border-box;
     width: 100%;
 }
 
-.pgn_san, .pgn_counter {
+.pgn_san, .pgn_num {
     padding: 2px 8px;
     font-size: 20px;
 }
@@ -40,7 +44,7 @@
     cursor: pointer;
 }
 
-.pgn_counter {
+.pgn_num {
     text-align: right;
     background-color: #111;
 }
@@ -54,18 +58,17 @@
 }
 
 .pgn_variation {
-    display: flex;
-    flex-wrap: wrap;
-    
-    grid-column-start: 1;
-    grid-column-end: 4;
-
     width: calc(100% - 28px);
     box-sizing: border-box;
     margin-left: 28px;
     border: 1px solid white;
 
     font-size: medium;
+}
+
+.pgn_variation-line {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .pgn_result {

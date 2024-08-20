@@ -91,6 +91,19 @@ class Variation {
         return moves;
     }
 
+    isMain(){
+        // keep traveling backwards until location is not 0 (which means it branches off).
+        // ignores the root
+        let iter = this;
+        while (iter && iter.prev){
+            if (iter.location != 0)
+                return false;
+            iter = iter.prev;
+        }
+
+        return true;
+    }
+
     get location(){
         if (this.prev)
             return this.prev.next.indexOf(this);
