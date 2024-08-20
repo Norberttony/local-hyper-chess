@@ -7,36 +7,36 @@ let dragging;
 
 // sets the elements dragging position based on the user's pointer position
 function setDraggingElemPos(pageX, pageY){
-    if (!dragging) return;
+    if (!dragging)
+        return;
     draggingElem.style.left = `calc(${pageX}px - var(--piece-width) / 2)`;
     draggingElem.style.top = `calc(${pageY}px - var(--piece-height) / 2)`;
 }
 
 document.addEventListener("pointermove", (event) => {
-    if (dragging) event.preventDefault();
+    if (dragging)
+        event.preventDefault();
     setDraggingElemPos(event.pageX, event.pageY);
 });
 
 // prevent scrolling and glitches on mobile devices when thing is being dragged
 document.addEventListener("touchmove", (event) => {
-    if (dragging) event.preventDefault();
-}, {passive: false});
+    if (dragging)
+        event.preventDefault();
+}, { passive: false });
 
 function piecePointerdown(event){
-    if (event.button !== undefined && event.button != 0) return;
+    if (event.button !== undefined && event.button != 0)
+        return;
 
     setAllMoveHighlightsToPool();
 
     let coords = this.id.split("_");
     let square = parseInt(coords[0]) + parseInt(coords[1] * 8);
 
-    // if the given piece is currently promoting, the user should not be able to drag it...
-    if (this.classList.contains("isPromoting")){
-        return;
-    }
-
     // check with gameState if the piece can move
-    if (!gameState.canMove(square)) return;
+    if (!gameState.canMove(square))
+        return;
 
     const piece = gameState.board.squares[square];
 
@@ -79,22 +79,14 @@ function draggingPointerup(event){
     
     let highlight = event.target;
     
-    // handle touch events
-    if (event.pointerType == "touch"){
-        highlight = document.elementFromPoint(event.clientX, event.clientY);
-    }
-
     // player let go at a highlight, indicating they're moving the piece there.
     if (highlight.classList.contains("moveHighlight")){
         testMove = currentMoves[parseInt(highlight.id.replace("moveHighlight_", ""))];
 
         // testMove handlers
-        if (testMove.promotion)
-            handlePromotion(testMove);
-        else{
-            gameState.makeMove(testMove);
-            testMove = undefined;
-        }
+        gameState.makeMove(testMove);
+        gameState.applyChanges(true);
+        testMove = undefined;
 
         // clear all moves from board
         setAllMoveHighlightsToPool();

@@ -57,6 +57,10 @@
     background-color: #222;
 }
 
+.pgn_blank {
+    pointer-events: none;
+}
+
 .pgn_variation {
     width: calc(100% - 28px);
     box-sizing: border-box;

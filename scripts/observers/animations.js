@@ -2,39 +2,22 @@
 
 var containerElem = document.getElementById("container");
 
-let stopAnimations = false;
-containerElem.addEventListener("madeMove", (event) => {
-    const {san} = event.detail;
+containerElem.addEventListener("single-scroll", (event) => {
+    const { prevVariation, variation, userInput } = event.detail;
 
-    if (san == lastPlayedSAN && NETWORK.gameId)
-        playerMadeMove = false;
-
-    if (stopAnimations)
-        playerMadeMove = true;
-
-});
-
-let prevMove = gameState.currentMove;
-containerElem.addEventListener("movescroll", (event) => {
-    const {state, board, pgnMove} = event.detail;
-
-    if (playerMadeMove){
-        console.log("player made move");
-        playerMadeMove = false;
-        prevMove = pgnMove;
+    if (userInput)
         return;
-    }
 
     console.log("play animation");
 
     // display the board from just before the move was made.
-    let dir = prevMove.isBefore(pgnMove) == 1 ? 1 : -1;
-    let lastMadeMove = pgnMove.move;
-    if (dir == -1) lastMadeMove = prevMove.move;
+    let dir = variation.prev == prevVariation ? 1 : -1;
+    let lastMadeMove = variation.move;
+    if (dir == -1)
+        lastMadeMove = prevVariation.move;
 
-    prevMove = pgnMove;
-
-    if (!lastMadeMove) return;
+    if (!lastMadeMove)
+        return;
 
     // now move piece graphically
     let piece;

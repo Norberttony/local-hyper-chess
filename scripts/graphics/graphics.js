@@ -11,7 +11,7 @@ let isDisplayFlipped = false;
 //  - flipped: whether or not the board is flipped
 //  - container: the game container HTML element
 // all of which are optional and default to the current game container stuff
-function displayBoard(board = gameState.board, lastMove = gameState.currentMove != gameState.moveRoot ? gameState.currentMove.move : undefined, flipped = isDisplayFlipped, container = gameElem){
+function displayBoard(board = gameState.board, lastMove = gameState.currentVariation != gameState.variationRoot ? gameState.currentVariation.move : undefined, flipped = isDisplayFlipped, container = gameElem){
     curBoardDisplay = board;
     isDisplayFlipped = flipped;
     lastMoveDisplay = lastMove; // terrible variable.

@@ -59,25 +59,20 @@ async function initFetchGame(){
             setUpBoard(gameInfo.color == "white" ? 1 : -1);
         }
 
-        stopAnimations = true;
         for (const m of gameInfo.moves.split(" ")){
-            console.log(m);
             if (m != ""){
                 if (m.startsWith("1-0") || m.startsWith("0-1") || m.startsWith("1/2-1/2")){
                     let s = m.indexOf(" ");
                     setResult(m.substring(0, s), m.substring(s + 1));
                 }else{
-                    lastPlayedSAN = m;
                     const move = gameState.board.getMoveOfSAN(m);
                     gameState.makeMove(move);
                 }
             }
         }
-        stopAnimations = false;
-        // to-do: set result of game
-        console.log(gameInfo.result);
 
-        console.log(gameState.board.turn, gameInfo.color);
+        gameState.applyChanges();
+
         if (gameInfo.color != "none" && gameInfo.archived == false){
             console.log(gameState.board.turn, gameInfo.color == "white" ? Piece.white : Piece.black);
             if (gameState.board.turn != (gameInfo.color == "white" ? Piece.white : Piece.black)){

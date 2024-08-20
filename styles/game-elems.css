@@ -46,46 +46,6 @@
     z-index: 2;
 }
 
-/* === Promoting === */
-
-.promoting {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-}
-
-.promoting.flipped {
-    flex-direction: column-reverse;
-}
-
-.promoting > * {
-    background-size: 600% 200%;
-
-    width: var(--piece-width);
-    height: var(--piece-height);
-}
-
-.promoting.black > * {
-    background-position-y: 100%;
-}
-
-.promoting {
-    z-index: 2;
-    pointer-events: none;
-}
-
-.promoting > * {
-    background-color: gray;
-    border-radius: 100%;
-    
-    width: var(--piece-width);
-    height: var(--piece-height);
-    z-index: 3;
-    pointer-events: all;
-}
-
 /* === Glyphs === */
 
 .game .glyph {

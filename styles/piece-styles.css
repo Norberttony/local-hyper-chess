@@ -4,8 +4,7 @@
 
 /* CBURNETT */
 .game_container_container.cburnett .piece,
-.game_container_container.cburnett #dragging,
-.game_container_container.cburnett .promoting > * {
+.game_container_container.cburnett #dragging {
     background-image: url(../images/pieces/cburnett.png);
 }
 
@@ -33,8 +32,7 @@
 
 /* MERIDA */
 .game_container_container.merida .piece,
-.game_container_container.merida #dragging,
-.game_container_container.merida .promoting > * {
+.game_container_container.merida #dragging {
     background-image: url(../images/pieces/merida.png);
 }
 

@@ -123,14 +123,12 @@ function handleMovelist(config, movelist){
         let move = gameState.latestBoard.getMoveOfSAN(moves[m]);
         console.log(move);
         if (move){
-            // goofy solution, but setting lastPlayedSAN prevents the moves from being sent by the
-            // network observer.
-            lastPlayedSAN = moves[m];
             gameState.makeMove(move);
         }else{
             console.error(`Game failed to be reconstructed because of illegal SAN: ${moves[m]}`);
         }
     }
+    gameState.applyChanges();
 }
 
 // hides utils from spectators

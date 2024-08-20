@@ -179,6 +179,7 @@ function puzzlePlayMove(san){
     setTimeout(() => {
         const move = gameState.board.getMoveOfSAN(san);
         gameState.makeMove(move);
+        gameState.applyChanges();
     }, 800);
 }
 

@@ -39,7 +39,7 @@ class GraphicalState {
         return this.board.turn;
     }
 
-    applyChanges(){
+    applyChanges(userInput = false){
         displayBoard();
 
         const cv = this.currentVariation;
@@ -51,11 +51,11 @@ class GraphicalState {
         
         // check if one of the variations follows the other
         if (cv.prev == gv || gv.prev == cv)
-            this.dispatchEvent("single-scroll", { variation: this.graphicalVariation });
+            this.dispatchEvent("single-scroll", { prevVariation: gv, variation: cv, userInput });
         
         this.graphicalVariation = this.currentVariation;
 
-        this.dispatchEvent("variation-change", { variation: this.currentVariation });
+        this.dispatchEvent("variation-change", { variation: cv });
     }
 
     addMoveToEnd(san){
@@ -142,7 +142,6 @@ class GraphicalState {
         this.currentVariation = variation;
 
         this.dispatchEvent("new-variation", { variation });
-        this.dispatchEvent("single-scroll", { variation });
 
         // continue the main variation if necessary
         if (variation.prev == this.mainVariation)
@@ -286,7 +285,7 @@ class GraphicalState {
 
         // cannot move a piece if user is trying to make a move in the past when variations
         // aren't allowed
-        if (!this.allowVariations && this.currentMove.next.length > 0)
+        if (!this.allowVariations && this.currentVariation.next.length > 0)
             return false;
 
         // otherwise we're good :)
