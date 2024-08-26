@@ -7,6 +7,9 @@
         <title>Hyper Chess</title>
         
         <link href = "styles/warn-bar.css"      rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/menu.css"          rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/lobby.css"         rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/my-games.css"      rel = "stylesheet" type = "text/css"/>
         <link href = "styles/annotations.css"   rel = "stylesheet" type = "text/css"/>
         <link href = "styles/invite.css"        rel = "stylesheet" type = "text/css"/>
         <link href = "styles/panel.css"         rel = "stylesheet" type = "text/css"/>
@@ -23,6 +26,8 @@
         <link href = "styles/board-styles.css"  rel = "stylesheet" type = "text/css"/>
         <link href = "styles/piece-styles.css"  rel = "stylesheet" type = "text/css"/>
         
+        <script src = "scripts/menus/menus.js"></script>
+
         <!-- game scripts -->
         <script src = "scripts/game/coords.js"></script>
         <script src = "scripts/game/move.js"></script>
@@ -61,8 +66,34 @@
         <script src = "scripts/game/puzzles-data.js"></script>
         <script defer src = "scripts/game/puzzles.js"></script>
 
+        <script defer src = "scripts/lobby/refresh.js"></script>
+
+        <script defer src = "scripts/lobby/view-games.js"></script>
+
+        
+        <script defer src = "scripts/menus/init-hash.js"></script>
+
     </head>
     <body>
+
+        <nav id = "menu">
+            <button onclick = "changeHash('#lobby');">Play</button>
+            <button onclick = "changeHash('#my-games');">View My Games</button>
+            <button onclick = "changeHash('#board');">Analysis Board</button>
+            <button onclick = "changeHash(`#puzzles=${PUZZLE ? PUZZLE.id : 0}`);">Puzzles</button>
+        </nav>
+
+        <div id = "my-games_container" style = "display: none;">
+            <h1 style = "margin: 20px;">Your games:</h1>
+            <div id = "my-games"></div>
+        </div>
+
+        <div id = "lobby_container" style = "display: none;">
+            <button id = "create-game-button" onclick = "showCreateGamePopup();">Click here to create your own challenge</button>
+            <h1>Currently active public challenges:</h1>
+            <div id = "header"><span>ID</span><span>Side</span><span>FEN</span></div>
+            <div id = "lobby"></div>
+        </div>
 
         <div id = "container" class = "game_container_container blue cburnett">
             <div id = "black_player" class = "player">
@@ -86,9 +117,6 @@
             <div id = "panel">
                 <div id = "pre-game-controls">
                     <button id = "panel_rematch" onclick = "offerRematch();">Offer Rematch</button>
-                    <button class = "font-icon" id = "panel_send-invite" onclick = "showCreateGamePopup();">
-                        <span>Invite someone to play!</span>
-                    </button>
                 </div>
                 <span id = "output"></span>
                 <div id = "pgn_control">
@@ -118,7 +146,6 @@
                 <div id = "puzzles_title">TITLE</div>
                 <div id = "puzzles_diff">Intermediate</div>
                 <div id = "puzzles_solved">Unsolved</div>
-                <div id = "puzzles_desc">The board unlocks after the puzzle is solved or the FEN/PGN is loaded</div>
             </div>
 
             <div id = "extra">
@@ -200,6 +227,26 @@
         <div id = "warn-bar">
             <button id = "warn-bar_close" onclick = "this.parentNode.style.display = 'none';">&#10006;</button>
             This is a completed Hyper Chess game that was played between two anonymous players.
+        </div>
+
+        <div id = "board-template">
+            <div class = "game_container_container blue cburnett">
+                <div class = "player">
+                    <span class = "name">Anonymous</span>
+                </div>
+            
+                <div class = "player">
+                    <span class = "name">Anonymous</span>
+                </div>
+            
+                <div id = "game_container" class = "game_container">
+                    <div id = "game" class = "game" style = "width: 304px; height: 304px;">
+            
+                    </div>
+                    <div id = "ranks"></div>
+                    <div id = "files"></div>
+                </div>
+            </div>
         </div>
 
     </body>

@@ -1,0 +1,38 @@
+
+#my-games_container {
+    text-align: center;
+}
+
+#my-games {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#my-games .game_container_container {
+    background-color: black;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+#my-games .result {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    
+    z-index: 30;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: center;
+
+    font-family: sans-serif;
+    font-size: xxx-large;
+}
+

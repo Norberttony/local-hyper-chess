@@ -78,6 +78,11 @@ function draggingPointerup(event){
     }
     
     let highlight = event.target;
+
+    // handle touch events
+    if (event.pointerType == "touch"){
+        highlight = document.elementFromPoint(event.clientX, event.clientY);
+    }
     
     // player let go at a highlight, indicating they're moving the piece there.
     if (highlight.classList.contains("moveHighlight")){

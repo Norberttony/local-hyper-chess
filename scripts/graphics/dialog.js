@@ -22,11 +22,16 @@ function hideDialogContainer(){
     dialog_box_containerElem.style.display = "none";
 }
 
-function displayDialogBox(title, desc){
+function showDialogBox(title, desc){
     hideResultBox();
 
     showDialogContainer();
     dialog_boxElem.style.display = "block";
+
+    if (title && desc){
+        document.getElementById("dialog_title").innerText = title;
+        document.getElementById("dialog_desc").innerText = desc;
+    }
 }
 
 function hideDialogBox(){

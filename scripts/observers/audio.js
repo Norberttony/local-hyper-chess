@@ -26,7 +26,7 @@ function playAudio(src){
 }
 
 function makeNoise(move){
-    if (move.captures.length > 0)
+    if (move && move.captures.length > 0)
         playAudio(AUDIO.capture);
     else
         playAudio(AUDIO.move);

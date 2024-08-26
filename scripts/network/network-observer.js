@@ -4,8 +4,6 @@ var containerElem = document.getElementById("container");
 containerElem.addEventListener("single-scroll", (event) => {
     const { prevVariation, variation, userInput } = event.detail;
 
-    console.log("Network considers", variation, "for move");
-
     if (!userInput)
         return;
     // ensure user is playing om main variation
@@ -22,92 +20,105 @@ containerElem.addEventListener("single-scroll", (event) => {
 
         // start waiting for opponent's move
         NETWORK.moveNum++;
-        waitForMove();
     }
 });
-
-let keepGettingOffers = true;
-let hasSetResult = false;
-let startGettingOffersActive = false;
-async function startGettingOffers(){
-    // to-do: figure out what's causing this shifty code :)
-    if (startGettingOffersActive)
-        return;
-    startGettingOffersActive = true;
-    
-    keepGettingOffers = true;
-    while (keepGettingOffers){
-        const offers = JSON.parse(await pollDatabase("GET", {
-            type: "offers",
-            id: getMyId()
-        }));
-
-        console.log(offers);
-
-        if (offers.draw != "false"){
-            if (offers.draw == "offered")
-                outputElem.innerText = "Draw has been offered";
-            else if (offers.draw == "accepted")
-                setResult("1/2-1/2", "agreement");
-        }else{
-            outputElem.innerText = "";
-        }
-        if (offers.rematch == "true"){
-            document.getElementById("result-box_rematch").innerText = "Accept rematch?";
-            document.getElementById("panel_rematch").innerText = "Accept rematch?";
-        }else if (offers.rematch != "false"){
-            // new game id to go to!
-            window.location.search = `?game_id=${offers.rematch}`;
-        }
-        if (offers.result != "*" && !hasSetResult){
-            const i = offers.result.indexOf(" ");
-            setResult(offers.result.substring(0, i), offers.result.substring(i + 1));
-        }
-
-        await sleep(2000);
-    }
-    startGettingOffersActive = false;
-}
 
 let keepWaitingForMove = true;
 let waitForMoveActive = false;
 function waitForMove(){
+    console.log("Must wait for move", keepWaitingForMove, waitForMoveActive);
     if (waitForMoveActive)
         return;
     waitForMoveActive = true;
     keepWaitingForMove = true;
+
+    console.log("Begin waiting");
     return new Promise(async (res, rej) => {
         while (keepWaitingForMove){
-            const san = await pollDatabase("GET", {
-                type: "gameStatus",
-                moveNum: NETWORK.moveNum + 1,
-                id: getMyId()
-            });
+            const gameInfo = JSON.parse(
+                await pollDatabase("GET", {
+                    type: "gameStatus",
+                    moveNum: NETWORK.moveNum + 1,
+                    id: getMyId()
+                })
+            );
 
-            console.log(san);
+            console.log(gameInfo);
 
-            if (san == "" || san == "false"){
-                await sleep(1000);
-            }else{
-                NETWORK.moveNum++;
-                if (san.startsWith("1-0") || san.startsWith("0-1") || san.startsWith("1/2-1/2")){
-                    // result!
-                    const result = san.substring(0, san.indexOf(" "));
-                    const termination = san.substring(san.indexOf(" ") + 1);
-                    setResult(result, termination);
-                }else{
+            if (!gameInfo || gameInfo.status == "err"){
+                rej(gameInfo);
+                console.log("Errored");
+                break;
+            }else if (gameInfo.status == "ok"){
+                const mySide = NETWORK.myColor == "white" ? Piece.white : Piece.black;
+
+                if (gameInfo.offers){
+                    const potentialId = gameInfo.offers.split("_");
+                    if (potentialId.length > 1){
+                        // rematches reuse the player id
+                        storeUserId(potentialId[0], potentialId[1], NETWORK.userId);
+                        document.getElementById("result-box_rematch").innerText = "Go to rematch";
+                        document.getElementById("panel_rematch").innerText = "Go to rematch";
+
+                        // to-do: fix this ugly mess to look more professional
+                        NETWORK.rematchId = gameInfo.offers;
+                        break;
+                    }
+
+                    const myChar = mySide == Piece.white ? "w" : "b";
+
+                    const [ draw, takeback, rematch ] = gameInfo.offers.split("");
+
+                    let offerTxt = "";
+                    if (draw != "n"){
+                        if (draw != myChar)
+                            offerTxt += "Your opponent has offered you a draw";
+                        else
+                            offerTxt += "You have offered your opponent a draw";
+                    }
+                    if (takeback != "n"){
+                        if (takeback != myChar)
+                            offerTxt += "Your opponent has offered you a takeback";
+                        else
+                            offerTxt += "You have offered your opponent a takeback";
+                    }
+                    if (rematch != "n"){
+                        if (rematch != myChar){
+                            document.getElementById("result-box_rematch").innerText = "Accept Rematch?";
+                            document.getElementById("panel_rematch").innerText = "Accept Rematch?";
+                        }else{
+                            document.getElementById("result-box_rematch").innerText = "Rematch offer sent";
+                            document.getElementById("panel_rematch").innerText = "Rematch offer sent";
+                        }
+                    }
+
+                    if (!gameState.mainHasResult)
+                        outputElem.innerText = offerTxt;
+                    else
+                        outputElem.innerText = "";
+                }
+
+                if (gameInfo.result){
+                    setResult(gameInfo.result, gameInfo.term);
+                }
+
+                if (gameInfo.move && (!NETWORK.myColor || NETWORK.moveNum % 2 == (mySide == Piece.white ? 1 : 0))){
+                    NETWORK.moveNum++;
+
                     if (gameState.currentVariation.isMain() && gameState.currentVariation.next.length == 0){
-                        gameState.makeMove(gameState.board.getMoveOfSAN(san));
+                        gameState.makeMove(gameState.board.getMoveOfSAN(gameInfo.move));
                         gameState.applyChanges();
                     }else{
-                        gameState.addMoveToEnd(san);
+                        gameState.addMoveToEnd(gameInfo.move);
                     }
+
+                    res(gameInfo);
                 }
-                break;
             }
+
+            await sleep(1000);
         }
         waitForMoveActive = false;
-        res();
     });
 }
 
@@ -118,22 +129,20 @@ function setResult(result, termination){
     if (!gameState.board.result){
         gameState.board.setResult(result, termination);
         gameState.dispatchEvent("result", {
-            result:         gameState.board.result,
+            result:         result,
             turn:           gameState.board.turn,
-            termination:    gameState.board.termination
+            termination:    termination
         });
 
-        keepWaitingForMove = false;
+        gameState.mainHasResult = true;
     }
 };
 
 // displays a result box
 containerElem.addEventListener("result", (event) => {
-    // if player can play both sides at once, they're not spectating or playing a multiplayer game
-    if (gameState.allowedSides[Piece.white] && gameState.allowedSides[Piece.black] || gameState.allowVariations)
+    // if player can play out variations, they're not spectating or playing a multiplayer game
+    if (gameState.allowVariations)
         return;
-
-    keepWaitingForMove = false;
 
     const { result, turn, termination } = event.detail;
 
@@ -168,11 +177,10 @@ containerElem.addEventListener("result", (event) => {
 
         gameState.allowedSides[Piece.white] = true;
         gameState.allowedSides[Piece.black] = true;
-        gameState.allowVariations = true;
     }
 
     let resultText;
-    switch(result){
+    switch(resultNum){
         case -1:
             resultText = `Black won by ${termination}`;
             break;
@@ -186,13 +194,15 @@ containerElem.addEventListener("result", (event) => {
 
     // did this player win?
     let mewin;
-    if (result == 0){
+    if (resultNum == 0){
         mewin = "drew";
-    }else if (gameState.allowedSides[Piece.white] && resultNum == 1 || !gameState.allowedSides[Piece.white] && resultNum == -1){
+    }else if (NETWORK.myColor == "white" && resultNum == 1 || NETWORK.myColor == "black" && resultNum == -1){
         mewin = "won";
     }else{
         mewin = "lost";
     }
+
+    gameState.pgnData.setHeader("Termination", termination);
 
     displayResultBox(resultText, mewin, termination);
     activatePreGameControls();

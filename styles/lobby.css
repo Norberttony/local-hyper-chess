@@ -1,23 +1,11 @@
 
-body {
-    margin: 0px;
-    padding-bottom: 80px;
-    height: calc(100vh - 80px);
-    box-shadow: inset 0 0 40px 0px #333;
-    background-color: #222;
-    color: #EEE;
-
-    max-width: 100vw;
-
-    overflow-x: hidden;
-}
-
-h1 {
+#lobby_container h1 {
     margin: 0px;
     text-align: center;
 }
 
-#header, .chall {
+#lobby_container #header,
+#lobby_container .chall {
     display: grid;
     grid-template-columns: 20% 35% 45%;
 
@@ -27,17 +15,18 @@ h1 {
     padding: 10px;
 }
 
-#header, #lobby {
+#lobby_container #header,
+#lobby_container #lobby {
     width: 80%;
     margin-left: 10%;
 }
 
-#header {
+#lobby_container #header {
     padding: 5px;
     font-size: large;
 }
 
-#lobby {
+#lobby_container #lobby {
     background-color: black;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -45,10 +34,19 @@ h1 {
     height: 100%;
 }
 
-.chall:nth-child(2n){
+#lobby_container .chall:nth-child(2n){
     background: linear-gradient(rgb(51, 51, 51) 50%, rgb(30, 30, 30) 100%);
 }
 
-.chall:nth-child(2n + 1){
+#lobby_container .chall:nth-child(2n + 1){
     background: linear-gradient(rgb(125, 125, 125) 50%, rgb(80, 80, 80) 100%);
+}
+
+#create-game-button {
+    display: block;
+    margin: 20px auto;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    font-size: x-large;
 }

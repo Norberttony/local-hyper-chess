@@ -11,11 +11,18 @@ createGameFormElem.fen.addEventListener("input", () => {
 });
 setCreateGameFEN(StartingFEN);
 
+function displayCreateGameBoard(){
+    displayBoard(createGameFormState, false, false, createGameFormBoardElem);
+    for (const p of createGameFormBoardElem.getElementsByClassName("piece")){
+        p.id = "";
+    }
+}
+
 function setCreateGameFEN(fen){
     if (!startingFenElem.checked){
         createGameFormElem.fen.value = fen;
         createGameFormState.loadFEN(fen);
-        displayBoard(createGameFormState, false, false, createGameFormBoardElem);
+        displayCreateGameBoard();
     }
 }
 
@@ -50,7 +57,7 @@ startingFenElem.addEventListener("change", () => {
     if (startingFenElem.checked){
         createGameFormElem.fen.readOnly = true;
         createGameFormState.loadFEN(StartingFEN);
-        displayBoard(createGameFormState, false, false, createGameFormBoardElem);
+        displayCreateGameBoard();
     }else{
         createGameFormElem.fen.readOnly = false;
         setCreateGameFEN(createGameFormElem.fen.value);

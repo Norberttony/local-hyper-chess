@@ -1,3 +1,8 @@
+
+#board-template {
+    display: none;
+}
+
 @font-face {
     font-family: 'Chess';
     src: url(../fonts/lichess.woff2);
@@ -20,13 +25,12 @@ body {
 @media (min-width: 1110px){
     #container {
         grid-template-areas:
-            '.  plyr_up    .'
-            '.  game       panel'
-            '.  plyr_dn    .'
-            '.  puzzles    .'
-            '.  extra      .';
-            grid-template-columns: 0.8fr 1fr 1fr 0.4fr;
-            grid-template-rows: auto var(--game-height);
+            '. plyr_up .'
+            '. game panel'
+            '. game puzzles'
+            '. plyr_dn .'
+            '. extra .';
+        grid-template-columns: 0.8fr 1fr 1fr 0.4fr;
     }
 }
 
@@ -42,6 +46,10 @@ body {
             'extra      ';
         grid-template-rows: min-content min-content;
         width: 100%;
+    }
+    #puzzles, #panel {
+        width: var(--game-width);
+        margin: auto;
     }
 }
 

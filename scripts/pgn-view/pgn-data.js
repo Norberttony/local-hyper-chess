@@ -3,7 +3,7 @@
 
 // determines all valid headers and their default order
 const VALID_HEADERS = [
-    "Event", "Site", "Round", "TimeControl", "Result", "Variant", "FEN"
+    "Event", "Site", "Round", "TimeControl", "Result", "Termination", "Variant", "FEN"
 ];
 
 class PGNData {

@@ -23,16 +23,21 @@ invite_copyElem.addEventListener("click", () => {
 async function generateInvite(gameConfig){
     // send request to server
     gameConfig.type = "challenge";
-    const fullId = await pollDatabase("POST", gameConfig);
+    const fullId = JSON.parse(await pollDatabase("POST", gameConfig));
+
+    console.log("Created challenge; info:", fullId);
 
     if (!fullId){
         alert("Something went wrong in creating the game");
+    }else if (fullId.status == "err"){
+        alert(`Something went wrong: ${fullId.msg}`);
     }
 
     // extract information from server
-    setMyId(fullId);
+    const { challId, userId } = fullId;
+    setMyId(`${challId}_${userId}`);
 
-    peer_idElem.value = `https://norberttony.github.io/local-hyper-chess?challenge_id=${NETWORK.gameId}`;
+    peer_idElem.value = `https://norberttony.github.io/local-hyper-chess#chall=${challId}`;
 
     gameState.loadFEN(StartingFEN);
     displayBoard();
@@ -43,26 +48,55 @@ async function generateInvite(gameConfig){
     // now that a new game is starting, there is no need for this "offer rematch" button
     panel_rematchElem.style.display = "none";
 
-    const { gameId } = JSON.parse(await checkIfAccepted());
+    const { status, chall, msg } = await checkIfAccepted();
+
+    if (status == "err")
+        return alert(`Something went wrong with the challenge: ${msg}`);
+    else if (status == "cancelled")
+        return;
 
     // now, the challenge ID has a different ref number than the game ID's ref number...
-    localStorage.setItem(`${gameId}_userId`, NETWORK.userId);
+    const [ gameId, refNum ] = chall.gameId.split("_");
+    storeUserId(gameId, refNum, userId);
 
-    window.location.search = `?game_id=${gameId}`;
+    changeHash(`#game=${chall.gameId}`);
+
+    hideInvite();
 }
 
+let cancelChallengePolling = false;
 async function checkIfAccepted(){
-    return new Promise(async (res, rej) => {
-        while (true){
-            const val = await pollDatabase("GET", {
-                type: "challengeStatus",
-                id: `${NETWORK.gameId}_${NETWORK.userId}`
-            });
+    
+    cancelChallengePolling = false;
 
-            if (val == "false")
-                await sleep(1000);
-            else
-                res(val);
+    return new Promise(async (res, rej) => {
+        while (!cancelChallengePolling){
+            const val = JSON.parse(
+                await pollDatabase("GET", {
+                    type: "challengeStatus",
+                    id: `${NETWORK.gameId}_${NETWORK.userId}`
+                })
+            );
+
+            console.log("Is challenge accepted?", val);
+
+            if (!val){
+                rej({ status: "err", msg: "Something went wrong!" });
+                break;
+            }else if (val.status == "err"){
+                rej(val);
+                break;
+            }else if (val.status == "ok"){
+                if (!val.chall)
+                    await sleep(1000);
+                else{
+                    res(val);
+                    break;
+                }
+            }
+        }
+        if (cancelChallengePolling){
+            res({ status: "cancelled" });
         }
     });
 }
@@ -90,49 +124,23 @@ function shareInvite(){
 
 // gets rid of the server's challenge
 async function cancelInvite(){
-    const success = await pollDatabase("POST", {
+    const info = await pollDatabase("POST", {
         type: "cancelChallenge",
-        id: `${NETWORK.gameId}_${NETWORK.userId}_${NETWORK.refNum}`
+        id: getMyId()
     });
 
-    if (success){
-        console.log("deleted challenge");
+    cancelChallengePolling = true;
+
+    if (info){
+        if (info.status == "ok"){
+            console.log("deleted challenge");
+        }else if (info.status == "err"){
+            alert(`Error deleting challenge: ${info.msg}`);
+        }
     }else{
         alert("Something went wrong in deleting the challenge");
     }
-    // close invite screen
+
+    // hide invite box
+    hideInvite();
 }
-
-// Receives a newly updated board state from the server.
-// config is {fen}, movelist is an array of move SANs
-// this function reconstructs the game given these two arguments
-function handleMovelist(config, movelist){
-    console.log("got info from server", config, movelist);
-    gameState.loadFEN(config.fen);
-
-    movelist = movelist.trim();
-
-    if (movelist.length == 0) return;
-
-    let moves = movelist.split(" ");
-    for (let m = 0; m < moves.length; m++){
-        let move = gameState.latestBoard.getMoveOfSAN(moves[m]);
-        console.log(move);
-        if (move){
-            gameState.makeMove(move);
-        }else{
-            console.error(`Game failed to be reconstructed because of illegal SAN: ${moves[m]}`);
-        }
-    }
-    gameState.applyChanges();
-}
-
-// hides utils from spectators
-var containerElem = document.getElementById("container");
-function setSpectator(){
-    hideDialogBox();
-    document.body.style.setProperty("--player-elems-visibility", "none");
-    
-    setUpBoard(0);
-    handleMovelist(config, movelist);
-};

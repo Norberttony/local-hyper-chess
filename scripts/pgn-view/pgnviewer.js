@@ -55,7 +55,6 @@ function newMovelineElem(num, whiteSANElem){
 // returns a list of two elements, the first moveline element and the second moveline element
 // if the given moveline elem is already split, this returns an empty list.
 function splitMovelineElem(movelineElem){
-    console.log("Splitting", movelineElem);
     // cannot split a moveline that is already split.
     if (movelineElem.classList.contains("pgn_split-moveline"))
         return [];
@@ -90,7 +89,6 @@ function newSANElem(san, variation){
 
     if (variation){
         div.addEventListener("click", () => {
-            console.log(variation);
             gameState.jumpToVariation(variation);
             displayBoard();
             selectPGNElem(div);
@@ -119,6 +117,8 @@ function isPGNSpecialBlock(elem){
 pgnText.value = gameState.pgnData.toString();
 
 containerElem.addEventListener("new-variation", (event) => {
+    pgnText.value = gameState.pgnData.toString();
+    
     const { variation } = event.detail;
 
     // determine move number
@@ -140,7 +140,6 @@ containerElem.addEventListener("new-variation", (event) => {
             // if the next element does not exist or is not a moveline, this must be the very end
             // of the pgn and a skip is required.
             const nextElem = prevMoveline.nextElementSibling;
-            console.log(nextElem);
             if (prevMoveline.getElementsByClassName("pgn_blank")[0]){
                 // fetch next available moveline
                 let nextMovelineElem = nextElem;
@@ -199,8 +198,6 @@ containerElem.addEventListener("new-variation", (event) => {
             
             let previousContainer = variation.prev.next[0].element.parentNode;
 
-            console.log(previousContainer);
-
             if (previousContainer.classList.contains("pgn_moveline")){
                 // do we split the moveline or not?
                 if (turn == Piece.white){
@@ -221,7 +218,6 @@ containerElem.addEventListener("new-variation", (event) => {
 
                     // no split needed, just insert after moveline
                     const nextElem = previousContainer.nextElementSibling;
-                    console.log(nextElem);
                     if (nextElem)
                         pgnElem.insertBefore(variationElem, nextElem);
                     else
@@ -244,11 +240,11 @@ containerElem.addEventListener("result", (event) => {
 
     // 0 for draw, 1 if white wins, -1 if black wins
     let resultNum;
-    if (result == "/")
+    if (result == "/" || result == "1/2-1/2")
         resultNum = 0;
-    else if (result == "#" && turn == Piece.white)
+    else if (result == "#" && turn == Piece.white || result == "1-0")
         resultNum = -1;
-    else if (result == "#" && turn == Piece.black)
+    else if (result == "#" && turn == Piece.black || result == "0-1")
         resultNum = 1;
 
     // based on the result number, add some result text and flavor text
@@ -271,6 +267,8 @@ containerElem.addEventListener("result", (event) => {
     pgn_resultElem.innerHTML = `<span>${resultText}</span><br /><span style = "font-size: large;">${flavorText} ${termination}</span>`;
     pgnElem.appendChild(pgn_resultElem);
 
+    gameState.pgnData.setHeader("Result", resultText);
+    
     pgnText.value = gameState.pgnData.toString();
 });
 

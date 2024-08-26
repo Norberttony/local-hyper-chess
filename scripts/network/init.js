@@ -1,72 +1,134 @@
-if (window.location.search != ""){
-    const params = new URLSearchParams(window.location.search);
-    const fullGameId = params.get("game_id");
-    const fullChallengeId = params.get("challenge_id");
-    
-    if (fullGameId){
-        const fullGameIdParts = fullGameId.split("_");
 
-        if (!isNaN(fullGameIdParts[1])){
-            NETWORK.gameId = fullGameIdParts[0];
-            NETWORK.refNum = parseInt(fullGameIdParts[1]);
+function getGameIdParts(gameId){
+    const parts = {
+        gameId: undefined,
+        userId: undefined,
+        refNum: undefined
+    };
 
-            // try to fetch stored user id
-            const localFetch = localStorage.getItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`);
-            if (localFetch)
-                NETWORK.userId = localFetch;
+    const gameIdParts = gameId.split("_");
 
-            initFetchGame();
-        }else{
-            // retrieve info
-            NETWORK.gameId = fullGameIdParts[0];
-            NETWORK.userId = fullGameIdParts[1];
-            NETWORK.refNum = parseInt(fullGameIdParts[2]);
+    if (!isNaN(gameIdParts[1])){
+        // gameId is of the form gameId_refNum
+        parts.gameId = gameIdParts[0];
+        parts.refNum = parseInt(gameIdParts[1]);
 
-            // if does not have a valid user id for this game, set it now
-            const key = `${NETWORK.gameId}_${NETWORK.refNum}_userId`;
-            const localFetch = localStorage.getItem(key);
-            if (!localFetch)
-                localStorage.setItem(key, NETWORK.userId);
+        // try to fetch stored user id
+        const localFetch = localStorage.getItem(`${parts.gameId}_${parts.refNum}_userId`);
+        if (localFetch)
+            parts.userId = localFetch;
 
-            // fetch game
-            initFetchGame();
-        }
-    }else if (fullChallengeId){
-        const fullChallengeIdParts = fullChallengeId.split("_");
-        NETWORK.gameId = fullChallengeIdParts[0];
-
-        initFetchChallenge();
+    }else{
+        // gameId is of the form gameId_userId_refNum
+        parts.gameId = gameIdParts[0];
+        parts.userId = gameIdParts[1];
+        parts.refNum = parseInt(gameIdParts[2]);
     }
+    
+    return parts;
 }
 
-async function initFetchGame(){
-    const gameInfo = JSON.parse(
+// fetches the game from the database
+async function fetchGame(gameSuperId){
+
+    // split super id to parts
+    const superIdSplit = gameSuperId.split("_");
+    const gameId = superIdSplit[0];
+    const refNum = superIdSplit[superIdSplit.length - 1];
+
+    // check the cache
+    const cacheId = `${gameId}_${refNum}_cached`;
+    const cachedGame = JSON.parse(localStorage.getItem(cacheId));
+    if (cachedGame){
+        // update timestamp
+        cachedGame.timestamp = new Date();
+        localStorage.setItem(cacheId, JSON.stringify(cachedGame));
+
+        return cachedGame;
+    }
+
+    const dbGame = JSON.parse(
         await pollDatabase("GET", {
             type: "game",
-            id: getMyId()
+            id: gameSuperId
         })
     );
 
-    if (gameInfo){
-        console.log("game", gameInfo);
+    // start storing this in cache only if it is archived
+    if (dbGame && dbGame.status != "err" && dbGame.archived){
+        dbGame.timestamp = new Date();
+        localStorage.setItem(cacheId, JSON.stringify(dbGame));
+    }
 
-        NETWORK.moveNum = gameInfo.moveNum;
+    return dbGame;
+}
 
-        gameState.loadFEN(gameInfo.fen);
+// displays the game on the board (PGN, FEN, player names, etc.)
+async function loadGame(gameSuperId){
+    // notify user
+    showDialogBox("Fetching Game...", "The game is being fetched from the database");
 
-        console.log(gameInfo.color);
-        if (gameInfo.color != "none"){
-            setUpBoard(gameInfo.color == "white" ? 1 : -1);
-            setNames(gameInfo.color == "white" ? "You" : "Anonymous", gameInfo.color == "black" ? "You" : "Anonymous");
+    document.getElementById("panel_rematch").style.display = "none";
+
+    console.log("Fetching game information for", gameSuperId);
+
+    // break into parts
+    const { gameId, userId, refNum } = getGameIdParts(gameSuperId);
+    NETWORK.gameId = gameId;
+    NETWORK.userId = userId;
+    NETWORK.refNum = refNum;
+
+    // in case user reconnects later, store the user id for this game in local storage
+    // this will allow the server to recognize the user as one of the players.
+    if (userId)
+        storeUserId(gameId, refNum, userId);
+    else
+        NETWORK.userId = fetchUserId(gameId, refNum);
+
+    console.log(getMyId());
+
+    // request game from database
+    const gameInfo = await fetchGame(getMyId());
+
+    console.log(gameInfo);
+
+    if (!gameInfo || gameInfo.status == "err"){
+        hideDialogBox();
+        hideDialogContainer();
+        alert(`The game could not be found in the database. ${gameInfo ? gameInfo.msg : ""}`);
+        return;
+    }
+
+    // notify user of successful db connection
+    showDialogBox("Loading Game...", "The game is almost ready!");
+
+    // everything is put in a timeout in order for the dialog box to update.
+    setTimeout(() => {
+
+        // interpret game info from db
+        const { moveNum, fen, color, moves, archived } = gameInfo;
+
+        NETWORK.moveNum = moveNum;
+        gameState.loadFEN(fen);
+
+        // set up the names and board based on color
+        if (color != "none"){
+            setUpBoard(color == "white" ? 1 : -1);
+            setNames(color == "white" ? "You" : "Anonymous", color == "black" ? "You" : "Anonymous");
         }else{
             setNames("Anonymous", "Anonymous");
         }
 
-        for (const m of gameInfo.moves.split(" ")){
+        // load the game move by move
+        const movesSplit = moves.split(" ");
+        let res;
+        let term;
+        for (const m of movesSplit){
             if (m != ""){
                 if (m.startsWith("1-0") || m.startsWith("0-1") || m.startsWith("1/2-1/2")){
-                    let s = m.indexOf(" ");
-                    setResult(m.substring(0, s), m.substring(s + 1));
+                    res = m;
+                    term = movesSplit[movesSplit.length - 1];
+                    break;
                 }else{
                     const move = gameState.board.getMoveOfSAN(m);
                     gameState.makeMove(move);
@@ -74,52 +136,74 @@ async function initFetchGame(){
             }
         }
 
+        hideDialogContainer();
+
+        if (res && term)
+            setResult(res, term);
+
         gameState.applyChanges();
 
-        if (gameInfo.color != "none" && gameInfo.archived == false){
-            console.log(gameState.board.turn, gameInfo.color == "white" ? Piece.white : Piece.black);
-            if (gameState.board.turn != (gameInfo.color == "white" ? Piece.white : Piece.black)){
-                console.log("awaiting opponent's move");
-                waitForMove();
-            }
-            startGettingOffers();
-        }else if (!gameInfo.archived){
-            // disallow both sides from moving
+        if (color != "none")
+            NETWORK.myColor = color;
+        
+        waitForMove();
+
+        // disallow both sides from moving for spectators
+        if (color == "none" && !archived){
             gameState.setSide();
         }
-    }
+        
+        // if game is archived, skip to the beginning
+        if (archived){
+            gameState.jumpToVariation(gameState.variationRoot);
+            gameState.applyChanges();
+        }
+
+        hideDialogBox();
+
+        // update pgn headers
+        gameState.pgnData.setHeader("Event", "Hyper Chess Online Game");
+
+    }, 100);
 }
 
-async function initFetchChallenge(){
-    // clear variables not used for challenges
-    NETWORK.userId = undefined;
-    NETWORK.refNum = undefined;
+async function acceptChallenge(challengeId){
+    showDialogBox("Fetching challenge...", "Looking for an active challenge with this ID");
 
-    // request challenge info
-    let challengeInfo = await pollDatabase("GET", {
-        type: "acceptChallenge",
-        id: getMyId()
-    });
+    // request from server
+    const challengeInfo = JSON.parse(
+        await pollDatabase("GET", {
+            type: "acceptChallenge",
+            id: challengeId
+        })
+    );
 
-    console.log(challengeInfo);
+    if (!challengeInfo || challengeInfo.status == "err"){
+        hideDialogBox();
+        hideDialogContainer();
+        alert(`An error occurred: ${challengeInfo.msg}`);
+        return;
+    }
 
-    // challenge info either fails or returns a new game or old game id.
-    if (challengeInfo && challengeInfo != "false"){
-        if (challengeInfo[0] != "{"){
-            // must load the old game with the id instead
-            window.location.search = `?game_id=${JSON.parse(challengeInfo)}`;
-        }else{
-            // prepare loading this new game
-            challengeInfo = JSON.parse(challengeInfo);
+    const gameSuperId = challengeInfo.gameId.split("_");
 
-            NETWORK.moveNum = 0;
-            setMyId(challengeInfo.gameId);
-            localStorage.setItem(`${NETWORK.gameId}_${NETWORK.refNum}_userId`, NETWORK.userId);
+    if (gameSuperId.length == 2){
+        // a game ID has been given from the server
+        // this challenge was already accepted and now links to this game.
+        changeHash(`#game=${challengeInfo.gameId}`);
+        alert("Too late, the challenge was already accepted. You may spectate the game.");
+    }else if (gameSuperId.length == 3){
 
-            window.location.search = `?game_id=${NETWORK.gameId}_${NETWORK.refNum}`;
-        }
-    }else{
-        alert("Invalid ID, it's possible the room has expired.");
+        // set NETWORK variables
+        const [ gameId, userId, refNum ] = gameSuperId;
+        NETWORK.gameId = gameId;
+        NETWORK.userId = userId;
+        NETWORK.refNum = refNum;
+        NETWORK.moveNum = 0;
+
+        // store user ID and set the hash correctly
+        storeUserId(gameId, refNum, userId);
+        changeHash(`#game=${gameId}_${refNum}`);
     }
 }
 
@@ -130,3 +214,39 @@ function setNames(whiteName, blackName){
     blackInfoElem.style.display = "block";
     blackInfoElem.getElementsByClassName("name")[0].innerText = blackName;
 }
+
+function hideNames(){
+    whiteInfoElem.style.display = "none";
+    blackInfoElem.style.display = "none";
+}
+
+// if the cache contains more than maxGames games, the oldest games are purged.
+function purgeCache(maxGames){
+    const cachedGames = [];
+    for (const [ k, v ] of Object.entries(localStorage)){
+        if (k.endsWith("_cached")){
+            if (!v.startsWith("{")){
+                localStorage.removeItem(k);
+                continue;
+            }
+
+            const game = JSON.parse(v);
+            game.key = k;
+            cachedGames.push(game);
+
+        }
+    }
+
+    cachedGames.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    if (cachedGames.length > maxGames){
+        const removedGames = cachedGames.splice(0, cachedGames.length - maxGames);
+        console.log("Removed cached games:", removedGames);
+        for (const g of removedGames){
+            localStorage.removeItem(g.key);
+        }
+    }
+}
+
+// purge once on entering website
+purgeCache(100);

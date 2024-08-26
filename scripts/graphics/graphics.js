@@ -1,6 +1,5 @@
 let testMove;
 
-let curBoardDisplay;
 let lastMoveDisplay;
 let isDisplayFlipped = false;
 
@@ -12,8 +11,6 @@ let isDisplayFlipped = false;
 //  - container: the game container HTML element
 // all of which are optional and default to the current game container stuff
 function displayBoard(board = gameState.board, lastMove = gameState.currentVariation != gameState.variationRoot ? gameState.currentVariation.move : undefined, flipped = isDisplayFlipped, container = gameElem){
-    curBoardDisplay = board;
-    isDisplayFlipped = flipped;
     lastMoveDisplay = lastMove; // terrible variable.
 
     setAllPiecesToPool(container);
@@ -22,8 +19,10 @@ function displayBoard(board = gameState.board, lastMove = gameState.currentVaria
 
     // highlight move from and move to
     if (lastMove){
-        getLastMoveHighlightFromPool(lastMove.to % 8, Math.floor(lastMove.to / 8));
-        getLastMoveHighlightFromPool(lastMove.from % 8, Math.floor(lastMove.from / 8));
+        const sq1 = getLastMoveHighlightFromPool(lastMove.to % 8, Math.floor(lastMove.to / 8));
+        const sq2 = getLastMoveHighlightFromPool(lastMove.from % 8, Math.floor(lastMove.from / 8));
+        container.appendChild(sq1);
+        container.appendChild(sq2);
     }
 
     // display all pieces on the board
@@ -70,16 +69,19 @@ function makeMoveGraphically(move){
 function flipBoard(){
     undoTestMove();
     document.getElementById("container").classList.toggle("flipped");
-    displayBoard(curBoardDisplay, lastMoveDisplay, !isDisplayFlipped);
+    displayBoard(gameState.board, lastMoveDisplay, !isDisplayFlipped);
+    isDisplayFlipped = !isDisplayFlipped;
 }
 
 function setFlip(flip){
     if (flip){
         document.getElementById("container").classList.add("flipped");
-        displayBoard(curBoardDisplay, lastMoveDisplay, true);
+        displayBoard(gameState.board, lastMoveDisplay, true);
+        isDisplayFlipped = true;
     }else{
         document.getElementById("container").classList.remove("flipped");
-        displayBoard(curBoardDisplay, lastMoveDisplay, false);
+        displayBoard(gameState.board, lastMoveDisplay, false);
+        isDisplayFlipped = false;
     }
 }
 

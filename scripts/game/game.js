@@ -814,13 +814,23 @@ class Board {
     // ==== STATE UPDATES ==== //
     // gets move given SAN
     getMoveOfSAN(san){
-        if (!san) return;
+        if (!san)
+            return;
+
+        // take a short cut by considering the destination square of the san and the move piece's type
+        san = removeGlyphs(san);
+        const toSq = algebraicToSquare(san.substring(san.length - 2));
+        const pieceType = FENToPiece[this.turn == Piece.white ? san[0] : san[0].toLowerCase()];
 
         const moves = this.generateMoves(true);
 
         for (const m of moves){
+            // only consider SAN if to squares and piece types match
+            if (m.to != toSq || this.squares[m.from] != pieceType)
+                continue;
+
             const SAN = getMoveSAN(this, m, moves);
-            if (removeGlyphs(SAN) == removeGlyphs(san)){
+            if (removeGlyphs(SAN) == san){
                 return m;
             }
         }

@@ -1,12 +1,5 @@
 
-const StartingFEN = "unbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNU w 1";
-
 const lobbyElem = document.getElementById("lobby");
-
-
-// refresh challenges every 10 seconds
-setInterval(refreshChallenges, 10000);
-refreshChallenges();
 
 
 function createChallengeTemplate(id, color, fen){
@@ -39,7 +32,7 @@ async function refreshChallenges(){
     for (const {id, color, fen} of challenges){
         const challElem = createChallengeTemplate(id, color, fen);
         challElem.addEventListener("click", () => {
-            window.location.href = `https://norberttony.github.io/local-hyper-chess/?challenge_id=${id}`;
+            acceptChallenge(id);
         });
         lobbyElem.appendChild(challElem);
     }

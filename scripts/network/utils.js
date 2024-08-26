@@ -1,4 +1,4 @@
-const DB_URL = "https://script.google.com/macros/s/AKfycbyts7wD_yD0r_Alv92C1AyAhH87Cl5nYhMDP47-eWVOjfl-eBU3WYy7kVrp7CE3RZWJbg/exec";
+const DB_URL = "https://script.google.com/macros/s/AKfycbxIM392xHM1s5zlqciGvrUhyubqdFegLsTNniA3_vj72GoqbiGgvunmY83L0ywXNMVgtQ/exec";
 
 const NETWORK = {
     gameId: undefined,
@@ -26,6 +26,14 @@ function pollDatabase(method, params){
     xhr.send();
 
     return promise;
+}
+
+function storeUserId(gameId, refNum, userId){
+    localStorage.setItem(`${gameId}_${refNum}_userId`, userId);
+}
+
+function fetchUserId(gameId, refNum){
+    return localStorage.getItem(`${gameId}_${refNum}_userId`);
 }
 
 function getMyId(){

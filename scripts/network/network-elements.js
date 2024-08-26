@@ -13,7 +13,6 @@ function setName(elem, name){
 
 // elements to disable once a game begins
 let pregameControls = [
-    document.getElementById("panel_send-invite"),
     document.getElementById("panel_set-fen"),
     document.getElementById("panel_set-pgn")
 ];
@@ -91,26 +90,70 @@ function setUpBoard(side){
         activatePreGameControls();
 }
 
+let resigning = false;
 function resign(){
+    if (resigning)
+        return;
+
+    resigning = true;
     pollDatabase("POST", {
         type: "resign",
         id: getMyId()
-    });
-
-    // wait for server to interpret resignation
-    waitForMove();
+    })
+        .then((info) => {
+            console.log(info);
+        })
+        .catch((err) => {
+            alert(err);
+        })
+        .finally(() => {
+            resigning = false;
+        });
 }
 
+let drawing = false;
 function offerDraw(){
+    if (drawing)
+        return;
+
+    drawing = true;
     pollDatabase("POST", {
         type: "draw",
         id: getMyId()
-    });
+    })
+        .then((info) => {
+            console.log(info);
+        })
+        .catch((err) => {
+            alert(err);
+        })
+        .finally(() => {
+            drawing = false;
+        });
 }
 
+let rematching = false;
 function offerRematch(){
-    pollDatabase("POST", {
-        type: "rematch",
-        id: getMyId()
-    });
+    if (NETWORK.rematchId){
+        changeHash(`#game=${NETWORK.rematchId}`);
+        delete NETWORK.rematchId;
+    }else{
+        if (rematching)
+            return;
+
+        rematching = true;
+        pollDatabase("POST", {
+            type: "rematch",
+            id: getMyId()
+        })
+            .then((info) => {
+                console.log(info);
+            })
+            .catch((err) => {
+                alert(err);
+            })
+            .finally(() => {
+                rematching = false;
+            });
+    }
 }

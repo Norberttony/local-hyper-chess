@@ -10,7 +10,7 @@ const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
     xSrc:       "images/puzzles/x.svg",
     starSrc:    "images/puzzles/star.svg",
-    id: -1
+    id: 0
 };
 
 // global variables for puzzles
@@ -25,19 +25,10 @@ while (puzzlesSolved.length < PUZZLES.length){
     puzzlesSolved.push("0");
 }
 
-// check if the URL indicates that a puzzle should be played.
 clearPuzzles();
-if (window.location.search.startsWith("?puzzle_id=")){
-    // this relies on there being a single search parameter.
-    const id = parseInt(window.location.search.substring(11));
-    if (id !== NaN){
-        PUZZLE.id = id;
-        loadPuzzle(id);
-    }
-}
 
 function loadPuzzle(id){
-    document.getElementById("puzzles_rdm").innerText = "Click to return to the analysis board";
+    PUZZLE.id = id;
 
     if (puzzlesSolved[id] == "1"){
         puzzlesImgElem.src = PUZZLE.starSrc;
@@ -190,41 +181,38 @@ function puzzlePlayMove(san){
 }
 
 function randomPuzzle(){
-    if (!puzzle){
-        let unsolvedPuzzlesAmt = 0;
-        for (const a of puzzlesSolved){
-            if (a == 0)
-                unsolvedPuzzlesAmt++;
-        }
-        if (unsolvedPuzzlesAmt > 0){
-            let unsolvedNum = Math.floor(Math.random() * unsolvedPuzzlesAmt);
-            let id = 0;
-            for (let i = 0; i < puzzlesSolved.length; i++){
-                if (puzzlesSolved[i] == 0)
-                unsolvedNum--;
-                if (unsolvedNum < 0){
-                    break;
-                }
-                id++;
+    let unsolvedPuzzlesAmt = 0;
+    for (const a of puzzlesSolved){
+        if (a == 0)
+            unsolvedPuzzlesAmt++;
+    }
+    if (unsolvedPuzzlesAmt > 0){
+        let unsolvedNum = Math.floor(Math.random() * unsolvedPuzzlesAmt);
+        let id = 0;
+        for (let i = 0; i < puzzlesSolved.length; i++){
+            if (puzzlesSolved[i] == 0)
+            unsolvedNum--;
+            if (unsolvedNum < 0){
+                break;
             }
-            window.location.search = `?puzzle_id=${id}`;
-        }else{
-            alert("You've solved all of the puzzles so far! Well done!");
+            id++;
         }
+        changeHash(`#puzzles=${id}`);
     }else{
-        // return back to the analysis  board
-        window.location.search = "";
+        alert("You've solved all of the puzzles so far! Well done!");
     }
 }
 
 function nextPuzzle(){
     let nextId = (PUZZLE.id + 1) % PUZZLES.length;
-    window.location.search = `?puzzle_id=${nextId}`;
+    PUZZLE.id = nextId;
+    changeHash(`#puzzles=${nextId}`);
 }
 
 function backPuzzle(){
     let backId = (PUZZLE.id - 1 + PUZZLES.length) % PUZZLES.length;
-    window.location.search = `?puzzle_id=${backId}`;
+    PUZZLE.id = backId;
+    changeHash(`#puzzles=${backId}`);
 }
 
 function loadPuzzlesSolvedData(){

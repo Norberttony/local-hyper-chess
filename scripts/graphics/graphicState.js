@@ -220,10 +220,9 @@ class GraphicalState {
         let toUndo = 0;
 
         for (let i = start; i < pgnSplit.length; i++){
-            
             const pgn = pgnSplit[i];
 
-            if (pgn == "("){
+            if (pgn.startsWith("(")){
 
                 this.previousVariation();
 
@@ -233,14 +232,14 @@ class GraphicalState {
                 // continue with main variation
                 this.nextVariation(0);
 
-            }else if (pgn == ")"){
+            }else if (pgn.startsWith(")")){
 
                 for (let j = 0; j < toUndo; j++){
                     this.previousVariation();
                 }
 
                 return i;
-            }else if (pgn == ""){
+            }else if (pgn.length == 0){
                 // avoid having to search for a move that clearly doesn't exist.
                 continue;
             }else{

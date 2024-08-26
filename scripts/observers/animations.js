@@ -8,8 +8,6 @@ containerElem.addEventListener("single-scroll", (event) => {
     if (userInput)
         return;
 
-    console.log("play animation");
-
     // display the board from just before the move was made.
     let dir = variation.prev == prevVariation ? 1 : -1;
     let lastMadeMove = variation.move;
@@ -35,5 +33,5 @@ containerElem.addEventListener("single-scroll", (event) => {
             setElemLocation(piece, getFileFromSq(lastMadeMove.to), getRankFromSq(lastMadeMove.to));
         else
             setElemLocation(piece, getFileFromSq(lastMadeMove.from), getRankFromSq(lastMadeMove.from));
-    }, 1);
+    }, 10);
 });

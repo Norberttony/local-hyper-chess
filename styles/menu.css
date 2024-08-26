@@ -1,0 +1,11 @@
+
+#menu {
+    display: flex;
+    padding-top: 10px;
+}
+
+#menu > * {
+    flex: 1;
+    margin: 0px 10px;
+    border: 1px solid darkslategray;
+}

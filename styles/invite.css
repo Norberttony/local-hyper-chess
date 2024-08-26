@@ -113,3 +113,8 @@
 #result-box_rematch {
     display: var(--player-elems-visibility);
 }
+
+#dialog_title {
+    font-weight: bold;
+    font-size: x-large;
+}
