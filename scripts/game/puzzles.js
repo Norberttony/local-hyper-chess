@@ -28,6 +28,7 @@ while (puzzlesSolved.length < PUZZLES.length){
 clearPuzzles();
 
 function loadPuzzle(id){
+    puzzlesImgElem.src = "";
     PUZZLE.id = id;
 
     if (puzzlesSolved[id] == "1"){
