@@ -57,7 +57,7 @@ function piecePointerdown(event){
     for (let i = 0; i < currentMoves.length; i++){
         let move = currentMoves[i];
         
-        let highlight = getMoveHighlightFromPool(move.to % 8, Math.floor(move.to / 8));
+        let highlight = getMoveHighlightFromPool(move.to % 8, Math.floor(move.to / 8), isDisplayFlipped);
         highlight.id = `moveHighlight_${i}`;
 
         // if move is a capture, update highlight graphically to indicate that

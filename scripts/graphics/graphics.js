@@ -19,8 +19,8 @@ function displayBoard(board = gameState.board, lastMove = gameState.currentVaria
 
     // highlight move from and move to
     if (lastMove){
-        const sq1 = getLastMoveHighlightFromPool(lastMove.to % 8, Math.floor(lastMove.to / 8));
-        const sq2 = getLastMoveHighlightFromPool(lastMove.from % 8, Math.floor(lastMove.from / 8));
+        const sq1 = getLastMoveHighlightFromPool(lastMove.to % 8, Math.floor(lastMove.to / 8), flipped);
+        const sq2 = getLastMoveHighlightFromPool(lastMove.from % 8, Math.floor(lastMove.from / 8), flipped);
         container.appendChild(sq1);
         container.appendChild(sq2);
     }
@@ -30,7 +30,7 @@ function displayBoard(board = gameState.board, lastMove = gameState.currentVaria
         for (let f = 0; f < 8; f++){
             let v = board.squares[r * 8 + f];
             if (v != 0){
-                let piece = getPieceFromPool(f, r, Piece.getType(v), Piece.getColor(v));
+                let piece = getPieceFromPool(f, r, flipped, Piece.getType(v), Piece.getColor(v));
                 container.appendChild(piece);
             }
         }
