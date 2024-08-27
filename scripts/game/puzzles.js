@@ -61,6 +61,7 @@ function loadPuzzle(id){
 
     puzzlesElem.style.display = "";
 
+    containerElem.addEventListener("single-scroll", puzzleOnMadeMove);
     gameState.graphicalVariation = gameState.currentVariation;
 }
 
