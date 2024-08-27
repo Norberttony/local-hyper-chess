@@ -50,6 +50,7 @@ class GraphicalState {
             return;
         
         // check if one of the variations follows the other
+        console.log("Is prev?", cv.prev == gv || gv.prev == cv, cv, gv);
         if (cv.prev == gv || gv.prev == cv)
             this.dispatchEvent("single-scroll", { prevVariation: gv, variation: cv, userInput });
         

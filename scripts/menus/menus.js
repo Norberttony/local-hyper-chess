@@ -136,10 +136,14 @@ registerMenu("puzzles",
         setPuzzlesVisibility(true);
         hideNames();
 
+        console.log("START SOLVING");
         document.getElementById("panel").style.height = "calc(var(--game-height) / 2)";
+        containerElem.addEventListener("single-scroll", puzzleOnMadeMove);
     },
     () => {
         document.getElementById("panel").style.height = "";
+
+        stopSolvingPuzzle();
         
         // reset the analysis board's state
         gameState.loadPGN(analysisState.pgn);

@@ -58,9 +58,10 @@ function loadPuzzle(id){
 
     // add an observer that will listen for specific moves from the user
     moveIndex = 0; // index of currently expected move
-    containerElem.addEventListener("single-scroll", puzzleOnMadeMove);
 
     puzzlesElem.style.display = "";
+
+    gameState.graphicalVariation = gameState.currentVariation;
 }
 
 function clearPuzzles(){
@@ -72,6 +73,7 @@ function clearPuzzles(){
 }
 
 function stopSolvingPuzzle(){
+    console.log("STOP SOLVING");
     // unlock board and stop listening for moves
     containerElem.removeEventListener("single-scroll", puzzleOnMadeMove);
     gameState.allowedSides[Piece.white] = true;
@@ -80,6 +82,8 @@ function stopSolvingPuzzle(){
 
 function puzzleOnMadeMove(event){
     const { prevVariation, variation, userInput } = event.detail;
+
+    console.log(userInput);
 
     if (!userInput)
         return;
