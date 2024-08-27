@@ -84,11 +84,6 @@ function puzzleOnMadeMove(event){
     if (!userInput)
         return;
 
-    // we don't make moves for the user
-    if (gameState.board.turn == userSide){
-        return;
-    }
-
     let pgn = removeGlyphs(variation.san);
     const correctMove = puzzle.solution[moveIndex];
 
@@ -227,5 +222,3 @@ function loadPuzzlesSolvedData(){
 function savePuzzlesSolvedData(data){
     localStorage.setItem("puzzles_solved", data.join(""));
 }
-
-containerElem.addEventListener("loadFEN", stopSolvingPuzzle);
