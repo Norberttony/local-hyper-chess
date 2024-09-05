@@ -1,3 +1,13 @@
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
 .game > * {
     position: absolute;
     width: 12.5%;
@@ -38,12 +48,16 @@
     will-change: transform;
 
     transform: translate(0px, 0px);
-    transition: transform 0.1s ease-in-out;
+    transition: transform 300ms ease-in-out;
 
     left: 0px;
     top: 0px;
 
     z-index: 2;
+}
+
+.piece.captured {
+    animation: fadeOut 300ms 80ms forwards ease-in;
 }
 
 /* === Glyphs === */

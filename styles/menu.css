@@ -1,4 +1,10 @@
 
+@media (max-width: 1110px){
+    #menu > button {
+        margin: 0px;
+    }
+}
+
 #menu {
     display: flex;
     padding-top: 10px;
@@ -8,4 +14,8 @@
     flex: 1;
     margin: 0px 10px;
     border: 1px solid darkslategray;
+}
+
+#menu > *.active {
+    background-color: #777;
 }

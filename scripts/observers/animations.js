@@ -1,9 +1,16 @@
 // handles move animations
 
+let queuedAnimations = [];
+
 var containerElem = document.getElementById("container");
 
 containerElem.addEventListener("single-scroll", (event) => {
     const { prevVariation, variation, userInput } = event.detail;
+
+    // clear queued animations
+    for (const a of queuedAnimations)
+        clearTimeout(a);
+    queuedAnimations = [];
 
     if (userInput)
         return;
@@ -17,6 +24,13 @@ containerElem.addEventListener("single-scroll", (event) => {
     if (!lastMadeMove)
         return;
 
+    // make captured pieces disappear
+    for (const c of lastMadeMove.captures){
+        const piece = getPieceFromPool(getFileFromSq(c.sq), getRankFromSq(c.sq), isDisplayFlipped, Piece.getType(c.captured), Piece.getColor(c.captured));
+        piece.classList.add("captured");
+        gameElem.appendChild(piece);
+    }
+
     // now move piece graphically
     let piece;
 
@@ -28,10 +42,16 @@ containerElem.addEventListener("single-scroll", (event) => {
         setElemLocation(piece, getFileFromSq(lastMadeMove.to), getRankFromSq(lastMadeMove.to));
     }
 
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
         if (dir == 1)
             setElemLocation(piece, getFileFromSq(lastMadeMove.to), getRankFromSq(lastMadeMove.to));
         else
             setElemLocation(piece, getFileFromSq(lastMadeMove.from), getRankFromSq(lastMadeMove.from));
+
+        const index = queuedAnimations.indexOf(timeout);
+        if (index > -1)
+            queuedAnimations.splice(index, 1);
     }, 10);
+
+    queuedAnimations.push(timeout);
 });

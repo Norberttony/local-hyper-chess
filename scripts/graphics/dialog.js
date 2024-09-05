@@ -10,6 +10,7 @@ var dialog_box_descElem = document.getElementById("dialog-box-desc");
 
 var result_boxElem = document.getElementById("result-box");
 var panel_rematchElem = document.getElementById("panel_rematch");
+var panel_goToBoardElem = document.getElementById("panel_go-to-board");
 
 var invite_popup_containerElem = document.getElementById("invite-popup-container");
 var invite_popupElem = document.getElementById("invite-popup");
@@ -55,6 +56,7 @@ function displayResultBox(result, mewin, termination){
 
     // allow player to offer rematch even after closing result box
     panel_rematchElem.style.display = "block";
+    panel_goToBoardElem.style.display = "block";
 }
 
 function hideResultBox(){

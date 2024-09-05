@@ -77,14 +77,15 @@
     <body>
 
         <nav id = "menu">
-            <button onclick = "changeHash('#lobby');">Play</button>
-            <button onclick = "changeHash('#my-games');">View My Games</button>
-            <button onclick = "changeHash('#board');">Analysis Board</button>
-            <button onclick = "changeHash(`#puzzles=${PUZZLE ? PUZZLE.id : 0}`);">Puzzles</button>
+            <button id = "menu_play"        onclick = "changeHash('#lobby');">Play</button>
+            <button id = "menu_my-games"    onclick = "changeHash('#my-games');">View My Games</button>
+            <button id = "menu_board"       onclick = "changeHash('#board');">Analysis Board</button>
+            <button id = "menu_puzzles"     onclick = "changeHash(`#puzzles=${PUZZLE ? PUZZLE.id : 0}`);">Puzzles</button>
         </nav>
 
         <div id = "my-games_container" style = "display: none;">
             <h1 style = "margin: 20px;">Your games:</h1>
+            <p id = "my-games_fetching">Fetching games, please wait...</p>
             <div id = "my-games"></div>
         </div>
 
@@ -116,6 +117,7 @@
 
             <div id = "panel">
                 <div id = "pre-game-controls">
+                    <button id = "panel_go-to-board" onclick = "changeHash('#board');">Go to the analysis board</button>
                     <button id = "panel_rematch" onclick = "offerRematch();">Offer Rematch</button>
                 </div>
                 <span id = "output"></span>

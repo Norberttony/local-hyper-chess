@@ -60,8 +60,11 @@ select {
 #pre-game-controls button {
     margin-bottom: 9px;
     border-radius: 11px;
+    padding: 5px;
+    font-size: x-large;
 }
 
-#panel_rematch {
+#panel_rematch, #panel_go-to-board {
+    border: 1px solid darkslategray;
     display: none;
 }

@@ -9,10 +9,25 @@
 }
 
 #my-games .game_container_container {
+    display: block;
     background-color: black;
     padding: 20px;
     border-radius: 20px;
     margin-bottom: 20px;
+    cursor: pointer;
+
+    transition: background-color, padding;
+    transition-duration: 500ms;
+}
+
+#my-games .game_container_container:hover {
+    background-color: #111;
+    padding: 25px;
+}
+
+#my-games .game_container_container .message {
+    margin: 0px;
+    margin-top: 10px;
 }
 
 #my-games .result {
@@ -23,7 +38,7 @@
     height: 100%;
 
     color: white;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.4);
     
     z-index: 30;
 

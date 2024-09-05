@@ -58,13 +58,21 @@ function setPuzzlesVisibility(vis){
 function changeHash(newHash, quiet = false){
     history.pushState(null, "", newHash);
 
+    // deactivate active menu button
+    for (const activeElem of document.getElementById("menu").getElementsByClassName("active")){
+        activeElem.classList.remove("active");
+    }
+
     if (newHash.startsWith("#puzzles")){
+        document.getElementById("menu_puzzles").classList.add("active");
         openMenu("puzzles");
     }else if (newHash.startsWith("#my-games")){
         openMenu("view-games");
     }else if (newHash.startsWith("#board")){
+        document.getElementById("menu_board").classList.add("active");
         openMenu("analysis-board");
     }else if (newHash.startsWith("#lobby")){
+        document.getElementById("menu_play").classList.add("active");
         openMenu("lobby");
     }else if (newHash.startsWith("#game") || newHash.startsWith("#chall")){
         openMenu("multiplayer-game");
@@ -101,6 +109,7 @@ registerMenu("lobby",
 
 registerMenu("view-games",
     () => {
+        document.getElementById("menu_my-games").classList.add("active");
         activateContainer("my-games_container");
     },
     () => {
@@ -136,7 +145,6 @@ registerMenu("puzzles",
         setPuzzlesVisibility(true);
         hideNames();
 
-        console.log("START SOLVING");
         document.getElementById("panel").style.height = "calc(var(--game-height) / 2)";
     },
     () => {
@@ -156,6 +164,8 @@ registerMenu("multiplayer-game",
         setExtraVisibility(false);
         setPuzzlesVisibility(false);
         gameState.allowVariations = false;
+
+        panel_goToBoardElem.style.display = "block";
     },
     () => {
         if (waitForMoveActive)
@@ -164,5 +174,8 @@ registerMenu("multiplayer-game",
 
         // save state of analysis board
         analysisState.pgn = pgnText.value;
+
+        panel_rematchElem.style.display = "none";
+        panel_goToBoardElem.style.display = "none";
     }
 );

@@ -1,5 +1,6 @@
 
 const myGamesElem = document.getElementById("my-games");
+const myGames_fetchingElem = document.getElementById("my-games_fetching");
 const boardTemplate = document.getElementById("board-template").children[0];
 
 refreshViewGames();
@@ -7,6 +8,11 @@ refreshViewGames();
 async function refreshViewGames(){
     // start by clearing previous games
     myGamesElem.innerHTML = "";
+
+    if (typeof localStorage === "undefined"){
+        myGames_fetchingElem.innerText = "Error: browser's local storage is not enabled";
+        return;
+    }
 
     // go through every game the user might have played
     for (const [ k, userId ] of Object.entries(localStorage)){
@@ -34,6 +40,7 @@ async function refreshViewGames(){
                 let res;
                 let term;
                 let lastMove;
+                let toPlay = board.turn;
                 for (const m of movesSplit){
                     if (m != ""){
                         if (m.startsWith("1-0") || m.startsWith("0-1") || m.startsWith("1/2-1/2")){
@@ -44,9 +51,11 @@ async function refreshViewGames(){
                             const move = board.getMoveOfSAN(m);
                             board.makeMove(move);
                             lastMove = move;
+                            toPlay = board.turn;
                         }
                     }
                 }
+                toPlay = toPlay == Piece.black ? "black" : "white";
 
                 // add the board to the display
                 const boardElem = boardTemplate.cloneNode(true);
@@ -61,11 +70,22 @@ async function refreshViewGames(){
                     p.id = "";
                 }
 
+                // if a result exists, display it on the board
                 if (result && result != "*"){
                     const resDiv = document.createElement("div");
                     resDiv.classList.add("result");
                     resDiv.innerText = result.split("-").join(" - ");
                     boardGameElem.appendChild(resDiv);
+                }else{
+                    // add a message if it is the user to play
+                    const toPlayElem = document.createElement("p");
+                    toPlayElem.classList.add("message");
+                    boardElem.appendChild(toPlayElem);
+                    if (toPlay == color){
+                        toPlayElem.innerText = "It is your turn to play";
+                    }else{
+                        toPlayElem.innerText = "Waiting for opponent";
+                    }
                 }
 
                 // clicking on the board should link to the game
@@ -76,5 +96,7 @@ async function refreshViewGames(){
             }
         }
     }
+
+    myGames_fetchingElem.innerText = "All games have been fetched";
     console.log("Refreshing view games done");
 }

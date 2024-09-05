@@ -18,8 +18,10 @@ let annotationStartX;
 let annotationStartY;
 gameElem.addEventListener("mousedown", (event) => {
     if (event.button == 2){
-        annotationStartX = Math.floor(event.layerX / annotationsElem.clientWidth * 8);
-        annotationStartY = Math.floor(event.layerY / annotationsElem.clientHeight * 8);
+        const rect = annotationsElem.getBoundingClientRect();
+
+        annotationStartX = Math.floor((event.clientX - rect.x) / annotationsElem.clientWidth * 8);
+        annotationStartY = Math.floor((event.clientY - rect.y) / annotationsElem.clientHeight * 8);
 
         // if board is flipped, flip the coords too
         if (containerElem.classList.contains("flipped")){
