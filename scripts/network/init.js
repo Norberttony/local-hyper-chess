@@ -106,17 +106,18 @@ async function loadGame(gameSuperId){
     setTimeout(() => {
 
         // interpret game info from db
-        const { moveNum, fen, color, moves, archived } = gameInfo;
+        const { moveNum, names, fen, color, moves, archived } = gameInfo;
 
         NETWORK.moveNum = moveNum;
         gameState.loadFEN(fen);
 
         // set up the names and board based on color
+        const [ whiteName, blackName ] = names.split("_");
         if (color != "none"){
             setUpBoard(color == "white" ? 1 : -1);
-            setNames(color == "white" ? "You" : "Anonymous", color == "black" ? "You" : "Anonymous");
+            setNames(color == "white" ? "You" : whiteName, color == "black" ? "You" : blackName);
         }else{
-            setNames("Anonymous", "Anonymous");
+            setNames(whiteName, blackName);
         }
 
         // load the game move by move
@@ -137,6 +138,8 @@ async function loadGame(gameSuperId){
         }
 
         hideDialogContainer();
+
+        console.log("From fetching game:", res, term);
 
         if (res && term)
             setResult(res, term);

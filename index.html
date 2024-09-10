@@ -5,6 +5,8 @@
         <meta name = "description" content = "Invite a friend to play a game of Hyper Chess!">
 
         <title>Hyper Chess</title>
+
+        <link rel = "icon" type = "image/png" href = "favicon.ico"/>
         
         <link href = "styles/warn-bar.css"      rel = "stylesheet" type = "text/css"/>
         <link href = "styles/menu.css"          rel = "stylesheet" type = "text/css"/>
@@ -92,7 +94,12 @@
         <div id = "lobby_container" style = "display: none;">
             <button id = "create-game-button" onclick = "showCreateGamePopup();">Click here to create your own challenge</button>
             <h1>Currently active public challenges:</h1>
-            <div id = "header"><span>ID</span><span>Side</span><span>FEN</span></div>
+            <div id = "header">
+                <span>ID</span>
+                <span>Name</span>
+                <span>Side</span>
+                <span>FEN</span>
+            </div>
             <div id = "lobby"></div>
         </div>
 

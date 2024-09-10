@@ -2,7 +2,7 @@
 const lobbyElem = document.getElementById("lobby");
 
 
-function createChallengeTemplate(id, color, fen){
+function createChallengeTemplate(id, name, isBot, color, fen){
     const challElem = document.createElement("div");
     challElem.classList.add("chall");
     
@@ -12,9 +12,12 @@ function createChallengeTemplate(id, color, fen){
     else if (color == "black")
         color = "white";
 
+    const isBotElem = isBot ? `<span class = "isBot">BOT</span>` : "";
+
     challElem.innerHTML = 
 `
 <span class = "chall_id">${id}</span>
+<span class = "chall_name">${name}${isBotElem}</span>
 <span class = "chall_color">You play as ${color}</span>
 <span>${fen == StartingFEN ? "Starting position" : "FEN: " + fen}</span>
 `;
@@ -29,8 +32,8 @@ async function refreshChallenges(){
     );
 
     lobbyElem.innerHTML = "";
-    for (const {id, color, fen} of challenges){
-        const challElem = createChallengeTemplate(id, color, fen);
+    for (const {id, name, isBot, color, fen} of challenges){
+        const challElem = createChallengeTemplate(id, name, isBot, color, fen);
         challElem.addEventListener("click", () => {
             acceptChallenge(id);
         });

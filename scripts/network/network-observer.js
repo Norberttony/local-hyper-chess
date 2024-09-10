@@ -46,9 +46,8 @@ function waitForMove(){
             console.log(gameInfo);
 
             if (!gameInfo || gameInfo.status == "err"){
-                rej(gameInfo);
-                console.log("Errored");
-                break;
+                res(gameInfo);
+                console.error(`Errored: ${gameInfo}`);
             }else if (gameInfo.status == "ok"){
                 const mySide = NETWORK.myColor == "white" ? Piece.white : Piece.black;
 
@@ -106,8 +105,13 @@ function waitForMove(){
                     NETWORK.moveNum++;
 
                     if (gameState.currentVariation.isMain() && gameState.currentVariation.next.length == 0){
-                        gameState.makeMove(gameState.board.getMoveOfSAN(gameInfo.move));
-                        gameState.applyChanges();
+                        const move = gameState.board.getMoveOfSAN(gameInfo.move);
+                        if (move){
+                            gameState.makeMove(move);
+                            gameState.applyChanges();
+                        }else{
+                            console.error(`Could not interpret move from other player: ${gameInfo.move}`);
+                        }
                     }else{
                         gameState.addMoveToEnd(gameInfo.move);
                     }

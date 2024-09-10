@@ -7,7 +7,7 @@
 #lobby_container #header,
 #lobby_container .chall {
     display: grid;
-    grid-template-columns: 20% 35% 45%;
+    grid-template-columns: 15% 30% 30% 25%;
 
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
@@ -17,8 +17,7 @@
 
 #lobby_container #header,
 #lobby_container #lobby {
-    width: 80%;
-    margin-left: 10%;
+    width: 100%;
 }
 
 #lobby_container #header {

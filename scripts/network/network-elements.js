@@ -95,6 +95,10 @@ function resign(){
     if (resigning)
         return;
 
+    const c = confirm("Are you sure you want to resign?");
+    if (!c)
+        return;
+
     resigning = true;
     pollDatabase("POST", {
         type: "resign",
@@ -116,6 +120,10 @@ function offerDraw(){
     if (drawing)
         return;
 
+    const c = confirm("Are you sure you want to offer a draw?");
+    if (!c)
+        return;
+
     drawing = true;
     pollDatabase("POST", {
         type: "draw",
@@ -135,9 +143,11 @@ function offerDraw(){
 let rematching = false;
 function offerRematch(){
     if (NETWORK.rematchId){
+        // button can teleport you to the rematch game
         changeHash(`#game=${NETWORK.rematchId}`);
         delete NETWORK.rematchId;
     }else{
+        // or can offer a rematch to the opponent
         if (rematching)
             return;
 

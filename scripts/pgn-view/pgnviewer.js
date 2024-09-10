@@ -242,9 +242,9 @@ containerElem.addEventListener("result", (event) => {
     let resultNum;
     if (result == "/" || result == "1/2-1/2")
         resultNum = 0;
-    else if (result == "#" && turn == Piece.white || result == "1-0")
+    else if (result == "#" && turn == Piece.white || result == "0-1")
         resultNum = -1;
-    else if (result == "#" && turn == Piece.black || result == "0-1")
+    else if (result == "#" && turn == Piece.black || result == "1-0")
         resultNum = 1;
 
     // based on the result number, add some result text and flavor text

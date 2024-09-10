@@ -81,10 +81,10 @@ async function checkIfAccepted(){
             console.log("Is challenge accepted?", val);
 
             if (!val){
-                rej({ status: "err", msg: "Something went wrong!" });
+                res({ status: "err", msg: "Something went wrong!" });
                 break;
             }else if (val.status == "err"){
-                rej(val);
+                res(val);
                 break;
             }else if (val.status == "ok"){
                 if (!val.chall)
