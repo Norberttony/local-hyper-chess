@@ -112,7 +112,7 @@ async function loadGame(gameSuperId){
         gameState.loadFEN(fen);
 
         // set up the names and board based on color
-        const [ whiteName, blackName ] = names.split("_");
+        const [ whiteName, blackName ] = names ? names.split("_") : [ "Anonymous", "Anonymous" ];
         if (color != "none"){
             setUpBoard(color == "white" ? 1 : -1);
             setNames(color == "white" ? "You" : whiteName, color == "black" ? "You" : blackName);
