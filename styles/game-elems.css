@@ -63,15 +63,21 @@
 /* === Glyphs === */
 
 .game .glyph {
-    background-color: black;
     position: absolute;
-    border-radius: 100%;
-    aspect-ratio: 1 / 1;
-    height: 45%;
-    text-align: center;
     right: 0px;
-    transform: translate(35%, -35%);
+
+    height: 40%;
+    aspect-ratio: 1 / 1;
+
+    text-align: center;
+    transform: translate(30%, -30%);
     line-height: 0.9;
+
+    background-size: contain;
+
+    border: 1px solid white;
+    border-radius: 100%;
+    box-shadow: 2px 2px 6px black;
 }
 
 .game .font-icon.glyph::before {

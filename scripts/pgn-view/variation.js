@@ -22,6 +22,8 @@ class Variation {
 
         // this move's comment
         this.comment = "";
+
+        this.fiftyMoveRuleCounter = 0;
     }
 
     // detaches this variation from its previous variation

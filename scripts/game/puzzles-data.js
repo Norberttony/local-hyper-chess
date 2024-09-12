@@ -187,40 +187,25 @@ const PUZZLES = [
         ]
     },
     {
-        title: "WTP and win material",
-        fen: "u1bqkb2/pppp2p1/3p2rP/5BR1/P1BPQ1P1/8/1P1P3P/1K5U w 62",
-        difficulty: "insane",
-        solution: ["Bg8", "Ke7", "Bh7", "Rxh5", ["Pgxh4", "Phxh4"]],
+        title: "BTP and mate in 3",
+        fen: "3qkbnr/p2ppp1p/1p6/4n1pP/P1b5/R5U1/2P1PPPN/1NBQ1K1B b 11",
+        difficulty: "hard",
+        solution: [ "Nxe1", "Kg1", "Ra1", "Rxa2", "Bf1" ],
         responses: [
-            // Bg8
+            // Nxe1
             {},
             {},
-            // Bh7
+            // Ra1
             {
-                "Bf7": ["Rxf6"]
+                "Bf1": [ "Rxf3" ],
+                "Bg7": [ "Rxe3" ],
+                "Bg4": [ "Pd4" ]
             },
             {},
-            // Pgxh4 or Phxh4
+            // Bf1
             {}
         ]
-    },
-    
-    /* multiple solutions D:
-       this one has multiple variations, so really no good.
-    {
-        title: "BTP Mate in 2",
-        fen: "5b2/2p1p1p1/8/2P1k1pp/1PB1n3/8/3K4/2B2b2 b 35",
-        difficulty: "Intermediate",
-        solution: ["Bd3", "Kd1", "Be2"],
-        responses: [
-            {
-                "Be2": ["Kc3", "Nb3", "Kb2", "Bc2", "Ka1"]
-            },
-            {},
-            {}
-        ]
-    },
-    */
+    }
     // GENERIC FORMAT
     /*
     {

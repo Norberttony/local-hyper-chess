@@ -19,8 +19,13 @@ function displayBoard(board = gameState.board, lastMove = gameState.currentVaria
 
     // highlight move from and move to
     if (lastMove){
-        const sq1 = getLastMoveHighlightFromPool(lastMove.to % 8, Math.floor(lastMove.to / 8), flipped);
-        const sq2 = getLastMoveHighlightFromPool(lastMove.from % 8, Math.floor(lastMove.from / 8), flipped);
+        const toX = lastMove.to % 8;
+        const toY = Math.floor(lastMove.to / 8);
+        const fromX = lastMove.from % 8;
+        const fromY = Math.floor(lastMove.from / 8);
+        
+        const sq1 = getLastMoveHighlightFromPool(toX, toY, flipped);
+        const sq2 = getLastMoveHighlightFromPool(fromX, fromY, flipped);
         container.appendChild(sq1);
         container.appendChild(sq2);
     }
@@ -54,15 +59,6 @@ function undoTestMove(){
         testMove = undefined;
         displayBoard();
     }
-}
-
-// makes a move that only affects the graphical board
-function makeMoveGraphically(move){
-    let graphicalState = new Board();
-    graphicalState.loadFEN(gameState.board.getFEN());
-    graphicalState.makeMove(move);
-    displayBoard(graphicalState, move);
-    graphicalState.nextTurn(); //goofy.
 }
 
 // flips the graphical board

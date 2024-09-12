@@ -60,6 +60,17 @@ class GraphicalState {
         this.graphicalVariation = this.currentVariation;
 
         this.dispatchEvent("variation-change", { variation: cv });
+
+        // apply any relevant glyphs
+        if (cv.move){
+            const toX = cv.move.to % 8;
+            const toY = Math.floor(cv.move.to / 8);
+            
+            // attach any relevant glyphs
+            for (const g of cv.glyphs){
+                attachGlyph(document.getElementById(`${toX}_${toY}`), g);
+            }
+        }
     }
 
     addMoveToEnd(san){

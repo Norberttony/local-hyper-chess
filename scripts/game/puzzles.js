@@ -10,7 +10,10 @@ const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
     xSrc:       "images/puzzles/x.svg",
     starSrc:    "images/puzzles/star.svg",
-    id: 0
+    id: 0,
+
+    glyphCorrectSrc: "images/glyphs/correct.svg",
+    glyphIncorrectSrc: "images/glyphs/incorrect.svg"
 };
 
 // global variables for puzzles
@@ -108,6 +111,8 @@ function puzzleOnMadeMove(event){
         removeGlyphs(variation.prev.prev.san) == puzzle.solution[moveIndex - 2];
 
     if (isCorrectMove && correctVariation){
+        variation.glyphs.push(PUZZLE.glyphCorrectSrc);
+
         moveIndex++;
         puzzlesImgElem.src = PUZZLE.checkSrc;
         
@@ -124,6 +129,8 @@ function puzzleOnMadeMove(event){
             stopSolvingPuzzle();
         }
     }else{
+        variation.glyphs.push(PUZZLE.glyphIncorrectSrc);
+
         puzzlesImgElem.src = PUZZLE.xSrc;
 
         // try to match as much of the PGN to the correct PGN

@@ -77,3 +77,11 @@ function setAllMoveHighlightsToPool(container){
 function setAllLastMoveHighlightsToPool(container){
     setClassToPool("lastMoveHighlight", container);
 }
+
+// attaches a glyph to the piece element
+function attachGlyph(elem, src){
+    const div = document.createElement("div");
+    div.classList.add("glyph");
+    div.style.backgroundImage = `url(${src})`;
+    elem.appendChild(div);
+}
