@@ -19,8 +19,8 @@ function displayCreateGameBoard(){
 }
 
 function setCreateGameFEN(fen){
+    createGameFormElem.fen.value = fen;
     if (!startingFenElem.checked){
-        createGameFormElem.fen.value = fen;
         createGameFormState.loadFEN(fen);
         displayCreateGameBoard();
     }
@@ -63,3 +63,9 @@ startingFenElem.addEventListener("change", () => {
         setCreateGameFEN(createGameFormElem.fen.value);
     }
 });
+
+if (startingFenElem.checked){
+    createGameFormElem.fen.readOnly = true;
+    createGameFormState.loadFEN(StartingFEN);
+    displayCreateGameBoard();
+}

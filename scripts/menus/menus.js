@@ -37,10 +37,11 @@ function activateContainer(id){
     document.getElementById(id).style.display = "";
 }
 
+// network handles activating game controls (spectators have no game controls) but whenever
+// network is hidden, the pregame controls should always be activated.
 function setNetworkVisibility(vis){
-    const setDisplay = vis ? "" : "none";
-
-    document.getElementById("play-game-controls").style.display = setDisplay;
+    if (!vis)
+        activatePreGameControls();
 }
 
 function setExtraVisibility(vis){
@@ -164,12 +165,9 @@ registerMenu("multiplayer-game",
         setExtraVisibility(false);
         setPuzzlesVisibility(false);
         gameState.allowVariations = false;
-
-        panel_goToBoardElem.style.display = "block";
     },
     () => {
-        if (waitForMoveActive)
-            keepWaitingForMove = false;
+        stopWaitingForMove();
         gameState.allowVariations = true;
 
         // save state of analysis board

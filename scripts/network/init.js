@@ -143,6 +143,8 @@ async function loadGame(gameSuperId){
 
         if (res && term)
             setResult(res, term);
+        else
+            panel_goToBoardElem.style.display = "none";
 
         gameState.applyChanges();
 

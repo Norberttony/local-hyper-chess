@@ -49,74 +49,17 @@ function waitForMove(){
                 res(gameInfo);
                 console.error(`Errored: ${gameInfo}`);
             }else if (gameInfo.status == "ok"){
-                const mySide = NETWORK.myColor == "white" ? Piece.white : Piece.black;
-
                 if (gameInfo.offers){
-                    const potentialId = gameInfo.offers.split("_");
-                    if (potentialId.length > 1){
-                        // rematches reuse the player id
-                        storeUserId(potentialId[0], potentialId[1], NETWORK.userId);
-                        document.getElementById("result-box_rematch").innerText = "Go to rematch";
-                        document.getElementById("panel_rematch").innerText = "Go to rematch";
-
-                        // to-do: fix this ugly mess to look more professional
-                        NETWORK.rematchId = gameInfo.offers;
-                        break;
-                    }
-
-                    const myChar = mySide == Piece.white ? "w" : "b";
-
-                    const [ draw, takeback, rematch ] = gameInfo.offers.split("");
-
-                    let offerTxt = "";
-                    if (draw != "n"){
-                        if (draw != myChar)
-                            offerTxt += "Your opponent has offered you a draw";
-                        else
-                            offerTxt += "You have offered your opponent a draw";
-                    }
-                    if (takeback != "n"){
-                        if (takeback != myChar)
-                            offerTxt += "Your opponent has offered you a takeback";
-                        else
-                            offerTxt += "You have offered your opponent a takeback";
-                    }
-                    if (rematch != "n"){
-                        if (rematch != myChar){
-                            document.getElementById("result-box_rematch").innerText = "Accept Rematch?";
-                            document.getElementById("panel_rematch").innerText = "Accept Rematch?";
-                        }else{
-                            document.getElementById("result-box_rematch").innerText = "Rematch offer sent";
-                            document.getElementById("panel_rematch").innerText = "Rematch offer sent";
-                        }
-                    }
-
-                    if (!gameState.mainHasResult)
-                        outputElem.innerText = offerTxt;
-                    else
-                        outputElem.innerText = "";
+                    networkHandleOffers(gameInfo.offers);
                 }
 
                 if (gameInfo.result){
                     setResult(gameInfo.result, gameInfo.term);
                 }
 
-                if (gameInfo.move && (!NETWORK.myColor || NETWORK.moveNum % 2 == (mySide == Piece.white ? 1 : 0))){
-                    NETWORK.moveNum++;
-
-                    if (gameState.currentVariation.isMain() && gameState.currentVariation.next.length == 0){
-                        const move = gameState.board.getMoveOfSAN(gameInfo.move);
-                        if (move){
-                            gameState.makeMove(move);
-                            gameState.applyChanges();
-                        }else{
-                            console.error(`Could not interpret move from other player: ${gameInfo.move}`);
-                        }
-                    }else{
-                        gameState.addMoveToEnd(gameInfo.move);
-                    }
-
-                    res(gameInfo);
+                if (gameInfo.move){
+                    if (networkHandleMove(gameInfo.move))
+                        res(gameInfo);
                 }
             }
 
@@ -124,6 +67,84 @@ function waitForMove(){
         }
         waitForMoveActive = false;
     });
+}
+
+function stopWaitingForMove(){
+    console.log("Stop waiting for move.");
+    if (waitForMoveActive)
+        keepWaitingForMove = false;
+}
+
+function networkHandleMove(move){
+    const mySide = NETWORK.myColor == "white" ? Piece.white : Piece.black;
+
+    const isSpectator = !NETWORK.myColor;
+    const isMyTurn = NETWORK.moveNum % 2 == (mySide == Piece.white ? 1 : 0);
+    console.log(`When handling move ${move}; isSpectator? ${isSpectator} isMyTurn? ${isMyTurn}`);
+    if (isSpectator || !isMyTurn)
+        return false;
+
+    NETWORK.moveNum++;
+
+    if (gameState.currentVariation.isMain() && gameState.currentVariation.next.length == 0){
+        const moveObj = gameState.board.getMoveOfSAN(move);
+        if (moveObj){
+            gameState.makeMove(moveObj);
+            gameState.applyChanges();
+        }else{
+            console.error(`Could not interpret move from other player: ${move}`);
+        }
+    }else{
+        gameState.addMoveToEnd(move);
+    }
+
+    return true;
+}
+
+function networkHandleOffers(offers){
+    const potentialId = offers.split("_");
+    if (potentialId.length > 1){
+        // rematches reuse the player id
+        storeUserId(potentialId[0], potentialId[1], NETWORK.userId);
+        document.getElementById("result-box_rematch").innerText = "Go to rematch";
+        document.getElementById("panel_rematch").innerText = "Go to rematch";
+
+        NETWORK.rematchId = offers;
+        return;
+    }
+
+    const mySide = NETWORK.myColor == "white" ? Piece.white : Piece.black;
+    const myChar = mySide == Piece.white ? "w" : "b";
+
+    const [ draw, takeback, rematch ] = offers.split("");
+
+    let offerTxt = "";
+    if (draw != "n"){
+        if (draw != myChar)
+            offerTxt += "Your opponent has offered you a draw";
+        else
+            offerTxt += "You have offered your opponent a draw";
+    }
+    if (takeback != "n"){
+        if (takeback != myChar)
+            offerTxt += "Your opponent has offered you a takeback";
+        else
+            offerTxt += "You have offered your opponent a takeback";
+    }
+    if (rematch != "n"){
+        if (rematch != myChar){
+            document.getElementById("result-box_rematch").innerText = "Accept Rematch?";
+            document.getElementById("panel_rematch").innerText = "Accept Rematch?";
+        }else{
+            document.getElementById("result-box_rematch").innerText = "Rematch offer sent";
+            document.getElementById("panel_rematch").innerText = "Rematch offer sent";
+        }
+    }
+
+    if (!gameState.mainHasResult)
+        outputElem.innerText = offerTxt;
+    else
+        outputElem.innerText = "";
 }
 
 function setResult(result, termination){
@@ -137,6 +158,8 @@ function setResult(result, termination){
             turn:           gameState.board.turn,
             termination:    termination
         });
+
+        panel_goToBoardElem.style.display = "block";
 
         gameState.mainHasResult = true;
     }
