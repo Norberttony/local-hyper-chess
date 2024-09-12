@@ -251,5 +251,5 @@ function purgeCache(maxGames){
     }
 }
 
-// purge once on entering website
-purgeCache(100);
+// purge cache once on entering website
+purgeCache(200);
