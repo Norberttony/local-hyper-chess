@@ -55,6 +55,7 @@
         <script defer src = "scripts/observers/animations.js"></script>
         <script defer src = "scripts/observers/annotator.js"></script>
         <script defer src = "scripts/pgn-view/pgnviewer.js"></script>
+        <script defer src = "scripts/pgn-view/pgn-control.js"></script>
 
         <!-- network -->
         <script defer src = "scripts/network/utils.js"></script>
@@ -130,8 +131,8 @@
                 <span id = "output"></span>
                 <div id = "pgn_control">
                     <button onclick = "PGNMoveFirst();">&lt;&lt;</button>
-                    <button onclick = "PGNMoveBack();">&lt;</button>
-                    <button onclick = "PGNMoveForward();">&gt;</button>
+                    <button id = "pgn_control_prev">&lt;</button>
+                    <button id = "pgn_control_next">&gt;</button>
                     <button onclick = "PGNMoveLast();">&gt;&gt;</button>
                 </div>
                 <div id = "pgn"></div>
