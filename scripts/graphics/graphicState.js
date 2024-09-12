@@ -33,6 +33,9 @@ class GraphicalState {
 
         // whether or not the user is allowed to create new variations
         this.allowVariations = true;
+
+        // keeps track of last capture for fifty move rule
+        this.lastCapture = 0;
     }
 
     get turn(){
@@ -100,6 +103,8 @@ class GraphicalState {
             // position reoccurs
             this.positions[this.board.getPosition()]++;
 
+            this.lastCapture = variation.fiftyMoveRuleCounter;
+
             this.currentVariation = variation;
             return true;
         }
@@ -111,6 +116,8 @@ class GraphicalState {
         if (this.currentVariation.prev){
             // position "unoccurs"
             this.positions[this.board.getPosition()]--;
+
+            this.lastCapture = this.currentVariation.fiftyMoveRuleCounter;
 
             this.board.unmakeMove(this.currentVariation.move);
             this.currentVariation = this.currentVariation.prev;
@@ -156,6 +163,15 @@ class GraphicalState {
         // the only issue is that this does not handle board (if moved to its latest state)
         if (this.positions[pos] >= 3)
             this.board.setResult("/", "three-fold repetition");
+
+        // handle the fifty move rule
+        this.lastCapture++;
+        if (move.captures.length > 0){
+            this.lastCapture = 0;
+        }
+        variation.fiftyMoveRuleCounter = this.lastCapture;
+        if (this.lastCapture >= 100)
+            this.board.setResult("/", "fifty move rule");
 
         // check and dispatch event for any results
         this.board.isGameOver();

@@ -84,18 +84,18 @@ function networkHandleMove(move){
     if (isSpectator || !isMyTurn)
         return false;
 
-    NETWORK.moveNum++;
-
     if (gameState.currentVariation.isMain() && gameState.currentVariation.next.length == 0){
         const moveObj = gameState.board.getMoveOfSAN(move);
         if (moveObj){
             gameState.makeMove(moveObj);
             gameState.applyChanges();
+            NETWORK.moveNum++;
         }else{
             console.error(`Could not interpret move from other player: ${move}`);
         }
     }else{
         gameState.addMoveToEnd(move);
+        NETWORK.moveNum++;
     }
 
     return true;
