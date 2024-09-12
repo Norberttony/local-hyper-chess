@@ -82,7 +82,7 @@ async function refreshViewGames(){
 
             const boardGameElem = boardElem.getElementsByClassName("game")[0];
 
-            displayBoard(board, { move: lastMove }, color == "black", boardGameElem);
+            displayBoard(board, lastMove, color == "black", boardGameElem);
 
             // remove id from all piece elements
             for (const p of boardGameElem.getElementsByClassName("piece")){

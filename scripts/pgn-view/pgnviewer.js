@@ -89,7 +89,7 @@ function newSANElem(san, variation){
     if (variation){
         div.addEventListener("click", () => {
             gameState.jumpToVariation(variation);
-            displayBoard();
+            gameState.applyChanges();
             selectPGNElem(div);
         });
     }
