@@ -102,8 +102,10 @@ function drawAnnotation(startX, startY, endX, endY){
 gameElem.addEventListener("mouseup", (event) => {
     if (event.button != 2) return clearUserAnnotations();
 
-    let annotationEndX = Math.floor(event.layerX / annotationsElem.clientWidth * 8);
-    let annotationEndY = Math.floor(event.layerY / annotationsElem.clientHeight * 8);
+    const rect = annotationsElem.getBoundingClientRect();
+
+    let annotationEndX = Math.floor((event.clientX - rect.x) / annotationsElem.clientWidth * 8);
+    let annotationEndY = Math.floor((event.clientY - rect.y) / annotationsElem.clientHeight * 8);
 
     // flip coords if board flipped too
     if (containerElem.classList.contains("flipped")){
