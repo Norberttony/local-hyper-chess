@@ -30,6 +30,8 @@ async function generateInvite(gameConfig){
     const { challId, userId } = fullId;
     setMyId(`${challId}_${userId}`);
 
+    addChallToLocalStorage(challId);
+
     peer_idElem.value = `https://norberttony.github.io/local-hyper-chess#chall=${challId}`;
 
     gameState.loadFEN(StartingFEN);
@@ -136,4 +138,23 @@ async function cancelInvite(){
 
     // hide invite box
     hideInvite();
+}
+
+function addChallToLocalStorage(challId){
+    const challenges = getChallengesFromLocalStorage();
+    challenges.push({ challId, strikes: 3 });
+
+    localStorage.setItem("user_challenges", JSON.stringify(challenges));
+}
+
+function getChallengesFromLocalStorage(){
+    if (!localStorage.getItem("user_challenges"))
+        localStorage.setItem("user_challenges", "[]");
+
+    return JSON.parse(localStorage.getItem("user_challenges"));
+}
+
+function setChallengesToLocalStorage(challenges){
+    console.log(challenges);
+    localStorage.setItem("user_challenges", JSON.stringify(challenges));
 }
