@@ -143,9 +143,6 @@ async function loadGame(gameSuperId){
 
         if (res && term){
             setResult(res, term);
-            panel_goToBoardElem.style.display = "block";
-        }else{
-            panel_goToBoardElem.style.display = "none";
         }
 
         gameState.applyChanges();
@@ -166,6 +163,10 @@ async function loadGame(gameSuperId){
         if (archived){
             gameState.jumpToVariation(gameState.variationRoot);
             gameState.applyChanges();
+            
+            panel_goToBoardElem.style.display = "block";
+        }else{
+            panel_goToBoardElem.style.display = "none";
         }
 
         hideDialogBox();

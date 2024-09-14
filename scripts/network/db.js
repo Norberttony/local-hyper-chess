@@ -5,17 +5,10 @@ var peer_idElem = document.getElementById("peer-id");
 
 // allows copying the invite link
 invite_copyElem.addEventListener("click", () => {
-    // access to clipboard is rather finicky. if the first method in the try block does not work,
-    // then the second method in the finally block is attempted.
-    try {
-        navigator.clipboard.writeText(peer_idElem.value);
+    if (copyToClipboard(peer_idElem, peer_idElem.value)){
         invite_copyElem.innerText = "Successfully copied!";
-    }catch(err){
-        console.error(err);
-    }finally{
-        peer_idElem.select();
-        document.execCommand("copy");
-        invite_copyElem.innerText = "Successfully copied!";
+    }else{
+        invite_copyElem.innerText = "Unknown error; cannot copy";
     }
 });
 

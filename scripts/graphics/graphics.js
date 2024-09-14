@@ -81,6 +81,20 @@ function setFlip(flip){
     }
 }
 
+function copyLinkWithPGN(){
+    const statusElem = document.getElementById("panel_copy-link");
+    const pgn = gameState.pgnData.toString().replace(/\n/g, "");
+    const url = `${window.location.origin}${window.location.pathname}#board,pgn=${encodeURIComponent(pgn)}`;
+
+    console.log(pgn);
+
+    if (copyToClipboard(undefined, url)){
+        statusElem.innerText = "Successfully copied!";
+    }else{
+        statusElem.innerText = "Unknown error; cannot copy";
+    }
+}
+
 // prevent focusing on buttons (so that arrow key presses and other things still register on the
 // board, even if the user clicks other buttons like "copy PGN")
 let buttons = document.getElementsByTagName("button");

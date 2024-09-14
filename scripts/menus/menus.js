@@ -87,6 +87,11 @@ function changeHash(newHash, quiet = false){
             loadGame(newHash.replace("#game=", ""));
         }else if (newHash.startsWith("#chall=")){
             acceptChallenge(newHash.replace("#chall=", ""));
+        }else if (newHash.startsWith("#board,pgn=")){
+            const pgn = decodeURIComponent(newHash.replace("#board,pgn=", ""));
+            gameState.loadPGN(pgn);
+            changeHash("#board", true);
+            return;
         }
     }
 }
