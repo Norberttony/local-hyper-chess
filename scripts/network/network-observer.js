@@ -6,10 +6,9 @@ containerElem.addEventListener("single-scroll", (event) => {
 
     if (!userInput)
         return;
-    // ensure user is playing om main variation
-    // to-do: probably don't depend on this being the case:
-    // gameState.allowVariations is only false when a game is actually being played...
-    if (variation.isMain() && !gameState.allowVariations){
+
+    // ensure user is playing on main variation
+    if (variation.isMain() && NETWORK.myColor){
         // the move wasn't from this user. let's send it over to the other user.
         console.log("SEND MOVE TO USER", variation.san);
         pollDatabase("POST", {

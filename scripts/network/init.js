@@ -141,15 +141,19 @@ async function loadGame(gameSuperId){
 
         console.log("From fetching game:", res, term);
 
-        if (res && term)
+        if (res && term){
             setResult(res, term);
-        else
+            panel_goToBoardElem.style.display = "block";
+        }else{
             panel_goToBoardElem.style.display = "none";
+        }
 
         gameState.applyChanges();
 
         if (color != "none")
             NETWORK.myColor = color;
+        else
+            delete NETWORK.myColor;
         
         waitForMove();
 
