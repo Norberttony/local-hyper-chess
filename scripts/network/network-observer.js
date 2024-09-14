@@ -81,7 +81,7 @@ function networkHandleMove(move){
     const isSpectator = !NETWORK.myColor;
     const isMyTurn = NETWORK.moveNum % 2 == (mySide == Piece.white ? 1 : 0);
     console.log(`When handling move ${move}; isSpectator? ${isSpectator} isMyTurn? ${isMyTurn}`);
-    if (isSpectator || !isMyTurn)
+    if (!isSpectator && !isMyTurn)
         return false;
 
     if (gameState.currentVariation.isMain() && gameState.currentVariation.next.length == 0){

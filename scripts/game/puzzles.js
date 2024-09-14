@@ -16,6 +16,8 @@ const PUZZLE = {
     glyphIncorrectSrc: "images/glyphs/incorrect.svg"
 };
 
+let PUZZLES;
+
 // global variables for puzzles
 let userSide;
 let oppSide;
@@ -23,14 +25,13 @@ let moveIndex;
 let puzzle;
 
 const puzzlesSolved = loadPuzzlesSolvedData();
-// user might have missed new puzzles
-while (puzzlesSolved.length < PUZZLES.length){
-    puzzlesSolved.push("0");
-}
 
 clearPuzzles();
 
-function loadPuzzle(id){
+async function loadPuzzle(id){
+    if (!PUZZLES)
+        await fetchPuzzleData();
+
     puzzlesImgElem.src = "";
     PUZZLE.id = id;
 
@@ -211,13 +212,19 @@ function randomPuzzle(){
     }
 }
 
-function nextPuzzle(){
+async function nextPuzzle(){
+    if (!PUZZLES)
+        await fetchPuzzleData();
+
     let nextId = (PUZZLE.id + 1) % PUZZLES.length;
     PUZZLE.id = nextId;
     changeHash(`#puzzles=${nextId}`);
 }
 
-function backPuzzle(){
+async function backPuzzle(){
+    if (!PUZZLES)
+        await fetchPuzzleData();
+
     let backId = (PUZZLE.id - 1 + PUZZLES.length) % PUZZLES.length;
     PUZZLE.id = backId;
     changeHash(`#puzzles=${backId}`);
@@ -233,4 +240,15 @@ function loadPuzzlesSolvedData(){
 
 function savePuzzlesSolvedData(data){
     localStorage.setItem("puzzles_solved", data.join(""));
+}
+
+async function fetchPuzzleData(){
+    if (!PUZZLES){
+        PUZZLES = tabulateData(await pollDatabase("GET", { type: "puzzles" }));
+
+        // user might have missed new puzzles
+        while (puzzlesSolved.length < PUZZLES.length){
+            puzzlesSolved.push("0");
+        }
+    }
 }
