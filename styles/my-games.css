@@ -9,8 +9,11 @@
 }
 
 #my-games .game_container_container {
+    position: relative;
     display: block;
+
     background-color: black;
+
     padding: 20px;
     border-radius: 20px;
     margin-bottom: 20px;
@@ -51,3 +54,20 @@
     font-size: xxx-large;
 }
 
+#my-games_download {
+    margin: 10px;
+    font-size: x-large;
+}
+
+#my-games .delete {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    width: 40px;
+    height: 40px;
+
+    background-color: transparent;
+    background-image: url(../images/glyphs/incorrect.svg);
+    background-size: contain;
+    z-index: 40;
+}

@@ -95,7 +95,7 @@ button, input[type="submit"] {
 button:disabled::before {
     opacity: 0.5;
 }
-button:disabled > * {
+button:disabled {
     opacity: 0.5;
 }
 

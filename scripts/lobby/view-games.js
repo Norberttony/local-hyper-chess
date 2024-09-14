@@ -1,6 +1,7 @@
 
 const myGamesElem = document.getElementById("my-games");
 const myGames_fetchingElem = document.getElementById("my-games_fetching");
+const myGames_download = document.getElementById("my-games_download");
 const boardTemplate = document.getElementById("board-template").children[0];
 
 
@@ -13,6 +14,7 @@ async function refreshViewGames(){
     // start by clearing previous games
     myGamesElem.innerHTML = "";
     myGames_fetchingElem.innerText = "Fetching your games...";
+    myGames_download.disabled = true;
 
     if (typeof localStorage === "undefined"){
         myGames_fetchingElem.innerText = "Error: browser's local storage is not enabled";
@@ -100,6 +102,32 @@ async function refreshViewGames(){
                 resDiv.classList.add("result");
                 resDiv.innerText = result.split("-").join(" - ");
                 boardGameElem.appendChild(resDiv);
+
+                // add a delete button for the game
+                const delElem = document.createElement("button");
+                delElem.classList.add("delete");
+                boardElem.appendChild(delElem);
+
+                delElem.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be visible to other users with the link.")){
+                        // in order to keep the user's authentication, store it somewhere
+                        // user should still be able to clear their unwanted archived games but the
+                        // authentication is still stored to prove ownership of a game.
+                        // this also provides (in the future) a way to retrieve games that were accidentally deleted.
+                        const auths = JSON.parse(localStorage.getItem("authentications") || "[]");
+                        auths.push(`${gameId}_${userId}_${refNum}`);
+                        localStorage.setItem(JSON.stringify(auths));
+
+                        // remove from local storage
+                        localStorage.removeItem(k);
+                        boardElem.parentNode.removeChild(boardElem);
+
+                        alert("Game has been removed from your storage");
+                    }
+                });
             }else{
                 // add a message if it is the user to play
                 const toPlayElem = document.createElement("p");
@@ -123,6 +151,7 @@ async function refreshViewGames(){
     console.log(allMyGames);
 
     myGames_fetchingElem.innerText = "All games have been fetched";
+    myGames_download.removeAttribute("disabled");
     console.log("Refreshing view games done");
 }
 
