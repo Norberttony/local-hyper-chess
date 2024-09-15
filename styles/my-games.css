@@ -8,7 +8,8 @@
     flex-wrap: wrap;
 }
 
-#my-games .game_container_container {
+#my-games .game_container_container,
+#bookmarked-games .game_container_container {
     position: relative;
     display: block;
 
@@ -23,7 +24,8 @@
     transition-duration: 500ms;
 }
 
-#my-games .game_container_container:hover {
+#my-games .game_container_container:hover,
+#bookmarked-games .game_container_container:hover {
     background-color: #111;
     padding: 25px;
 }
@@ -70,4 +72,18 @@
     background-image: url(../images/glyphs/incorrect.svg);
     background-size: contain;
     z-index: 40;
+}
+
+#my-games_menu button {
+    font-size: x-large;
+    padding: 15px;
+    margin: 10px;
+}
+
+#my-games_menu button.active {
+    background-color: #777;
+}
+
+#bookmarked-games {
+    display: none;
 }

@@ -57,7 +57,7 @@ select {
     width: 100%;
 }
 
-#pre-game-controls button {
+#pre-game-controls button, #toggle_bookmark {
     margin-bottom: 9px;
     border-radius: 11px;
     padding: 5px;

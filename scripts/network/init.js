@@ -78,6 +78,15 @@ async function loadGame(gameSuperId){
     NETWORK.userId = userId;
     NETWORK.refNum = refNum;
 
+    
+    // check if bookmarked
+    const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+    if (bookmarks.indexOf(`${gameId}_${refNum}`) > -1)
+        toggle_bookmarkElem.innerText = "Remove bookmark?";
+    else
+        toggle_bookmarkElem.innerText = "Add bookmark?";
+
+
     // in case user reconnects later, store the user id for this game in local storage
     // this will allow the server to recognize the user as one of the players.
     if (userId)

@@ -174,6 +174,8 @@ registerMenu("multiplayer-game",
         setExtraVisibility(false);
         setPuzzlesVisibility(false);
         gameState.allowVariations = false;
+
+        toggle_bookmarkElem.style.display = "block";
     },
     () => {
         stopWaitingForMove();
@@ -186,5 +188,7 @@ registerMenu("multiplayer-game",
 
         panel_rematchElem.style.display = "none";
         panel_goToBoardElem.style.display = "none";
+
+        toggle_bookmarkElem.style.display = "none";
     }
 );
