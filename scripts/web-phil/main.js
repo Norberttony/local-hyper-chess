@@ -17,8 +17,6 @@ catch(err){}
 
 const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
 
-const myBoard = new Board();
-
 
 onmessage = (e) => {
     console.log(e);
