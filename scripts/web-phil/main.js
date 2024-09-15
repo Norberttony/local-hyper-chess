@@ -7,7 +7,8 @@ importScripts(
     basePath + "/../../game/coords.js",
     basePath + "/../../game/move.js",
     basePath + "/../../game/piece.js",
-    basePath + "/../../game/game.js"
+    basePath + "/../../game/game.js",
+    basePath + "/../../graphics/san.js"
 );
 
 const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
@@ -45,10 +46,10 @@ function evaluate(board){
     return value;
 }
 
-// performs an alpha-beta negamax search.
+// performs an alpha-beta search.
 function think(board, depthPly, alpha = -Infinity, beta = Infinity){
     if (depthPly == 0)
-        return [evaluate(board), undefined];
+        return [ evaluate(board), undefined ];
 
     const isWhite = board.turn == Piece.white;
     let bestValue = isWhite ? -Infinity : Infinity;
@@ -78,7 +79,7 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity){
                 alpha = value;
                 if (alpha <= beta){
                     board.unmakeMove(m);
-                    return [value, m];
+                    return [ value, m ];
                 }
             }
         }else{
@@ -88,7 +89,7 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity){
                 beta = value;
                 if (beta <= alpha){
                     board.unmakeMove(m);
-                    return [value, m];
+                    return [ value, m ];
                 }
             }
         }
@@ -103,9 +104,9 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity){
         board.nextTurn();
         if (isSafe){
             // STALEMATE!!!
-            return [0, undefined];
+            return [ 0, undefined ];
         }
     }
     
-    return [bestValue, bestMove];
+    return [ bestValue, bestMove ];
 }
