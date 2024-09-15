@@ -79,7 +79,8 @@ class GraphicalState {
         this.jumpToVariation(this.mainVariation);
         
         const move = this.board.getMoveOfSAN(san);
-        this.makeMove(move);
+        if (move)
+            this.makeMove(move);
 
         this.jumpToVariation(previous);
     }

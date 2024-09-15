@@ -14,7 +14,8 @@ containerElem.addEventListener("single-scroll", (event) => {
         pollDatabase("POST", {
             type: "move",
             id: getMyId(),
-            move: variation.san
+            move: variation.san,
+            moveNum: NETWORK.moveNum
         });
 
         // start waiting for opponent's move
@@ -34,32 +35,36 @@ function waitForMove(){
     console.log("Begin waiting");
     return new Promise(async (res, rej) => {
         while (keepWaitingForMove){
-            const gameInfo = JSON.parse(
-                await pollDatabase("GET", {
+            try {
+                const rawData = await pollDatabase("GET", {
                     type: "gameStatus",
                     moveNum: NETWORK.moveNum + 1,
                     id: getMyId()
-                })
-            );
+                });
+                console.log(rawData);
 
-            console.log(gameInfo);
+                const gameInfo = JSON.parse(rawData);
 
-            if (!gameInfo || gameInfo.status == "err"){
-                res(gameInfo);
-                console.error(`Errored: ${gameInfo}`);
-            }else if (gameInfo.status == "ok"){
-                if (gameInfo.offers){
-                    networkHandleOffers(gameInfo.offers);
+                if (!gameInfo || gameInfo.status == "err"){
+                    res(gameInfo);
+                    console.error(`Errored: ${gameInfo}`);
+                }else if (gameInfo.status == "ok"){
+                    if (gameInfo.offers){
+                        networkHandleOffers(gameInfo.offers);
+                    }
+
+                    if (gameInfo.result){
+                        setResult(gameInfo.result, gameInfo.term);
+                    }
+
+                    if (gameInfo.move){
+                        if (networkHandleMove(gameInfo.move))
+                            res(gameInfo);
+                    }
                 }
-
-                if (gameInfo.result){
-                    setResult(gameInfo.result, gameInfo.term);
-                }
-
-                if (gameInfo.move){
-                    if (networkHandleMove(gameInfo.move))
-                        res(gameInfo);
-                }
+            }
+            catch(err){
+                console.error(err);
             }
 
             await sleep(1000);

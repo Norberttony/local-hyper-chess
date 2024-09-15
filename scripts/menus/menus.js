@@ -174,6 +174,8 @@ registerMenu("multiplayer-game",
     () => {
         stopWaitingForMove();
         gameState.allowVariations = true;
+        gameState.allowedSides[Piece.white] = true;
+        gameState.allowedSides[Piece.black] = true;
 
         // save state of analysis board
         analysisState.pgn = pgnText.value;
