@@ -1,25 +1,17 @@
 
-try {
-    importScripts(new URL("./scripts/game/game.js"));
-}
-catch(err){}
-
-try {
-    importScripts(new URL("scripts/game/game.js"));
-}
-catch(err){}
-
-try {
-    importScripts(new URL("/scripts/game/game.js"));
-}
-catch(err){}
-
+importScripts(
+    "../game/pre-game.js",
+    "../game/coords.js",
+    "../game/move.js",
+    "../game/piece.js",
+    "../game/game.js"
+);
 
 const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
 
+let board;
 
 onmessage = (e) => {
-    console.log(e);
 }
 
 
