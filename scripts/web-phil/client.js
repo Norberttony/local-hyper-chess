@@ -2,7 +2,8 @@
 const WEB_PHIL = {
     playing: false,
     worker: undefined,
-    userColor: Piece.white
+    userColor: Piece.white,
+    searchDepth: 3
 };
 
 {
@@ -72,5 +73,5 @@ containerElem.addEventListener("single-scroll", (event) => {
         return;
 
     WEB_PHIL.worker.postMessage({ cmd: "move", san: variation.san });
-    WEB_PHIL.worker.postMessage({ cmd: "search" });
+    WEB_PHIL.worker.postMessage({ cmd: "search", depth: WEB_PHIL.searchDepth });
 });
