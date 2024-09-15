@@ -1,16 +1,16 @@
 
 try {
-    console.log(new URL("./scripts/game/game.js"));
+    postMessage(new URL("./scripts/game/game.js"));
 }
 catch(err){}
 
 try {
-    console.log(new URL("scripts/game/game.js"));
+    postMessage(new URL("scripts/game/game.js"));
 }
 catch(err){}
 
 try {
-    console.log(new URL("/scripts/game/game.js"));
+    postMessage(new URL("/scripts/game/game.js"));
 }
 catch(err){}
 
