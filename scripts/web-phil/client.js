@@ -39,11 +39,15 @@ function playWebPhil(){
         if (!WEB_PHIL.playing)
             return;
 
-        const { cmd, val, bestMove } = e.data;
+        const { cmd, val, san } = e.data;
 
         if (cmd == "searchFinish"){
-            gameState.makeMove(bestMove);
-            gameState.applyChanges(false);
+            if (!gameState.currentVariation.isMain()){
+                gameState.addMoveToEnd(san);
+            }else{
+                gameState.makeMove(gameState.board.getMoveOfSAN(san));
+                gameState.applyChanges(false);
+            }
         }
     }
 
