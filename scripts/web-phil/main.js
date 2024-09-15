@@ -1,8 +1,21 @@
 
-console.log(new URL("../game/game.js"));
+try {
+    console.log(new URL("./scripts/game/game.js"));
+}
+catch(err){}
+
+try {
+    console.log(new URL("scripts/game/game.js"));
+}
+catch(err){}
+
+try {
+    console.log(new URL("/scripts/game/game.js"));
+}
+catch(err){}
 
 importScripts(
-    new URL("../game/game.js")
+    new URL("./game/game.js")
 );
 
 const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
