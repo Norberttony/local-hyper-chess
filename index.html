@@ -72,6 +72,7 @@
         <script defer src = "scripts/lobby/refresh.js"></script>
 
         <script defer src = "scripts/lobby/view-games.js"></script>
+        <script defer src = "scripts/lobby/featured-game.js"></script>
 
         
         <script defer src = "scripts/menus/init-hash.js"></script>
@@ -103,6 +104,12 @@
                 <span>FEN</span>
             </div>
             <div id = "lobby"></div>
+
+            <div id = "lobby_featured-game">
+                <h1 id = "lobby_featured-title">Featured Game</h1>
+                <div id = "lobby_featured-game-container"></div>
+                <button onclick = "goToFeaturedGame();">Go to game</button>
+            </div>
         </div>
 
         <div id = "container" class = "game_container_container blue cburnett">
@@ -243,11 +250,11 @@
 
         <div id = "board-template">
             <div class = "game_container_container blue cburnett">
-                <div class = "player">
+                <div class = "player white_player">
                     <span class = "name">Anonymous</span>
                 </div>
             
-                <div class = "player">
+                <div class = "player black_player">
                     <span class = "name">Anonymous</span>
                 </div>
             

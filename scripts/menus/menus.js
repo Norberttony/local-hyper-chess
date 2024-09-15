@@ -106,10 +106,14 @@ registerMenu("lobby",
 
         refreshChallenges();
         LOBBY.interval = setInterval(refreshChallenges, 10000);
+
+        fetchFeaturedGame();
     },
     () => {
         if (LOBBY.interval)
             clearInterval(LOBBY.interval);
+
+        stopUpdatingFeaturedGame();
     }
 );
 
