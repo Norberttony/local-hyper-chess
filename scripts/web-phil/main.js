@@ -1,17 +1,21 @@
 
+const workerUrl = location + "";
+const basePath = workerUrl.replace(/\/[^/]+$/, '/');
+
 importScripts(
-    "../game/pre-game.js",
-    "../game/coords.js",
-    "../game/move.js",
-    "../game/piece.js",
-    "../game/game.js"
+    basePath + "/../game/pre-game.js",
+    basePath + "/../game/coords.js",
+    basePath + "/../game/move.js",
+    basePath + "/../game/piece.js",
+    basePath + "/../game/game.js"
 );
 
 const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
 
-let board;
+const myBoard = new Board();
 
 onmessage = (e) => {
+    postMessage("Success!");
 }
 
 
