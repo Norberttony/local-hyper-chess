@@ -22,6 +22,7 @@ onmessage = (e) => {
         case "search":
             const [ val, bestMove ] = think(myBoard, e.data.depth);
             postMessage({ cmd: "searchFinish", val, san: getMoveSAN(myBoard, bestMove) });
+            myBoard.makeMove(bestMove);
             break;
         case "move":
             myBoard.makeMove(myBoard.getMoveOfSAN(e.data.san));
