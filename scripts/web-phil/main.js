@@ -1,16 +1,16 @@
 
 try {
-    postMessage(new URL("./scripts/game/game.js"));
+    importScripts(new URL("./scripts/game/game.js"));
 }
 catch(err){}
 
 try {
-    postMessage(new URL("scripts/game/game.js"));
+    importScripts(new URL("scripts/game/game.js"));
 }
 catch(err){}
 
 try {
-    postMessage(new URL("/scripts/game/game.js"));
+    importScripts(new URL("/scripts/game/game.js"));
 }
 catch(err){}
 
