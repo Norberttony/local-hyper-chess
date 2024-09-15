@@ -1,9 +1,8 @@
 
-console.log(import.meta.url);
-console.log(import.meta);
+console.log(new URL("../game/game.js"));
 
 importScripts(
-    new URL("../game/game.js", import.meta.url)
+    new URL("../game/game.js")
 );
 
 const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
