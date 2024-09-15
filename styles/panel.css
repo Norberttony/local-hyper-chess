@@ -13,7 +13,7 @@
     grid-area: extra;
 }
 
-input:not([type="checkbox"]), textarea {
+input:not([type="checkbox"]):not([type="radio"]), textarea {
     background-color: black;
     color: #EEE;
     border: 1px solid gray;
@@ -44,10 +44,10 @@ select {
     padding-bottom: 10px;
 }
 
-/* this is some bad CSS but... oh well... */
 #panel_draw {
     font-size: x-large;
 }
+
 #panel_draw::before {
     content: none;
 }
@@ -66,5 +66,9 @@ select {
 
 #panel_rematch, #panel_go-to-board {
     border: 1px solid darkslategray;
+    display: none;
+}
+
+#toggle_bookmark {
     display: none;
 }

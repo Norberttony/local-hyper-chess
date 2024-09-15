@@ -1,0 +1,28 @@
+
+#web-phil {
+    grid-area: game;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+
+    width: var(--game-width);
+    height: var(--game-height);
+    margin: auto;
+
+    background-color: rgba(0, 0, 0, 0.9);
+    font-size: x-large;
+
+    z-index: 30;
+}
+
+#web-phil button {
+    font-size: xx-large;
+    margin-top: 20px;
+}
+
+#web-phil input[type="radio"] {
+    width: 20px;
+    height: 20px;
+}

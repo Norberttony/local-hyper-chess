@@ -20,6 +20,7 @@
         <link href = "styles/coords.css"        rel = "stylesheet" type = "text/css"/>
         <link href = "styles/game.css"          rel = "stylesheet" type = "text/css"/>
         <link href = "styles/game-elems.css"    rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/web-phil.css"      rel = "stylesheet" type = "text/css"/>
         <link href = "styles/highlights.css"    rel = "stylesheet" type = "text/css"/>
         <link href = "styles/puzzles.css"       rel = "stylesheet" type = "text/css"/>
         <link href = "styles/style.css"         rel = "stylesheet" type = "text/css"/>
@@ -74,6 +75,7 @@
         <script defer src = "scripts/lobby/view-games.js"></script>
         <script defer src = "scripts/lobby/featured-game.js"></script>
 
+        <script defer src = "scripts/web-phil/client.js"></script>
         
         <script defer src = "scripts/menus/init-hash.js"></script>
 
@@ -104,6 +106,8 @@
 
         <div id = "lobby_container" style = "display: none;">
             <button id = "create-game-button" onclick = "showCreateGamePopup();">Click here to create your own challenge</button>
+            <p>Or</p>
+            <button id = "play-phil-button" onclick = "changeHash('#web-phil')">Play against a bot</button>
             <h1>Currently active public challenges:</h1>
             <div id = "header">
                 <span>ID</span>
@@ -182,6 +186,17 @@
                 <button id = "panel_set-fen" onclick = "setFEN();" spellcheck = "false">Set FEN</button>
                 <button id = "panel_copy-link" onclick = "copyLinkWithPGN();" spellcheck = "false">Copy Link To Board</button>
             </div>
+            
+            <form id = "web-phil" name = "web-phil" style = "display: none;">
+                <label for = "phil_color">You play as:</label>
+                <div>
+                    <input name = "phil_color" type = "radio" value = "white" checked = true> White
+                </div>
+                <div>
+                    <input name = "phil_color" type = "radio" value = "black"> Black
+                </div>
+                <input value = "Start Game" type = "submit">
+            </form>
 
             <div id = "dragging"></div>
         </div>

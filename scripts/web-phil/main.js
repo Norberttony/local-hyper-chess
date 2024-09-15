@@ -15,7 +15,20 @@ const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
 const myBoard = new Board();
 
 onmessage = (e) => {
-    postMessage("Success!");
+    const cmd = e.data.cmd;
+
+    switch(cmd){
+        case "search":
+            const [ val, bestMove ] = think(myBoard, e.data.depth);
+            postMessage({ cmd: "searchFinish", val, bestMove });
+            break;
+        case "move":
+            myBoard.makeMove(myBoard.getMoveOfSAN(e.data.san));
+            break;
+        case "fen":
+            myBoard.loadFEN(e.data.fen);
+            break;
+    }
 }
 
 

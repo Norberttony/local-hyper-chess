@@ -77,6 +77,8 @@ function changeHash(newHash, quiet = false){
         openMenu("lobby");
     }else if (newHash.startsWith("#game") || newHash.startsWith("#chall")){
         openMenu("multiplayer-game");
+    }else if (newHash.startsWith("#web-phil")){
+        openMenu("web-phil");
     }
 
     if (!quiet){
@@ -192,3 +194,19 @@ registerMenu("multiplayer-game",
         toggle_bookmarkElem.style.display = "none";
     }
 );
+
+registerMenu("web-phil",
+    () => {
+        activateContainer("container");
+        setNetworkVisibility(false);
+        setExtraVisibility(true);
+        setPuzzlesVisibility(false);
+        gameState.allowVariations = false;
+
+        document.getElementById("web-phil").style.display = "";
+    },
+    () => {
+        document.getElementById("web-phil").style.display = "none";
+        stopWebPhil();
+    }
+)
