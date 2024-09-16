@@ -62,11 +62,9 @@ class Board {
         return result;
     }
     // checks if the current player is checkmated... or stalemated...
-    isGameOver(){
+    isGameOver(moves = this.generateMoves()){
         if (this.result) return this.result;
 
-        let moves = this.generateMoves();
-        
         // yup. this code is not broken. ha ha.
         this.nextTurn();
 

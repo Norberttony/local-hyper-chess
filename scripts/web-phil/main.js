@@ -11,8 +11,6 @@ importScripts(
     basePath + "/../../graphics/san.js"
 );
 
-const pieceValues = [0, 9999999, 3, 6, 4, 8, 1, 8];
-
 const myBoard = new Board();
 
 onmessage = (e) => {
@@ -34,80 +32,125 @@ onmessage = (e) => {
 }
 
 
+const pieceValues = [
+    0,  // empty
+    999999999,  // king
+    3,  // retractor
+    6,  // chameleon
+    4,  // springer
+    8,  // coordinator
+    1,  // straddler
+    8   // immobilizer
+];
+
+const backRankPenalty = 0.5;
 
 function evaluate(board){
     let value = 0;
+    let s = 0;
     for (const p of board.squares){
+        const t = Piece.getType(p);
+
         if (Piece.ofColor(p, Piece.white)){
-            value += pieceValues[Piece.getType(p)];
-        }else{
-            value -= pieceValues[Piece.getType(p)];
+            value += pieceValues[t];
+
+            if (t != Piece.king){
+                if (s < 8 && t != Piece.king){
+                    value -= backRankPenalty;
+                }else if (s < 16){
+                    value -= 0.5 * backRankPenalty;
+                }
+            }
+        }else if (Piece.ofColor(p, Piece.black)){
+            value -= pieceValues[t];
+
+            if (t != Piece.king){
+                if (s >= 56){
+                    value += backRankPenalty;
+                }else if (s >= 48){
+                    value += 0.5 * backRankPenalty;
+                }
+            }
         }
+
+        s++;
     }
-    return value;
+    return board.turn == Piece.white ? value : -value;
 }
 
-// performs an alpha-beta search.
-function think(board, depthPly, alpha = -Infinity, beta = Infinity){
-    if (depthPly == 0)
-        return [ evaluate(board), undefined ];
+// keeps thinking about captures until none remain!
+function thinkCaptures(board, alpha = -Infinity, beta = Infinity){
 
-    const isWhite = board.turn == Piece.white;
-    let bestValue = isWhite ? -Infinity : Infinity;
-    let bestMove;
-    const moves = board.generateMoves(false).sort((a, b) => b.captures.length - a.captures.length);
+    const nowVal = evaluate(board);
+    if (nowVal >= beta)
+        return beta;
+
+    if (nowVal < alpha - 8){
+        return alpha;
+    }
+
+    if (nowVal > alpha)
+        alpha = nowVal;
+    
+    const moves = board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
+
     for (const m of moves){
+        if (m.captures.length == 0)
+            break;
+
         board.makeMove(m);
 
         let value;
 
-        // one of the kings is captured in this instance!
-        if (isWhite && board.kings[1] == 255){
-            value = 2 * pieceValues[1] - depthPly;
-        }else if (!isWhite && board.kings[0] == 255){
-            value = 2 * -pieceValues[1] + depthPly;
-        }else{
-            if (isWhite)
-                value = think(board, depthPly - 1, alpha, Infinity)[0];
-            else
-                value = think(board, depthPly - 1, -Infinity, beta)[0];
-        }
+        const res = board.isGameOver(moves);
+        if (res == "/")
+            value = 0;
+        else if (res == "#")
+            value = 9999999999;
+        else
+            value = -thinkCaptures(board, -beta, -alpha);
 
-        if (isWhite){
-            if (value >= bestValue){
-                bestValue = value;
-                bestMove = m;
-                alpha = value;
-                if (alpha <= beta){
-                    board.unmakeMove(m);
-                    return [ value, m ];
-                }
-            }
-        }else{
-            if (value <= bestValue){
-                bestValue = value;
-                bestMove = m;
-                beta = value;
-                if (beta <= alpha){
-                    board.unmakeMove(m);
-                    return [ value, m ];
-                }
-            }
-        }
-        
         board.unmakeMove(m);
+
+        if (value >= beta)
+            return beta;
+
+        if (value > alpha)
+            alpha = value;
     }
 
-    if (isWhite && bestValue < -pieceValues[1] || !isWhite && bestValue > pieceValues[1]){
-        // white is in big trouble. king is being captured no matter what... BUT! can I just stay and do nothing?
-        board.nextTurn();
-        const isSafe = !board.isAttacked(board.getEnemyKingSq());
-        board.nextTurn();
-        if (isSafe){
-            // STALEMATE!!!
-            return [ 0, undefined ];
+    return alpha;
+}
+
+function think(board, depthPly, alpha = -Infinity, beta = Infinity){
+    if (depthPly == 0)
+        return [ thinkCaptures(board, alpha, beta), undefined ];
+
+    let bestMove;
+    const moves = board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
+    for (const m of moves){
+        board.makeMove(m);
+
+        let value;
+        
+        const res = board.isGameOver(moves);
+        if (res == "/")
+            value = 0;
+        else if (res == "#")
+            value = 9999999999 - depthPly;
+        else
+            value = -think(board, depthPly - 1, -beta, -alpha)[0];
+
+        board.unmakeMove(m);
+
+        if (value >= beta)
+            return [ beta, undefined ];
+
+        if (value > alpha){
+            alpha = value;
+            bestMove = m;
         }
     }
-    
-    return [ bestValue, bestMove ];
+
+    return [ alpha, bestMove ];
 }
