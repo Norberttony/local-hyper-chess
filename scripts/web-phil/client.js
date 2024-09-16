@@ -41,6 +41,8 @@ function playWebPhil(){
 
         const { cmd, val, san } = e.data;
 
+        console.log(`Web Phil believes his position is valued at ${val}.`);
+
         if (cmd == "searchFinish"){
             if (!gameState.currentVariation.isMain()){
                 gameState.addMoveToEnd(san);
@@ -52,6 +54,10 @@ function playWebPhil(){
     }
 
     phil.postMessage({ type: "fen", fen: gameState.board.getFEN() });
+
+    // if not user's turn, it's web phil's turn!
+    if (WEB_PHIL.userColor != gameState.board.turn)
+        WEB_PHIL.worker.postMessage({ cmd: "search", depth: WEB_PHIL.searchDepth });
 }
 
 function stopWebPhil(){
