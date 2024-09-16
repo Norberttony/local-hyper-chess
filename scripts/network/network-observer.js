@@ -223,15 +223,23 @@ containerElem.addEventListener("result", (event) => {
             break;
     }
 
+    const myColor = NETWORK.myColor || (WEB_PHIL.userColor == Piece.white ? "white" : "black");
+
     // did this player win?
     let mewin;
     if (resultNum == 0){
         mewin = "drew";
-    }else if (NETWORK.myColor == "white" && resultNum == 1 || NETWORK.myColor == "black" && resultNum == -1){
+    }else if (myColor == "white" && resultNum == 1 || myColor == "black" && resultNum == -1){
         mewin = "won";
     }else{
         mewin = "lost";
     }
+
+    // avoid displaying the local result for spectating games
+    if (!myColor)
+        document.getElementById("result-box_local").style.display = "none";
+    else
+        document.getElementById("result-box_local").style.display = "";
 
     gameState.pgnData.setHeader("Termination", termination);
 

@@ -79,7 +79,7 @@ function evaluate(board){
 }
 
 // keeps thinking about captures until none remain!
-function thinkCaptures(board, alpha = -Infinity, beta = Infinity){
+function thinkCaptures(board, alpha = -Infinity, beta = Infinity, pregenMoves = undefined){
 
     const nowVal = evaluate(board);
     if (nowVal >= beta)
@@ -92,7 +92,7 @@ function thinkCaptures(board, alpha = -Infinity, beta = Infinity){
     if (nowVal > alpha)
         alpha = nowVal;
     
-    const moves = board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
+    const moves = pregenMoves || board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
 
     for (const m of moves){
         if (m.captures.length == 0)
@@ -100,15 +100,17 @@ function thinkCaptures(board, alpha = -Infinity, beta = Infinity){
 
         board.makeMove(m);
 
+        const nextDepthMoves = board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
+
         let value;
 
-        const res = board.isGameOver(moves);
+        const res = board.isGameOver(nextDepthMoves);
         if (res == "/")
             value = 0;
         else if (res == "#")
             value = 9999999999;
         else
-            value = -thinkCaptures(board, -beta, -alpha);
+            value = -thinkCaptures(board, -beta, -alpha, nextDepthMoves);
 
         board.unmakeMove(m);
 
@@ -122,24 +124,26 @@ function thinkCaptures(board, alpha = -Infinity, beta = Infinity){
     return alpha;
 }
 
-function think(board, depthPly, alpha = -Infinity, beta = Infinity){
+function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves = undefined){
     if (depthPly == 0)
-        return [ thinkCaptures(board, alpha, beta), undefined ];
+        return [ thinkCaptures(board, alpha, beta, pregenMoves), undefined ];
 
     let bestMove;
-    const moves = board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
+    const moves = pregenMoves || board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
     for (const m of moves){
         board.makeMove(m);
 
         let value;
+
+        const nextDepthMoves = board.generateMoves(true).sort((a, b) => b.captures.length - a.captures.length);
         
-        const res = board.isGameOver(moves);
+        const res = board.isGameOver(nextDepthMoves);
         if (res == "/")
             value = 0;
         else if (res == "#")
-            value = 9999999999 - depthPly;
+            value = 9999999999 + depthPly;
         else
-            value = -think(board, depthPly - 1, -beta, -alpha)[0];
+            value = -think(board, depthPly - 1, -beta, -alpha, nextDepthMoves)[0];
 
         board.unmakeMove(m);
 
