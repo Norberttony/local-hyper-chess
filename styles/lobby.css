@@ -18,6 +18,8 @@
     font-weight: bold;
     font-size: medium;
     padding: 10px;
+
+    box-sizing: border-box;
 }
 
 #lobby_container #header,

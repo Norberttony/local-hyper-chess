@@ -217,7 +217,7 @@ async function refreshBookmarkedGames(){
         }
 
         // server could not find game, or the user isn't playing this game.
-        if (gameInfo.status == "err" || gameInfo.color == "none"){
+        if (gameInfo.status == "err"){
             toRemove.push(b);
             continue;
         }
