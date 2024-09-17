@@ -104,12 +104,21 @@ function prepareBoardElem(id, gameInfo){
     return [ boardElem, board ];
 }
 
-async function refreshViewGames(){
+// when calling refreshViewGames directly, the website layout isn't recalculated or re-set until
+// everything finishes. So, it is separated by a setTimeout to allow the website to update
+// correctly.
+function refreshViewGamesSetup(){
     // start by clearing previous games
     myGamesElem.innerHTML = "";
     myGames_fetchingElem.innerText = "Fetching your games...";
     myGames_download.disabled = true;
 
+    setTimeout(() => {
+        refreshViewGames();
+    }, 100);
+}
+
+async function refreshViewGames(){
     if (typeof localStorage === "undefined"){
         myGames_fetchingElem.innerText = "Error: browser's local storage is not enabled";
         return;
@@ -204,6 +213,8 @@ async function refreshBookmarkedGames(){
     const bookmarkedGames = JSON.parse(localStorage.getItem("bookmarks") || "[]");
 
     let toRemove = [];
+
+    bookmarkedGamesElem.innerHTML = "";
 
     allMyBookmarks = [];
 

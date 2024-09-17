@@ -123,6 +123,10 @@ registerMenu("view-games",
     () => {
         document.getElementById("menu_my-games").classList.add("active");
         activateContainer("my-games_container");
+
+        // for some reason, activating this menu causes the entire UI to wait until all games
+        // are refreshed (even though it is async...?)
+        refreshViewGamesSetup();
     },
     () => {
 

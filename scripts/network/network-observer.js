@@ -223,7 +223,7 @@ containerElem.addEventListener("result", (event) => {
             break;
     }
 
-    const myColor = NETWORK.myColor || (WEB_PHIL.userColor == Piece.white ? "white" : "black");
+    const myColor = NETWORK.myColor || (WEB_PHIL.playing && WEB_PHIL.userColor == Piece.white ? "white" : "black");
 
     // did this player win?
     let mewin;

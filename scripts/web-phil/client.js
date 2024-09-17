@@ -85,3 +85,8 @@ containerElem.addEventListener("single-scroll", (event) => {
     WEB_PHIL.worker.postMessage({ cmd: "move", san: variation.san });
     WEB_PHIL.worker.postMessage({ cmd: "search", depth: WEB_PHIL.searchDepth });
 });
+
+window.addEventListener("beforeunload", (event) => {
+    if (WEB_PHIL.playing)
+        event.preventDefault();
+});

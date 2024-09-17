@@ -86,4 +86,5 @@
 
 #bookmarked-games {
     display: none;
+    flex-wrap: wrap;
 }
