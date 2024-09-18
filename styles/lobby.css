@@ -79,11 +79,11 @@
 }
 
 #lobby_featured-game-container .game_container_container .white_player {
-    grid-area: plyr_up;
+    grid-area: plyr_dn;
     border-radius: 5px 5px 0px 0px;
 }
 
 #lobby_featured-game-container .game_container_container .black_player {
-    grid-area: plyr_dn;
+    grid-area: plyr_up;
     border-radius: 0px 0px 5px 5px;
 }
