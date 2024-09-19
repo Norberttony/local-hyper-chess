@@ -171,8 +171,7 @@ function setResult(result, termination){
 
 // displays a result box
 containerElem.addEventListener("result", (event) => {
-    // if player can play out variations, they're not spectating or playing a multiplayer game
-    if (gameState.allowVariations)
+    if (!NETWORK.myColor && !WEB_PHIL.playing)
         return;
 
     const { result, turn, termination } = event.detail;

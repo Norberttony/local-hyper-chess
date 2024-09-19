@@ -1,13 +1,18 @@
 
-function getMoveSAN(board, move, moveList = board.generateMoves()){
+function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)){
     let SAN;
 
     /* collects information on move collision ambiguity */
     let sameMove = false;
     let sameFile = false;
     let sameRank = false;
-    for (const other of moveList){
+    for (const other of pseudoMoves){
         if (!(move.from == other.from) && move.to == other.to && Piece.ofType(board.squares[move.from], board.squares[other.from])){
+
+            // of course, ambiguity is only caused if the move is legal.
+            if (!board.isMoveLegal(other))
+                continue;
+
             // oh no, the move is ambiguous!
             sameMove = true;
 

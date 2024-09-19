@@ -820,7 +820,7 @@ class Board {
         const toSq = algebraicToSquare(san.substring(san.length - 2));
         const pieceType = FENToPiece[this.turn == Piece.white ? san[0] : san[0].toLowerCase()];
 
-        const moves = this.generateMoves(true);
+        const moves = this.generateMoves(false);
 
         for (const m of moves){
             // only consider SAN if to squares and piece types match

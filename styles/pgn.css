@@ -92,6 +92,7 @@
 
 #pgn_control > button, #play-game-controls > button {
     flex: 1;
+    user-select: none;
 }
 
 #pgn_control > button {
