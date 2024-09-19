@@ -13,6 +13,15 @@
     grid-area: extra;
 }
 
+#extra button {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#extra input {
+    font-size: large;
+}
+
 input:not([type="checkbox"]):not([type="radio"]), textarea {
     background-color: black;
     color: #EEE;

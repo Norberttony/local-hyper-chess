@@ -91,8 +91,8 @@ function changeHash(newHash, quiet = false){
             acceptChallenge(newHash.replace("#chall=", ""));
         }else if (newHash.startsWith("#board,pgn=")){
             const pgn = decodeURIComponent(newHash.replace("#board,pgn=", ""));
-            gameState.loadPGN(pgn);
             changeHash("#board", true);
+            gameState.loadPGN(pgn);
             return;
         }
     }
@@ -133,10 +133,6 @@ registerMenu("view-games",
     }
 );
 
-const analysisState = {
-    pgn: ""
-};
-
 registerMenu("analysis-board",
     () => {
         pgnText.value = gameState.pgnData.toString();
@@ -149,7 +145,7 @@ registerMenu("analysis-board",
     },
     () => {
         // save state of analysis board
-        analysisState.pgn = pgnText.value;
+        sessionStorage.setItem("analysisBoardPGN", pgnText.value);
     }
 );
 
@@ -169,7 +165,9 @@ registerMenu("puzzles",
         stopSolvingPuzzle();
         
         // reset the analysis board's state
-        gameState.loadPGN(analysisState.pgn);
+        const pgn = sessionStorage.getItem("analysisBoardPGN");
+        if (pgn)
+            gameState.loadPGN(pgn);
     }
 );
 
@@ -190,7 +188,7 @@ registerMenu("multiplayer-game",
         gameState.allowedSides[Piece.black] = true;
 
         // save state of analysis board
-        analysisState.pgn = pgnText.value;
+        sessionStorage.setItem("analysisBoardPGN", pgnText.value);
 
         panel_rematchElem.style.display = "none";
         panel_goToBoardElem.style.display = "none";

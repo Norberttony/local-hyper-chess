@@ -44,7 +44,7 @@ function playWebPhil(){
         console.log(`Web Phil believes his position is valued at ${val}.`);
 
         if (cmd == "searchFinish"){
-            if (!gameState.currentVariation.isMain()){
+            if (!gameState.currentVariation.isMain() || gameState.currentVariation.next.length > 0){
                 gameState.addMoveToEnd(san);
             }else{
                 gameState.makeMove(gameState.board.getMoveOfSAN(san));
@@ -80,6 +80,10 @@ containerElem.addEventListener("single-scroll", (event) => {
     const { prevVariation, variation, userInput } = event.detail;
 
     if (!userInput)
+        return;
+
+    // ensure user is making moves on the main variation itself
+    if (variation.next.length > 0 || !variation.isMain())
         return;
 
     WEB_PHIL.worker.postMessage({ cmd: "move", san: variation.san });

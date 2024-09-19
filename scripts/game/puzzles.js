@@ -244,11 +244,15 @@ function savePuzzlesSolvedData(data){
 
 async function fetchPuzzleData(){
     if (!PUZZLES){
+        showDialogBox("Fetching puzzles", "The puzzles are being fetched from the database, please wait...");
+        
         PUZZLES = tabulateData(await pollDatabase("GET", { type: "puzzles" }));
 
         // user might have missed new puzzles
         while (puzzlesSolved.length < PUZZLES.length){
             puzzlesSolved.push("0");
         }
+
+        hideDialogBox();
     }
 }

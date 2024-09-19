@@ -296,3 +296,9 @@ containerElem.addEventListener("variation-change", (event) => {
     fenText.value = gameState.board.getFEN();
 });
 fenText.value = StartingFEN;
+
+// whenever PGN changes on the analysis board, save it to session storage
+pgnText.addEventListener("change", () => {
+    if (window.location.hash.startsWith("#board"))
+        sessionStorage.setItem("analysisBoardPGN", pgnText.value);
+});
