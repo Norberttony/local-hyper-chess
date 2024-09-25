@@ -13,7 +13,7 @@ async function pollDatabase(method, params){
     const url = `${DB_URL}?${urlParams}`;
 
     try {
-        const res = await fetch(url);
+        const res = await fetch(url, { method });
 
         if (!res.ok)
             throw new Error(`ERROR: ${method} ${params} ${url}`);
