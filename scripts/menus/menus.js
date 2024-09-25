@@ -206,6 +206,7 @@ registerMenu("web-phil",
         gameState.allowVariations = false;
 
         document.getElementById("web-phil").style.display = "";
+        gameState.loadFEN(StartingFEN);
     },
     () => {
         document.getElementById("web-phil").style.display = "none";

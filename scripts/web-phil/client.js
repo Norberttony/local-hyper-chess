@@ -3,7 +3,7 @@ const WEB_PHIL = {
     playing: false,
     worker: undefined,
     userColor: Piece.white,
-    searchDepth: 3
+    thinkTime: 5000
 };
 
 {
@@ -39,9 +39,9 @@ function playWebPhil(){
         if (!WEB_PHIL.playing)
             return;
 
-        const { cmd, val, san } = e.data;
+        const { cmd, val, san, depth } = e.data;
 
-        console.log(`Web Phil believes his position is valued at ${val}.`);
+        console.log(`Web Phil believes his position is valued at ${val} after calculating to a depth of ${depth} ply.`);
 
         if (cmd == "searchFinish"){
             if (!gameState.currentVariation.isMain() || gameState.currentVariation.next.length > 0){
@@ -57,7 +57,7 @@ function playWebPhil(){
 
     // if not user's turn, it's web phil's turn!
     if (WEB_PHIL.userColor != gameState.board.turn)
-        WEB_PHIL.worker.postMessage({ cmd: "search", depth: WEB_PHIL.searchDepth });
+        WEB_PHIL.worker.postMessage({ cmd: "search", thinkTime: WEB_PHIL.thinkTime });
 }
 
 function stopWebPhil(){
@@ -87,7 +87,7 @@ containerElem.addEventListener("single-scroll", (event) => {
         return;
 
     WEB_PHIL.worker.postMessage({ cmd: "move", san: variation.san });
-    WEB_PHIL.worker.postMessage({ cmd: "search", depth: WEB_PHIL.searchDepth });
+    WEB_PHIL.worker.postMessage({ cmd: "search", thinkTime: WEB_PHIL.thinkTime });
 });
 
 window.addEventListener("beforeunload", (event) => {

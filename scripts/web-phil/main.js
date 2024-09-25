@@ -12,14 +12,32 @@ importScripts(
 );
 
 const myBoard = new Board();
+let startSearch = new Date();
+let thinkTime = Infinity;
 
 onmessage = (e) => {
     const cmd = e.data.cmd;
 
     switch(cmd){
         case "search":
-            const [ val, bestMove ] = think(myBoard, e.data.depth);
-            postMessage({ cmd: "searchFinish", val, san: getMoveSAN(myBoard, bestMove) });
+            startSearch = new Date();
+            thinkTime = e.data.thinkTime;
+
+            let bestVal;
+            let bestMove;
+
+            let d = 1;
+            for (; d <= 32; d++){
+                const [ val, move ] = think(myBoard, d);
+                if (move){
+                    bestVal = val;
+                    bestMove = move;
+                }
+
+                if (!isAllowedThink())
+                    break;
+            }
+            postMessage({ cmd: "searchFinish", val: bestVal, san: getMoveSAN(myBoard, bestMove), depth: d });
             myBoard.makeMove(bestMove);
             break;
         case "move":
@@ -81,6 +99,9 @@ function evaluate(board){
 // keeps thinking about captures until none remain!
 function thinkCaptures(board, alpha = -Infinity, beta = Infinity, pregenMoves = undefined){
 
+    if (!isAllowedThink())
+        return beta;
+
     const nowVal = evaluate(board);
     if (nowVal >= beta)
         return beta;
@@ -114,6 +135,9 @@ function thinkCaptures(board, alpha = -Infinity, beta = Infinity, pregenMoves = 
 
         board.unmakeMove(m);
 
+        if (!isAllowedThink())
+            return beta;
+
         if (value >= beta)
             return beta;
 
@@ -125,6 +149,9 @@ function thinkCaptures(board, alpha = -Infinity, beta = Infinity, pregenMoves = 
 }
 
 function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves = undefined){
+    if (!isAllowedThink())
+        return beta;
+
     if (depthPly == 0)
         return [ thinkCaptures(board, alpha, beta, pregenMoves), undefined ];
 
@@ -147,6 +174,9 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves 
 
         board.unmakeMove(m);
 
+        if (!isAllowedThink())
+            return beta;
+
         if (value >= beta)
             return [ beta, undefined ];
 
@@ -157,4 +187,9 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves 
     }
 
     return [ alpha, bestMove ];
+}
+
+// returns true if can still think, or false if out of time.
+function isAllowedThink(){
+    return (new Date() - startSearch) > thinkTime;
 }

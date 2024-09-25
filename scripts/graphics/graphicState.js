@@ -53,7 +53,6 @@ class GraphicalState {
             return;
         
         // check if one of the variations follows the other
-        console.log("Is prev?", cv.prev == gv || gv.prev == cv, cv, gv);
         if (cv.prev == gv || gv.prev == cv)
             this.dispatchEvent("single-scroll", { prevVariation: gv, variation: cv, userInput });
         
@@ -240,7 +239,7 @@ class GraphicalState {
         // start reading san
         let pgnSplit = pgn.split(" ");
         this.readVariation(pgnSplit, 0);
-        displayBoard();
+        this.applyChanges(false);
     }
 
     // parses a list of PGN tokens
