@@ -207,7 +207,8 @@ class GraphicalState {
         this.currentVariation = this.variationRoot;
         this.variationRoot.next = [];
 
-        displayBoard();
+        this.applyChanges(false);
+        this.graphicalVariation = this.variationRoot;
         this.dispatchEvent("loadFEN", { fen });
     }
 
@@ -240,6 +241,7 @@ class GraphicalState {
         let pgnSplit = pgn.split(" ");
         this.readVariation(pgnSplit, 0);
         this.applyChanges(false);
+        this.graphicalVariation = this.variationRoot;
     }
 
     // parses a list of PGN tokens

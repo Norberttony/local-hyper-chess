@@ -8,7 +8,7 @@ else
 // if user had PGN in session storage, load it
 {
     const pgn = sessionStorage.getItem("analysisBoardPGN");
-    if (pgn)
+    if (pgn && window.location.hash.startsWith("#board"))
         gameState.loadPGN(pgn);
 }
 

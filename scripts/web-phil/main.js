@@ -44,7 +44,9 @@ onmessage = (e) => {
             myBoard.makeMove(myBoard.getMoveOfSAN(e.data.san));
             break;
         case "fen":
+            console.log(`Setting myBoard FEN to ${e.data.fen}`);
             myBoard.loadFEN(e.data.fen);
+            console.log(`FEN set to ${myBoard.getFEN()}`);
             break;
     }
 }
