@@ -8,24 +8,21 @@ const NETWORK = {
 };
 
 
-function pollDatabase(method, params){
-    const xhr = new XMLHttpRequest();
-
+async function pollDatabase(method, params){
     const urlParams = new URLSearchParams(params);
     const url = `${DB_URL}?${urlParams}`;
 
-    const promise = new Promise((res, rej) => {
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState == 4){
-                res(xhr.responseText);
-            }
-        }
-    });
+    try {
+        const res = await fetch(url);
 
-    xhr.open(method, url);
-    xhr.send();
+        if (!res.ok)
+            throw new Error(`ERROR: ${method} ${params} ${url}`);
 
-    return promise;
+        return await res.text();
+    }
+    catch(err){
+        throw new Error(err);
+    }
 }
 
 function storeUserId(gameId, refNum, userId){

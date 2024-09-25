@@ -150,7 +150,7 @@ function thinkCaptures(board, alpha = -Infinity, beta = Infinity, pregenMoves = 
 
 function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves = undefined){
     if (!isAllowedThink())
-        return beta;
+        return [ beta, undefined ];
 
     if (depthPly == 0)
         return [ thinkCaptures(board, alpha, beta, pregenMoves), undefined ];
@@ -175,7 +175,7 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves 
         board.unmakeMove(m);
 
         if (!isAllowedThink())
-            return beta;
+            return [ beta, undefined ];
 
         if (value >= beta)
             return [ beta, undefined ];
