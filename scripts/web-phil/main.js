@@ -191,5 +191,5 @@ function think(board, depthPly, alpha = -Infinity, beta = Infinity, pregenMoves 
 
 // returns true if can still think, or false if out of time.
 function isAllowedThink(){
-    return (new Date() - startSearch) > thinkTime;
+    return (new Date() - startSearch) < thinkTime;
 }
