@@ -3,7 +3,7 @@ const WEB_PHIL = {
     playing: false,
     worker: undefined,
     userColor: Piece.white,
-    thinkTime: 5000
+    thinkTime: 1000
 };
 
 {
@@ -32,7 +32,7 @@ function playWebPhil(){
     WEB_PHIL.playing = true;
 
 
-    const phil = new Worker("./scripts/web-phil/main.js");
+    const phil = new Worker("./scripts/hyper-active/main.js");
     WEB_PHIL.worker = phil;
     
     phil.onmessage = (e) => {
@@ -42,8 +42,9 @@ function playWebPhil(){
         const { cmd, val, san, depth } = e.data;
 
         console.log(`Web Phil believes his position is valued at ${val} after calculating to a depth of ${depth} ply.`);
+        console.log(san);
 
-        if (cmd == "searchFinish"){
+        if (cmd == "searchFinished"){
             if (!gameState.currentVariation.isMain() || gameState.currentVariation.next.length > 0){
                 gameState.addMoveToEnd(san);
             }else{
