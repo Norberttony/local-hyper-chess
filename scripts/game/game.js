@@ -948,5 +948,15 @@ class Board {
 
         return FEN;
     }
+
+    getMoveOfLAN(LAN){
+        const moves = this.generateMoves(true);
+
+        for (const m of moves){
+            if (m.uci == LAN){
+                return m;
+            }
+        }
+    }
     // ==== END STATE UPDATES ==== //
 }
