@@ -14,9 +14,30 @@ importScripts(
 );
 
 const myBoard = new Board();
+let moduleLoaded = false;
 
-onmessage = (e) => {
+Module["onRuntimeInitialized"] = () => {
+    moduleLoaded = true;
+}
+run();
+
+onmessage = async (e) => {
     const cmd = e.data.cmd;
+
+    if (!moduleLoaded){
+        await new Promise((res, rej) => {
+
+            let to;
+            function wait(){
+                if (!moduleLoaded)
+                    to = setTimeout(wait, 300);
+                else
+                    res();
+            }
+
+            wait();
+        });
+    }
 
     switch(cmd){
         case "search":
