@@ -54,7 +54,7 @@ function playWebPhil(){
         }
     }
 
-    phil.postMessage({ type: "fen", fen: gameState.board.getFEN() });
+    phil.postMessage({ cmd: "fen", fen: gameState.board.getFEN() });
 
     // if not user's turn, it's web phil's turn!
     if (WEB_PHIL.userColor != gameState.board.turn)

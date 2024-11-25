@@ -24,19 +24,22 @@ run();
 onmessage = async (e) => {
     const cmd = e.data.cmd;
 
+    console.log(e.data);
+
     if (!moduleLoaded){
+        console.log("NOT LOADED. WAIT");
         await new Promise((res, rej) => {
 
-            let to;
             function wait(){
                 if (!moduleLoaded)
-                    to = setTimeout(wait, 300);
+                    setTimeout(wait, 300);
                 else
                     res();
             }
 
             wait();
         });
+        console.log("LOADED. EXECUTE", e.data);
     }
 
     switch(cmd){
@@ -102,7 +105,7 @@ function sendMove(move){
 
 function setFEN(fen){
     Module.ccall(
-        "loadFEN",
+        "loadFENWasm",
         null,
         [ "string" ],
         [ fen ]
