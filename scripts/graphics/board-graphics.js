@@ -19,6 +19,7 @@ class BoardGraphics {
         // set attributes
         this.skeleton = skeleton;
         this.boardDiv = boardDiv;
+        this.piecesDiv = piecesDiv;
         this.state = new Board();
 
         // determine if meant to create files and ranks.
@@ -32,7 +33,55 @@ class BoardGraphics {
             createBoardDraggingElem(skeleton);
     }
 
+    get isFlipped(){
+        return this.skeleton.classList.contains("board-graphics--flipped");
+    }
+
     addWidget(widget){
+
+    }
+
+    // if v is false: white perspective
+    // if v is true: black perspective
+    setFlip(v){
+        if (v != this.isFlipped)
+            this.flip();
+    }
+
+    // flips the board and then redisplays it
+    flip(){
+        this.skeleton.classList.toggle("board-graphics--flipped");
+        this.display();
+    }
+
+    display(){
+        setAllPiecesToPool(this.skeleton);
+        setAllMoveHighlightsToPool(this.skeleton);
+        setAllLastMoveHighlightsToPool(this.skeleton);
+
+        // highlight move from and move to
+        if (this.lastMove){
+            const toX = this.lastMove.to % 8;
+            const toY = Math.floor(this.lastMove.to / 8);
+            const fromX = this.lastMove.from % 8;
+            const fromY = Math.floor(this.lastMove.from / 8);
+            
+            const sq1 = getLastMoveHighlightFromPool(toX, toY, this.isFlipped);
+            const sq2 = getLastMoveHighlightFromPool(fromX, fromY, this.isFlipped);
+            this.piecesDiv.appendChild(sq1);
+            this.piecesDiv.appendChild(sq2);
+        }
+
+        // display all pieces on the board
+        for (let r = 0; r < 8; r++){
+            for (let f = 0; f < 8; f++){
+                const v = this.state.squares[r * 8 + f];
+                if (v){
+                    const piece = getPieceFromPool(f, r, this.isFlipped, Piece.getType(v), Piece.getColor(v));
+                    this.piecesDiv.appendChild(piece);
+                }
+            }
+        }
 
     }
 }
