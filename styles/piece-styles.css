@@ -1,56 +1,54 @@
 /* handles displaying proper images for pieces based on the indicated styles */
 
-/* unfortunately, this app uses tiling, but some of the images are not aligned that way. */
-
 /* CBURNETT */
-.game_container_container.cburnett .piece,
-.game_container_container.cburnett #dragging {
+.board-graphics--pieces-cburnett .piece,
+.board-graphics--pieces-cburnett .board-graphics__dragging {
     background-image: url(../images/pieces/cburnett.png);
 }
 
-.game_container_container.cburnett .k {
+.board-graphics--pieces-cburnett .k {
     background-position-x: 0%;
 }
-.game_container_container.cburnett .q {
+.board-graphics--pieces-cburnett .q {
     background-position-x: 16.666666666666666%;
 }
-.game_container_container.cburnett .b {
+.board-graphics--pieces-cburnett .b {
     background-position-x: 33.333333333333336%;
 }
-.game_container_container.cburnett .n {
+.board-graphics--pieces-cburnett .n {
     background-position-x: 50%;
 }
-.game_container_container.cburnett .r {
+.board-graphics--pieces-cburnett .r {
     background-position-x: 66.66666666666667%;
 }
-.game_container_container.cburnett .p {
+.board-graphics--pieces-cburnett .p {
     background-position-x: 83.33333333333333%;
 }
-.game_container_container.cburnett .u {
+.board-graphics--pieces-cburnett .u {
     background-position-x: 100%;
 }
 
 /* MERIDA */
-.game_container_container.merida .piece,
-.game_container_container.merida #dragging {
+.board-graphics--pieces-merida .piece,
+.board-graphics--pieces-merida .board-graphics__dragging {
     background-image: url(../images/pieces/merida.png);
 }
 
-.game_container_container.merida .r {
+.board-graphics--pieces-merida .r {
     background-position-x: 0%;
 }
-.game_container_container.merida .n {
+.board-graphics--pieces-merida .n {
     background-position-x: 20%;
 }
-.game_container_container.merida .b {
+.board-graphics--pieces-merida .b {
     background-position-x: 40%;
 }
-.game_container_container.merida .q {
+.board-graphics--pieces-merida .q {
     background-position-x: 60%;
 }
-.game_container_container.merida .k {
+.board-graphics--pieces-merida .k {
     background-position-x: 80%;
 }
-.game_container_container.merida .p {
+.board-graphics--pieces-merida .p {
     background-position-x: 100%;
 }

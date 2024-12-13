@@ -1,32 +1,37 @@
-#files, #ranks {
+
+.board-graphics__files,
+.board-graphics__ranks {
     font-weight: bold;
     font-family: "Noto Sans", Sans-Serif;
     padding-left: 2px;
 }
 
-#files div, #ranks div {
+.board-graphics__files > *,
+.board-graphics__ranks > * {
     flex: 1;
 }
 
-#files div:nth-child(2n + 1), #ranks div:nth-child(2n) {
+.board-graphics__files div:nth-child(2n + 1),
+.board-graphics__ranks div:nth-child(2n) {
     color: var(--secondary-color);
 }
 
-#files div:nth-child(2n), #ranks div:nth-child(2n + 1) {
+.board-graphics__files div:nth-child(2n),
+.board-graphics__ranks div:nth-child(2n + 1) {
     color: var(--primary-color);
 }
 
-.game_container_container.flipped #files div:nth-child(2n + 1),
-.game_container_container.flipped #ranks div:nth-child(2n) {
+.board-graphics--flipped .board-graphics__files div:nth-child(2n + 1),
+.board-graphics--flipped .board-graphics__ranks div:nth-child(2n) {
     color: var(--primary-color);
 }
 
-.game_container_container.flipped #files div:nth-child(2n),
-.game_container_container.flipped #ranks div:nth-child(2n + 1) {
+.board-graphics--flipped .board-graphics__files div:nth-child(2n),
+.board-graphics--flipped .board-graphics__ranks div:nth-child(2n + 1) {
     color: var(--secondary-color);
 }
 
-#files {
+.board-graphics__files {
     display: flex;
     flex-direction: row;
 
@@ -36,15 +41,15 @@
     width: 100%;
 }
 
-.game_container_container.flipped #files {
+.board-graphics--flipped .board-graphics__files {
     flex-direction: row-reverse;
 }
 
-.game_container_container.flipped #ranks {
+.board-graphics--flipped .board-graphics__ranks {
     flex-direction: column;
 }
 
-#ranks {
+.board-graphics__ranks {
     display: flex;
     flex-direction: column-reverse;
     position: absolute;
@@ -52,5 +57,3 @@
     top: 0px;
     height: 100%;
 }
-
-

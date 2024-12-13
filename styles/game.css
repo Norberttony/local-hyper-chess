@@ -1,3 +1,4 @@
+
 .game_container_container {
     --piece-width: calc(var(--game-width) / 8);
     --piece-height: calc(var(--game-height) / 8);
@@ -27,7 +28,7 @@
     user-select: none;
 }
 
-.game {
+.board-graphics__board {
     background-size: 100%;
     image-rendering: pixelated;
 

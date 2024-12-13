@@ -333,4 +333,4 @@ class GraphicalState {
     }
 }
 
-window.gameState = new GraphicalState(document.getElementById("container"));
+// window.gameState = new GraphicalState(document.getElementById("container"));

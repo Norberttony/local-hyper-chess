@@ -8,7 +8,7 @@
 // Of course, this entire file was built with the goal of just handling board rendering
 // calculations.
 
-var containerElem = document.getElementById("container");
+const mainBoardElem = document.getElementById("main-board");
 
 function roundToNearest8(n){
     return 8 * Math.floor(n / 8);
@@ -18,7 +18,7 @@ function resizeBoard(){
     const aspectRatio = window.innerWidth / window.innerHeight;
     let size;
 
-    const zoom = getComputedStyle(containerElem).getPropertyValue("--zoom");
+    const zoom = getComputedStyle(mainBoardElem).getPropertyValue("--zoom");
     const bodyRect = document.body.getBoundingClientRect();
 
     if (aspectRatio >= 1){
@@ -27,8 +27,8 @@ function resizeBoard(){
         size = roundToNearest8(bodyRect.width * zoom / 100);
     }
 
-    containerElem.style.setProperty("--game-width", `${size}px`);
-    containerElem.style.setProperty("--game-height", `${size}px`);
+    mainBoardElem.style.setProperty("--game-width", `${size}px`);
+    mainBoardElem.style.setProperty("--game-height", `${size}px`);
 }
 
 function windowResize(){

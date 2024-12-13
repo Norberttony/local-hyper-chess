@@ -1,5 +1,7 @@
 let testMove;
 
+window.gameState = new BoardGraphics(true, [], true, document.getElementById("main-board"));
+
 let lastMoveDisplay;
 let isDisplayFlipped = false;
 

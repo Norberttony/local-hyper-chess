@@ -40,6 +40,8 @@
         <script src = "scripts/game/test-suite.js"></script>
 
         <!-- graphics scripts -->
+        <script defer src = "scripts/graphics/board-graphics.js"></script>
+
         <script defer src = "scripts/pgn-view/variation.js"></script>
         <script defer src = "scripts/pgn-view/pgn-data.js"></script>
         <script defer src = "scripts/graphics/san.js"></script>
@@ -127,83 +129,9 @@
             </div>
         </div>
 
-        <div id = "container" class = "game_container_container blue cburnett">
-            <div id = "black_player" class = "player">
-                <span class = "name">Anonymous</span>
-            </div>
-
-            <div id = "white_player" class = "player">
-                <span class = "name">Anonymous</span>
-            </div>
-
-            <div id = "game_container" class = "game_container">
-                <div id = "game" class = "game">
-
-                </div>
-                <div id = "ranks"></div>
-                <div id = "files"></div>
-                <!-- user annotations are drawn on canvas -->
-                <canvas class = "annotations" width = 1200 height = 1200></canvas>
-            </div>
-
-            <div id = "panel">
-                <div id = "pre-game-controls">
-                    <button id = "panel_go-to-board" onclick = "changeHash('#board');">Go to the analysis board</button>
-                    <button id = "panel_rematch" onclick = "offerRematch();">Offer Rematch</button>
-                </div>
-                <button id = "toggle_bookmark" onclick = "toggleBookmark(this);">Add bookmark?</button>
-                <span id = "output"></span>
-                <div id = "pgn_control">
-                    <button onclick = "PGNMoveFirst();">&lt;&lt;</button>
-                    <button id = "pgn_control_prev">&lt;</button>
-                    <button id = "pgn_control_next">&gt;</button>
-                    <button onclick = "PGNMoveLast();">&gt;&gt;</button>
-                </div>
-                <div id = "pgn"></div>
-                <div id = "play-game-controls">
-                    <button class = "font-icon" data-icon = "" onclick = "flipBoard();"></button>
-                    <button class = "font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
-                    <button id = "panel_draw" onclick = "offerDraw();"><span>½</span></button>
-                    <button class = "font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>
-                </div>
-            </div>
-
-            <div id = "puzzles">
-                <div id = "puzzles_image_container">
-                    <img id = "puzzles_image" src = "">
-                </div>
-                <div id = "puzzles_control">
-                    <button id = "puzzles_back" onclick = "backPuzzle();">&lt;</button>
-                    <button id = "puzzles_rdm" onclick = "randomPuzzle();">Click to go to a random puzzle</button>
-                    <button id = "puzzles_next" onclick = "nextPuzzle();">&gt;</button>
-                </div>
-                <div id = "puzzles_title">TITLE</div>
-                <div id = "puzzles_diff">Intermediate</div>
-                <div id = "puzzles_solved">Unsolved</div>
-            </div>
-
-            <div id = "extra">
-                <textarea id = "pgnText" onfocus = "this.select();" spellcheck = "false"></textarea>
-                <button id = "panel_set-pgn" onclick = "setPGN();">Set PGN</button>
-                <input id = "fenText" onfocus = "this.select();">
-                <button id = "panel_set-fen" onclick = "setFEN();" spellcheck = "false">Set FEN</button>
-                <button id = "panel_copy-link" onclick = "copyLinkWithPGN();" spellcheck = "false">Copy Link To Board</button>
-            </div>
-            
-            <form id = "web-phil" name = "web-phil" style = "display: none;">
-                <label for = "phil_color">You play as:</label>
-                <div>
-                    <input name = "phil_color" type = "radio" value = "white" checked = true> White
-                </div>
-                <div>
-                    <input name = "phil_color" type = "radio" value = "black"> Black
-                </div>
-                <input value = "Start Game" type = "submit">
-            </form>
-
-            <div id = "dragging"></div>
+        <div id = "main-board" class = "board-graphics board-graphics--board-blue board-graphics--pieces-cburnett">
+            <div class = "board-graphics__board"></div>
         </div>
-
 
         <div id = "dialog-box-container">
             <div id = "dialog-box">

@@ -23,7 +23,8 @@ body {
 }
 
 @media (min-width: 1110px){
-    #container {
+    #main-board {
+        /*
         grid-template-areas:
             '. plyr_up .'
             '. game panel'
@@ -31,12 +32,14 @@ body {
             '. plyr_dn .'
             '. extra .';
         grid-template-columns: 0.8fr 1fr 1fr 0.4fr;
+        */
     }
 }
 
 @media (max-width: 1110px){
-    #container {
+    #main-board {
         --zoom: 100;
+        /*
         grid-template-areas:
             'plyr_up    '
             'game       '
@@ -45,6 +48,7 @@ body {
             'panel      '
             'extra      ';
         grid-template-rows: min-content min-content;
+        */
         width: 100%;
     }
     #puzzles, #panel {
@@ -54,7 +58,7 @@ body {
 }
 
 @media (min-aspect-ratio: 1/1){
-    #container {
+    #main-board {
         --zoom: 85;
         --game-width: calc(var(--zoom) * 1vh);
         --game-height: calc(var(--zoom) * 1vh);
@@ -65,7 +69,7 @@ body {
 }
 
 @media (max-aspect-ratio: 1/1){
-    #container {
+    #main-board {
         margin: 0px;
         --game-width: calc(100vw);
         --game-height: calc(100vw);
@@ -75,7 +79,7 @@ body {
     }
 }
 
-#container {
+#main-board {
     padding-top: 1vw;
 }
 

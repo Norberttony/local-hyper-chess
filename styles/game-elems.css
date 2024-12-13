@@ -8,7 +8,7 @@
     }
 }
 
-.game > * {
+.board-graphics__pieces > * {
     position: absolute;
     width: 12.5%;
     height: 12.5%;
@@ -62,7 +62,7 @@
 
 /* === Glyphs === */
 
-.game .glyph {
+.board-graphics__pieces .glyph {
     position: absolute;
     right: 0px;
 
@@ -80,6 +80,6 @@
     box-shadow: 2px 2px 6px black;
 }
 
-.game .font-icon.glyph::before {
+.board-graphics__pieces .font-icon.glyph::before {
     font-size: calc(0.4 * var(--piece-height));
 }
