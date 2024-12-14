@@ -37,8 +37,6 @@ function getLastMoveHighlightFromPool(f, r, boardFlipped){
 function getPieceFromPool(f, r, boardFlipped, pieceType, pieceColor){
     let piece = fetchElem("piece", f, r, boardFlipped);
 
-    piece.onpointerdown = piecePointerdown;
-
     piece.id = `${f}_${r}`;
 
     piece.style.backgroundPositionY = colorToBackground[pieceColor];

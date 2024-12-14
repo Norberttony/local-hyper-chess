@@ -1,5 +1,5 @@
 
-.game_container_container {
+.board-graphics {
     --piece-width: calc(var(--game-width) / 8);
     --piece-height: calc(var(--game-height) / 8);
 
@@ -8,14 +8,11 @@
     margin: auto;
 }
 
-.game_container {
+.board-graphics__board {
     --primary-color: rgb(47 88 139);
     --secondary-color: rgb(234 233 210);
     --move-highlight-color: #262421;
     --last-move-highlight-color: rgb(0, 165, 255);
-
-    --piece-width: calc(var(--game-width) / 8);
-    --piece-height: calc(var(--game-height) / 8);
 
     position: relative;
     grid-area: game;

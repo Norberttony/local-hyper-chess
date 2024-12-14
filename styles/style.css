@@ -24,7 +24,6 @@ body {
 
 @media (min-width: 1110px){
     #main-board {
-        /*
         grid-template-areas:
             '. plyr_up .'
             '. game panel'
@@ -32,14 +31,12 @@ body {
             '. plyr_dn .'
             '. extra .';
         grid-template-columns: 0.8fr 1fr 1fr 0.4fr;
-        */
     }
 }
 
 @media (max-width: 1110px){
     #main-board {
         --zoom: 100;
-        /*
         grid-template-areas:
             'plyr_up    '
             'game       '
@@ -48,7 +45,6 @@ body {
             'panel      '
             'extra      ';
         grid-template-rows: min-content min-content;
-        */
         width: 100%;
     }
     #puzzles, #panel {

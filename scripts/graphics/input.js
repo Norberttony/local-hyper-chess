@@ -1,70 +1,85 @@
 // This file handles the way that the user might interact with the game board via dragging pieces.
 
 // make pieces draggable
-let currentMoves;
-let selected;
-let dragging;
+const INPUT = {
+    currentMoves: undefined,
+    selected: undefined,
+    draggingElem: undefined,
+    gameState: undefined,
+    testMove: undefined
+};
+
+function setInputTarget(gameState, draggingElem, event){
+    INPUT.gameState = gameState;
+    INPUT.draggingElem = draggingElem;
+
+    piecePointerdown(event);
+}
 
 // sets the elements dragging position based on the user's pointer position
 function setDraggingElemPos(pageX, pageY){
-    if (!dragging)
+    if (!INPUT.dragging)
         return;
-    draggingElem.style.left = `calc(${pageX}px - var(--piece-width) / 2)`;
-    draggingElem.style.top = `calc(${pageY}px - var(--piece-height) / 2)`;
+    INPUT.draggingElem.style.left = `calc(${pageX}px - var(--piece-width) / 2)`;
+    INPUT.draggingElem.style.top = `calc(${pageY}px - var(--piece-height) / 2)`;
 }
 
 document.addEventListener("pointermove", (event) => {
-    if (dragging)
+    if (INPUT.dragging)
         event.preventDefault();
     setDraggingElemPos(event.pageX, event.pageY);
 });
 
 // prevent scrolling and glitches on mobile devices when thing is being dragged
 document.addEventListener("touchmove", (event) => {
-    if (dragging)
+    if (INPUT.dragging)
         event.preventDefault();
 }, { passive: false });
 
 function piecePointerdown(event){
+    const elem = event.target;
     if (event.button !== undefined && event.button != 0)
         return;
 
-    setAllMoveHighlightsToPool();
+    if (!elem.classList.contains("moveHighlight"))
+        setAllMoveHighlightsToPool(INPUT.gameState.skeleton);
+    else
+        return;
 
-    let coords = this.id.split("_");
-    let square = parseInt(coords[0]) + parseInt(coords[1] * 8);
+    const coords = elem.id.split("_");
+    const square = parseInt(coords[0]) + parseInt(coords[1] * 8);
 
     // check with gameState if the piece can move
     if (!gameState.canMove(square))
         return;
 
-    const piece = gameState.board.squares[square];
+    const piece = gameState.state.squares[square];
 
-    dragging = this;
-    selected = this;
-    this.classList.add("dragged");
+    INPUT.dragging = elem;
+    INPUT.selected = elem;
+    elem.classList.add("dragged");
     // copy over graphics
-    draggingElem.style.backgroundPositionY = dragging.style.backgroundPositionY;
+    INPUT.draggingElem.style.backgroundPositionY = INPUT.dragging.style.backgroundPositionY;
     // to-do: referencing specific index in classList is unreliable.
-    draggingElem.className = "";
-    draggingElem.classList.add(dragging.classList[1]);
-    draggingElem.style.display = "block";
+    INPUT.draggingElem.className = "board-graphics__dragging";
+    INPUT.draggingElem.classList.add(INPUT.dragging.classList[1]);
+    INPUT.draggingElem.style.display = "block";
 
     setDraggingElemPos(event.pageX, event.pageY);
 
     // get moves for selected piece and display them
-    currentMoves = gameState.board.generatePieceMoves(square, piece);
-    for (let i = 0; i < currentMoves.length; i++){
-        let move = currentMoves[i];
+    INPUT.currentMoves = gameState.state.generatePieceMoves(square, piece);
+    for (let i = 0; i < INPUT.currentMoves.length; i++){
+        const move = INPUT.currentMoves[i];
         
-        let highlight = getMoveHighlightFromPool(move.to % 8, Math.floor(move.to / 8), isDisplayFlipped);
+        const highlight = getMoveHighlightFromPool(move.to % 8, Math.floor(move.to / 8), INPUT.gameState.isFlipped);
         highlight.id = `moveHighlight_${i}`;
 
         // if move is a capture, update highlight graphically to indicate that
         if (move.captures.length > 0)
             highlight.classList.add("capture");
 
-        gameElem.appendChild(highlight);
+        gameState.piecesDiv.appendChild(highlight);
     }
 }
 
@@ -72,9 +87,9 @@ function draggingPointerup(event){
     if (event.button == 2)
         return;
 
-    if (dragging){
-        dragging.classList.remove("dragged");
-        draggingElem.style.display = "none";
+    if (INPUT.dragging){
+        INPUT.dragging.classList.remove("dragged");
+        INPUT.draggingElem.style.display = "none";
     }
     
     let highlight = event.target;
@@ -86,22 +101,22 @@ function draggingPointerup(event){
     
     // player let go at a highlight, indicating they're moving the piece there.
     if (highlight.classList.contains("moveHighlight")){
-        testMove = currentMoves[parseInt(highlight.id.replace("moveHighlight_", ""))];
+        INPUT.testMove = INPUT.currentMoves[parseInt(highlight.id.replace("moveHighlight_", ""))];
 
         // testMove handlers
-        gameState.makeMove(testMove);
+        gameState.makeMove(INPUT.testMove);
         gameState.applyChanges(true);
-        testMove = undefined;
+        INPUT.testMove = undefined;
 
         // clear all moves from board
         setAllMoveHighlightsToPool();
     }
 
-    if (!dragging){
+    if (!INPUT.dragging){
         // clear all moves from board
         setAllMoveHighlightsToPool();
     }else{
-        dragging = undefined;
+        INPUT.dragging = undefined;
     }
 }
 

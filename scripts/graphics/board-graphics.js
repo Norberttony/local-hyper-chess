@@ -21,6 +21,35 @@ class BoardGraphics {
         this.boardDiv = boardDiv;
         this.piecesDiv = piecesDiv;
         this.state = new Board();
+        this.allowInputFrom = { [Piece.white]: allowDragging, [Piece.black]: allowDragging };
+        this.piecePointerDown = createPiecePointerDown(this);
+        this.board = new Board();
+
+        // threefold and draws require keeping track of repeated positions, and when the last
+        // capture was performed.
+        this.positions = {};
+        this.lastCapture = 0;
+
+        // variations in the position are stored via a tree. The root is the very first empty
+        // variation (sentinel node).
+        this.variationRoot = new Variation();
+
+        // This set-up allows quickly adding more moves at the end of the main variation, without
+        // performing any additional tree searches.
+        this.mainVariation = this.variationRoot;
+
+        // pgnData allows reading in the current variation.
+        this.pgnData = new PGNData(this.variationRoot);
+
+        // currentVariation points to the currently active variation that a piece of code or the
+        // user is viewing. It is not necessarily the variation currently displayed to the user.
+        this.currentVariation = this.variationRoot;
+
+        // graphicalVariation points to the variation currently displayed to the user. If
+        // currentVariation does not match with graphicalVariation, applyChanges should be called.
+        this.graphicalVariation = this.currentVariation;
+
+        boardDiv.onpointerdown = this.piecePointerDown;
 
         // determine if meant to create files and ranks.
         if (displayRanksAndFiles)
@@ -29,8 +58,11 @@ class BoardGraphics {
         for (const w of widgets)
             this.addWidget(w);
 
-        if (allowDragging)
-            createBoardDraggingElem(skeleton);
+        if (allowDragging){
+            this.draggingElem = createBoardDraggingElem(skeleton);
+
+
+        }
     }
 
     get isFlipped(){
@@ -40,6 +72,180 @@ class BoardGraphics {
     addWidget(widget){
 
     }
+
+    // =========================== //
+    // === HANDLING VARIATIONS === //
+    // =========================== //
+
+    applyChanges(userInput = false){
+        this.display();
+
+        const cv = this.currentVariation;
+        const gv = this.graphicalVariation;
+
+        // no variation changes!
+        if (cv == gv)
+            return;
+        
+        // check if one of the variations follows the other
+        if (cv.prev == gv || gv.prev == cv)
+            this.dispatchEvent("single-scroll", { prevVariation: gv, variation: cv, userInput });
+        
+        this.graphicalVariation = this.currentVariation;
+
+        this.dispatchEvent("variation-change", { variation: cv });
+
+        // apply any relevant glyphs
+        if (cv.move){
+            const toX = cv.move.to % 8;
+            const toY = Math.floor(cv.move.to / 8);
+            
+            // attach any relevant glyphs
+            for (const g of cv.glyphs){
+                attachGlyph(document.getElementById(`${toX}_${toY}`), g);
+            }
+        }
+    }
+
+    // board jumps to the given variation
+    jumpToVariation(variation){
+        const ca = this.currentVariation.findCommonAncestor(variation);
+
+        // build the path of nodes from the common ancestor to the given variation
+        const path = [];
+        let iter = variation;
+        while (iter != ca){
+            path.unshift(iter.location);
+            iter = iter.prev;
+        }
+
+        // go to the common ancestor
+        while (this.currentVariation != ca)
+            this.previousVariation();
+
+        // go forth to the given variation
+        for (const n of path)
+            this.nextVariation(n);
+    }
+
+    // chooses one of the next variations to play
+    nextVariation(index = 0){
+        const variation = this.currentVariation.next[index];
+        if (variation){
+            this.board.makeMove(variation.move);
+
+            // position reoccurs
+            this.positions[this.board.getPosition()]++;
+
+            this.lastCapture = variation.fiftyMoveRuleCounter;
+
+            this.currentVariation = variation;
+            return true;
+        }
+        return false;
+    }
+
+    // goes back a variation
+    previousVariation(){
+        if (this.currentVariation.prev){
+            // position "unoccurs"
+            this.positions[this.board.getPosition()]--;
+
+            this.lastCapture = this.currentVariation.fiftyMoveRuleCounter;
+
+            this.board.unmakeMove(this.currentVariation.move);
+            this.currentVariation = this.currentVariation.prev;
+            return true;
+        }
+        return false;
+    }
+
+    // ========================== //
+    // === HANDLING MAKE MOVE === //
+    // ========================== //
+
+    // returns true if the player can move the piece at the given square. Otherwise, returns false.
+    canMove(sq){
+        const piece = this.state.squares[sq];
+        const col = Piece.getColor(piece);
+        return this.allowInputFrom[col] && !this.state.isImmobilized(sq, piece) && this.state.turn == col;
+    }
+
+    addMoveToEnd(san){
+        const previous = this.currentVariation;
+
+        this.jumpToVariation(this.mainVariation);
+        
+        const move = this.board.getMoveOfSAN(san);
+        if (move)
+            this.makeMove(move);
+
+        this.jumpToVariation(previous);
+    }
+
+    
+    // assumes move is legal
+    // performs the move without making any graphical updates. To perform graphical updates, run the
+    // applyChanges method.
+    makeMove(move){
+        const SAN = getMoveSAN(this.state, move);
+        
+        // search for an existing variation with this move
+        for (const v of this.currentVariation.next){
+            if (v.san == SAN){
+                this.nextVariation(v.location);
+                return;
+            }
+        }
+        
+        // otherwise create a new variation
+        const variation = new Variation(move);
+        variation.san = SAN;
+
+        variation.attachTo(this.currentVariation);
+
+        this.currentVariation = variation;
+
+        this.dispatchEvent("new-variation", { variation });
+
+        // continue the main variation if necessary
+        if (variation.prev == this.mainVariation)
+            this.mainVariation = variation;
+
+        this.state.makeMove(move);
+
+        // keep track of repeated positions for three fold repetition
+        let pos = this.state.getPosition();
+        if (this.positions[pos]) this.positions[pos]++;
+        else                     this.positions[pos] = 1;
+
+        // the only issue is that this does not handle board (if moved to its latest state)
+        if (this.positions[pos] >= 3)
+            this.state.setResult("/", "three-fold repetition");
+
+        // handle the fifty move rule
+        this.lastCapture++;
+        if (move.captures.length > 0){
+            this.lastCapture = 0;
+        }
+        variation.fiftyMoveRuleCounter = this.lastCapture;
+        if (this.lastCapture >= 100)
+            this.state.setResult("/", "fifty move rule");
+
+        // check and dispatch event for any results
+        this.state.isGameOver();
+        if (this.state.result){
+            this.dispatchEvent("result", {
+                result:         this.state.result,
+                turn:           this.state.turn,
+                termination:    this.state.termination
+            });
+        }
+    }
+
+    // ============================== //
+    // === HANDLING BOARD DISPLAY === //
+    // ============================== //
 
     // if v is false: white perspective
     // if v is true: black perspective
@@ -83,6 +289,17 @@ class BoardGraphics {
             }
         }
 
+    }
+
+    // allows this object to be garbage collected.
+    // do not use the object after running this method.
+    // only run this method if you intend to delete the BoardGraphics object entirely.
+    allowGC(){
+        delete this.piecePointerDown;
+    }
+    
+    dispatchEvent(name, detail){
+        this.skeleton.dispatchEvent(new CustomEvent(name, { detail }));
     }
 }
 
@@ -130,4 +347,11 @@ function createBoardDraggingElem(skeleton){
     const drag = document.createElement("div");
     drag.classList.add("board-graphics__dragging");
     skeleton.appendChild(drag);
+    return drag;
+}
+
+function createPiecePointerDown(gameState){
+    return (event) => {
+        setInputTarget(gameState, gameState.draggingElem, event);
+    };
 }
