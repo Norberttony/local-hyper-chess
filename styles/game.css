@@ -14,8 +14,11 @@
     --move-highlight-color: #262421;
     --last-move-highlight-color: rgb(0, 165, 255);
 
+    background-size: 100%;
+    image-rendering: pixelated;
+
     position: relative;
-    grid-area: game;
+    grid-area: board;
 
     margin: auto;
 
@@ -23,14 +26,4 @@
     height: var(--game-height);
 
     user-select: none;
-}
-
-.board-graphics__board {
-    background-size: 100%;
-    image-rendering: pixelated;
-
-    position: relative;
-
-    width: var(--game-width);
-    height: var(--game-height);
 }

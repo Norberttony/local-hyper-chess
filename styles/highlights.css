@@ -1,22 +1,23 @@
-.moveHighlight {
+
+.board-graphics__move-highlight {
     opacity: 0.25;
     border-radius: 100%;
     z-index: 3;
 }
 
-.moveHighlight:not(.capture){
+.board-graphics__move-highlight:not(.board-graphics__move-highlight--capture) {
     background-color: var(--move-highlight-color);
     background-clip: content-box;
     box-sizing: border-box;
     padding: 4.2%;
 }
 
-.moveHighlight.capture {
+.board-graphics__move-highlight--capture {
     border: 8px solid var(--move-highlight-color);
     box-sizing: border-box;
 }
 
-.lastMoveHighlight {
+.board-graphics__move-highlight--last {
     background-color: var(--last-move-highlight-color);
     opacity: 0.5;
     z-index: 0;

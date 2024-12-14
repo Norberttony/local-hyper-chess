@@ -1,5 +1,7 @@
 
-window.gameState = new BoardGraphics(true, [], true, document.getElementById("main-board"));
+window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
+
+const aw = new AnnotatorWidget(gameState);
 
 gameState.display();
 

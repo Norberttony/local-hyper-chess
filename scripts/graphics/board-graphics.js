@@ -4,7 +4,7 @@
 // of widgets, that may listen to relevant state changes.
 
 class BoardGraphics {
-    constructor(allowDragging = true, widgets = [], displayRanksAndFiles = false, skeleton = null){
+    constructor(allowDragging = true, displayRanksAndFiles = false, skeleton = null){
         if (!skeleton)
             skeleton = createSkeleton();
 
@@ -20,6 +20,7 @@ class BoardGraphics {
         this.skeleton = skeleton;
         this.boardDiv = boardDiv;
         this.piecesDiv = piecesDiv;
+        this.widgetNames = new Set();
         this.state = new Board();
         this.allowInputFrom = { [Piece.white]: allowDragging, [Piece.black]: allowDragging };
         this.piecePointerDown = createPiecePointerDown(this);
@@ -55,8 +56,12 @@ class BoardGraphics {
         if (displayRanksAndFiles)
             addFilesAndRanks(boardDiv);
 
-        for (const w of widgets)
-            this.addWidget(w);
+        // create widget containers
+        for (const name of [ "left", "top_bar", "bottom_bar", "right", "bottom" ]){
+            const w = document.createElement("div");
+            w.classList.add(`board-graphics__${name}`);
+            skeleton.appendChild(w);
+        }
 
         if (allowDragging){
             this.draggingElem = createBoardDraggingElem(skeleton);
@@ -67,10 +72,6 @@ class BoardGraphics {
 
     get isFlipped(){
         return this.skeleton.classList.contains("board-graphics--flipped");
-    }
-
-    addWidget(widget){
-
     }
 
     // =========================== //

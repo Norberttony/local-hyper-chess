@@ -41,7 +41,7 @@ function piecePointerdown(event){
     if (event.button !== undefined && event.button != 0)
         return;
 
-    if (!elem.classList.contains("moveHighlight"))
+    if (!elem.classList.contains("board-graphics__move-highlight"))
         setAllMoveHighlightsToPool(INPUT.gameState.skeleton);
     else
         return;
@@ -77,7 +77,7 @@ function piecePointerdown(event){
 
         // if move is a capture, update highlight graphically to indicate that
         if (move.captures.length > 0)
-            highlight.classList.add("capture");
+            highlight.classList.add("board-graphics__move-highlight--capture");
 
         gameState.piecesDiv.appendChild(highlight);
     }
@@ -100,7 +100,7 @@ function draggingPointerup(event){
     }
     
     // player let go at a highlight, indicating they're moving the piece there.
-    if (highlight.classList.contains("moveHighlight")){
+    if (highlight.classList.contains("board-graphics__move-highlight")){
         INPUT.testMove = INPUT.currentMoves[parseInt(highlight.id.replace("moveHighlight_", ""))];
 
         // testMove handlers

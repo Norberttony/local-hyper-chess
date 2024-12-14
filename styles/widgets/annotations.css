@@ -1,6 +1,6 @@
 /* didn't know where to put this. this file styles the canvas is for drawing user annotations */
 
-.annotations {
+.board-graphics__annotations {
     position: absolute;
     left: 0px;
     top: 0px;
@@ -12,11 +12,11 @@
 
     /*
         so that annotations doesn't block mouse button 1 events; the mouse button 2 listener is
-        attached to the game element. 
+        attached to the board element. 
     */
     pointer-events: none;
 }
 
-.game_container_container.flipped .annotations {
+.board-graphics--flipped .board-graphics__annotations {
     transform: rotate(180deg);
 }

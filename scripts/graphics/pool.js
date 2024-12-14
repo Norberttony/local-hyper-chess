@@ -25,12 +25,12 @@ function setElemLocation(elem, f, r, boardFlipped = isDisplayFlipped){
 
 // either creates a completely new move highlight, or fetches an unused element.
 function getMoveHighlightFromPool(f, r, boardFlipped){
-    return fetchElem("moveHighlight", f, r, boardFlipped);
+    return fetchElem("board-graphics__move-highlight", f, r, boardFlipped);
 }
 
 // either creates a completely new move highlight, or fetches an unused element.
 function getLastMoveHighlightFromPool(f, r, boardFlipped){
-    return fetchElem("lastMoveHighlight", f, r, boardFlipped);
+    return fetchElem("board-graphics__move-highlight--last", f, r, boardFlipped);
 }
 
 // either creates a completely new piece, or fetches an unused element.
@@ -68,12 +68,12 @@ function setAllPiecesToPool(container){
 
 // puts all highlights back into pool.
 function setAllMoveHighlightsToPool(container){
-    setClassToPool("moveHighlight", container);
+    setClassToPool("board-graphics__move-highlight", container);
 }
 
 // puts all last move highlights back into pool.
 function setAllLastMoveHighlightsToPool(container){
-    setClassToPool("lastMoveHighlight", container);
+    setClassToPool("board-graphics__move-highlight--last", container);
 }
 
 // attaches a glyph to the piece element
