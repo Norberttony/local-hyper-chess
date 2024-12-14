@@ -46,7 +46,10 @@ function piecePointerdown(event){
     else
         return;
 
-    const coords = elem.id.split("_");
+    if (!elem.dataset.coords)
+        return;
+
+    const coords = elem.dataset.coords.split("_");
     const square = parseInt(coords[0]) + parseInt(coords[1] * 8);
 
     // check with gameState if the piece can move
@@ -57,12 +60,12 @@ function piecePointerdown(event){
 
     INPUT.dragging = elem;
     INPUT.selected = elem;
-    elem.classList.add("dragged");
+    elem.classList.add("board-graphics__piece--dragged");
     // copy over graphics
     INPUT.draggingElem.style.backgroundPositionY = INPUT.dragging.style.backgroundPositionY;
-    // to-do: referencing specific index in classList is unreliable.
+
     INPUT.draggingElem.className = "board-graphics__dragging";
-    INPUT.draggingElem.classList.add(INPUT.dragging.classList[1]);
+    INPUT.draggingElem.classList.add(`board-graphics__piece--type-${INPUT.dragging.dataset.pieceType}`);
     INPUT.draggingElem.style.display = "block";
 
     setDraggingElemPos(event.pageX, event.pageY);
@@ -73,7 +76,7 @@ function piecePointerdown(event){
         const move = INPUT.currentMoves[i];
         
         const highlight = getMoveHighlightFromPool(move.to % 8, Math.floor(move.to / 8), INPUT.gameState.isFlipped);
-        highlight.id = `moveHighlight_${i}`;
+        highlight.dataset.index = i;
 
         // if move is a capture, update highlight graphically to indicate that
         if (move.captures.length > 0)
@@ -88,7 +91,7 @@ function draggingPointerup(event){
         return;
 
     if (INPUT.dragging){
-        INPUT.dragging.classList.remove("dragged");
+        INPUT.dragging.classList.remove("board-graphics__piece--dragged");
         INPUT.draggingElem.style.display = "none";
     }
     
@@ -101,7 +104,7 @@ function draggingPointerup(event){
     
     // player let go at a highlight, indicating they're moving the piece there.
     if (highlight.classList.contains("board-graphics__move-highlight")){
-        INPUT.testMove = INPUT.currentMoves[parseInt(highlight.id.replace("moveHighlight_", ""))];
+        INPUT.testMove = INPUT.currentMoves[parseInt(highlight.dataset.index)];
 
         // testMove handlers
         gameState.makeMove(INPUT.testMove);
@@ -109,12 +112,12 @@ function draggingPointerup(event){
         INPUT.testMove = undefined;
 
         // clear all moves from board
-        setAllMoveHighlightsToPool();
+        setAllMoveHighlightsToPool(gameState.skeleton);
     }
 
     if (!INPUT.dragging){
         // clear all moves from board
-        setAllMoveHighlightsToPool();
+        setAllMoveHighlightsToPool(gameState.skeleton);
     }else{
         INPUT.dragging = undefined;
     }

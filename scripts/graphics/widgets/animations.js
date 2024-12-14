@@ -37,7 +37,7 @@ class AnimationWidget extends BoardWidget {
         // make captured pieces disappear
         for (const c of lastMadeMove.captures){
             const piece = getPieceFromPool(getFileFromSq(c.sq), getRankFromSq(c.sq), isFlipped, Piece.getType(c.captured), Piece.getColor(c.captured));
-            piece.classList.add("captured");
+            piece.classList.add("board-graphics__piece--captured");
             this.boardgfx.piecesDiv.appendChild(piece);
         }
 
@@ -45,10 +45,10 @@ class AnimationWidget extends BoardWidget {
         let piece;
 
         if (dir == 1){
-            piece = document.getElementById(`${getFileFromSq(lastMadeMove.to)}_${getRankFromSq(lastMadeMove.to)}`);
+            piece = this.boardgfx.getPieceElem(getFileFromSq(lastMadeMove.to), getRankFromSq(lastMadeMove.to));
             setElemLocation(piece, getFileFromSq(lastMadeMove.from), getRankFromSq(lastMadeMove.from), isFlipped);
         }else{
-            piece = document.getElementById(`${getFileFromSq(lastMadeMove.from)}_${getRankFromSq(lastMadeMove.from)}`);
+            piece = this.boardgfx.getPieceElem(getFileFromSq(lastMadeMove.from), getRankFromSq(lastMadeMove.from));
             setElemLocation(piece, getFileFromSq(lastMadeMove.to), getRankFromSq(lastMadeMove.to), isFlipped);
         }
 

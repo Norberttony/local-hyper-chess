@@ -102,7 +102,7 @@ class BoardGraphics {
             
             // attach any relevant glyphs
             for (const g of cv.glyphs){
-                attachGlyph(document.getElementById(`${toX}_${toY}`), g);
+                attachGlyph(this.getPieceElem(toX, toY), g);
             }
         }
     }
@@ -290,7 +290,10 @@ class BoardGraphics {
                 }
             }
         }
+    }
 
+    getPieceElem(f, r){
+        return this.piecesDiv.getElementsByClassName(`${f}_${r}`)[0];
     }
 
     // allows this object to be garbage collected.

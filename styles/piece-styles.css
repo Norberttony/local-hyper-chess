@@ -1,54 +1,54 @@
 /* handles displaying proper images for pieces based on the indicated styles */
 
 /* CBURNETT */
-.board-graphics--pieces-cburnett .piece,
+.board-graphics--pieces-cburnett .board-graphics__piece,
 .board-graphics--pieces-cburnett .board-graphics__dragging {
     background-image: url(../images/pieces/cburnett.png);
 }
 
-.board-graphics--pieces-cburnett .k {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-k {
     background-position-x: 0%;
 }
-.board-graphics--pieces-cburnett .q {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-q {
     background-position-x: 16.666666666666666%;
 }
-.board-graphics--pieces-cburnett .b {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-b {
     background-position-x: 33.333333333333336%;
 }
-.board-graphics--pieces-cburnett .n {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-n {
     background-position-x: 50%;
 }
-.board-graphics--pieces-cburnett .r {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-r {
     background-position-x: 66.66666666666667%;
 }
-.board-graphics--pieces-cburnett .p {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-p {
     background-position-x: 83.33333333333333%;
 }
-.board-graphics--pieces-cburnett .u {
+.board-graphics--pieces-cburnett .board-graphics__piece--type-u {
     background-position-x: 100%;
 }
 
 /* MERIDA */
-.board-graphics--pieces-merida .piece,
+.board-graphics--pieces-merida .board-graphics__piece,
 .board-graphics--pieces-merida .board-graphics__dragging {
     background-image: url(../images/pieces/merida.png);
 }
 
-.board-graphics--pieces-merida .r {
+.board-graphics--pieces-merida .board-graphics__piece--type-r {
     background-position-x: 0%;
 }
-.board-graphics--pieces-merida .n {
+.board-graphics--pieces-merida .board-graphics__piece--type-n {
     background-position-x: 20%;
 }
-.board-graphics--pieces-merida .b {
+.board-graphics--pieces-merida .board-graphics__piece--type-b {
     background-position-x: 40%;
 }
-.board-graphics--pieces-merida .q {
+.board-graphics--pieces-merida .board-graphics__piece--type-q {
     background-position-x: 60%;
 }
-.board-graphics--pieces-merida .k {
+.board-graphics--pieces-merida .board-graphics__piece--type-k {
     background-position-x: 80%;
 }
-.board-graphics--pieces-merida .p {
+.board-graphics--pieces-merida .board-graphics__piece--type-p {
     background-position-x: 100%;
 }

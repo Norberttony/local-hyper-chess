@@ -1,7 +1,7 @@
 
 const MENUS = {
     activeMenu: undefined,
-    containers: [ "container", "lobby_container", "my-games_container" ],
+    containers: [ "main-board", "lobby_container", "my-games_container" ],
     menus: {}
 };
 
@@ -135,9 +135,9 @@ registerMenu("view-games",
 
 registerMenu("analysis-board",
     () => {
-        pgnText.value = gameState.pgnData.toString();
+        // pgnText.value = gameState.pgnData.toString();
 
-        activateContainer("container");
+        activateContainer("main-board");
         setNetworkVisibility(false);
         setExtraVisibility(true);
         setPuzzlesVisibility(false);
@@ -151,7 +151,7 @@ registerMenu("analysis-board",
 
 registerMenu("puzzles",
     () => {
-        activateContainer("container");
+        activateContainer("main-board");
         setNetworkVisibility(false);
         setExtraVisibility(false);
         setPuzzlesVisibility(true);

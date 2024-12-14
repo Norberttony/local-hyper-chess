@@ -22,7 +22,7 @@
     display: none;
 }
 
-.dragged {
+.board-graphics__piece--dragged {
     opacity: 0.5;
 }
 
@@ -39,7 +39,7 @@
     z-index: 3;
 }
 
-.piece {
+.board-graphics__piece {
     background-size: 700% 200%;
     image-rendering: auto;
 
@@ -56,7 +56,7 @@
     z-index: 2;
 }
 
-.piece.captured {
+.board-graphics__piece--captured {
     animation: fadeOut 300ms 80ms forwards ease-in;
 }
 
