@@ -77,8 +77,6 @@ document.body.addEventListener("keydown", function(event){
 
 
 /* mobile user holds down next/back buttons */
-const pgn_control_prevElem = document.getElementById("pgn_control_prev");
-const pgn_control_nextElem = document.getElementById("pgn_control_next");
 
 function addPointerHoldListener(elem, action){
     let holdTimeout;
@@ -118,6 +116,3 @@ function addPointerHoldListener(elem, action){
     elem.addEventListener("pointerleave", cancelHold);
     elem.addEventListener("pointerup", cancelHold);
 }
-
-addPointerHoldListener(pgn_control_nextElem, PGNMoveForward);
-addPointerHoldListener(pgn_control_prevElem, PGNMoveBack);

@@ -103,7 +103,7 @@ class PGNWidget extends BoardWidget {
             }else{
                 // create a new move line for this variation
                 const moveline = newMovelineElem(moveNum, sanElem);
-                const resultElem = document.getElementsByClassName("pgn_result")[0];
+                const resultElem = document.getElementsByClassName("pgn-viewer__pgn-elem--type-result")[0];
                 if (resultElem)
                     this.pgnElem.insertBefore(moveline, resultElem);
                 else
