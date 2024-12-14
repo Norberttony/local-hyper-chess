@@ -1,8 +1,9 @@
 
 window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
-const aw = new AnnotatorWidget(gameState);
+new AnnotatorWidget(gameState);
 new AnimationWidget(gameState);
+new AudioWidget(gameState);
 
 gameState.display();
 

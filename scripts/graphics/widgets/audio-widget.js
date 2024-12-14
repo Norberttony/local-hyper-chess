@@ -1,6 +1,5 @@
-// Plays some really nice audio.
 
-var containerElem = document.getElementById("container");
+// Whenever a move, capture, or something important happens, a sound occurs.
 
 const AUDIO = {
     move:           "sounds/move.mp3",
@@ -14,6 +13,22 @@ let bufferedAudio = {
     [AUDIO.move]: new Audio(AUDIO.move),
     [AUDIO.capture]: new Audio(AUDIO.capture)
 };
+
+
+class AudioWidget extends BoardWidget {
+    constructor(boardgfx){
+        super(boardgfx, "Audio", WIDGET_LOCATIONS.BOARD);
+
+        boardgfx.skeleton.addEventListener("single-scroll", (event) => {
+            let { prevVariation, variation, userInput } = event.detail;
+            
+            // only play audio if move scrolling is going forward by exactly 1
+            makeNoise(variation.move);
+        });
+    }
+}
+
+
 function playAudio(src){
     if (bufferedAudio[src]){
         bufferedAudio[src].load();
@@ -21,6 +36,7 @@ function playAudio(src){
     }else{
         (new Audio(src)).play();
     }
+
     bufferedAudio[src] = new Audio(src);
     bufferedAudio[src].load();
 }
@@ -31,12 +47,3 @@ function makeNoise(move){
     else
         playAudio(AUDIO.move);
 }
-
-let prevIndex = -1;
-containerElem.addEventListener("single-scroll", (event) => {
-    let { prevVariation, variation, userInput } = event.detail;
-    
-    // only play audio if move scrolling is going forward by exactly 1
-    makeNoise(variation.move);
-    prevIndex = moveIndex;
-});

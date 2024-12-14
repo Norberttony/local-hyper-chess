@@ -265,12 +265,14 @@ class BoardGraphics {
         setAllMoveHighlightsToPool(this.skeleton);
         setAllLastMoveHighlightsToPool(this.skeleton);
 
+        const lastMove = this.currentVariation != this.variationRoot ? this.currentVariation.move : undefined;
+
         // highlight move from and move to
-        if (this.lastMove){
-            const toX = this.lastMove.to % 8;
-            const toY = Math.floor(this.lastMove.to / 8);
-            const fromX = this.lastMove.from % 8;
-            const fromY = Math.floor(this.lastMove.from / 8);
+        if (lastMove){
+            const toX = lastMove.to % 8;
+            const toY = Math.floor(lastMove.to / 8);
+            const fromX = lastMove.from % 8;
+            const fromY = Math.floor(lastMove.from / 8);
             
             const sq1 = getLastMoveHighlightFromPool(toX, toY, this.isFlipped);
             const sq2 = getLastMoveHighlightFromPool(fromX, fromY, this.isFlipped);
