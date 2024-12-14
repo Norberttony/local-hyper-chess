@@ -27,6 +27,15 @@ class PGNWidget extends BoardWidget {
         pgnElem.classList.add("pgn-viewer__pgn-list");
         container.appendChild(pgnElem);
 
+        const gameButtons = document.createElement("div");
+        gameButtons.classList.add("pgn-viewer__game-controls");
+        gameButtons.innerHTML = `
+            <button class = "font-icon" data-icon = "" onclick = "gameState.flip();"></button>
+            <button class = "font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
+            <button id = "panel_draw" onclick = "offerDraw();"><span>½</span></button>
+            <button class = "font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>`;
+        container.appendChild(gameButtons);
+
         this.pgnElem = pgnElem;
         this.boardgfx = boardgfx;
 

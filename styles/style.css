@@ -31,6 +31,13 @@ body {
             ' .   bottom      .  ';
         grid-template-columns: 0.8fr 1fr 1fr 0.4fr;
     }
+
+    .board-graphics__right {
+        height: var(--game-height);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 1110px){
@@ -58,7 +65,7 @@ body {
         --game-width: calc(var(--zoom) * 1vh);
         --game-height: calc(var(--zoom) * 1vh);
     }
-    #files, #ranks {
+    #main-board .board-graphics__files, #main-board .board-graphics__ranks {
         font-size: 2vh;
     }
 }
@@ -69,7 +76,7 @@ body {
         --game-width: calc(100vw);
         --game-height: calc(100vw);
     }
-    #files, #ranks {
+    #main-board .board-graphics__files, #main-board .board-graphics__ranks {
         font-size: 2vw;
     }
 }
@@ -105,6 +112,21 @@ button:hover, input[type="submit"]:hover {
 
 button:active, input[type="submit"]:active {
     background-color: #222;
+}
+
+input:not([type="checkbox"]):not([type="radio"]), textarea {
+    background-color: black;
+    color: #EEE;
+    border: 1px solid gray;
+    width: 100%;
+}
+
+select {
+    background-color: black;
+    color: #EEE;
+    padding: 3px;
+    border-radius: 50px;
+    border: 2px solid #EEE;
 }
 
 

@@ -83,7 +83,7 @@
     z-index: 1;
 }
 
-.pgn-viewer__pgn-control > button, #play-game-controls > button {
+.pgn-viewer__pgn-control > button, .pgn-viewer__game-controls > button {
     flex: 1;
     user-select: none;
 }
@@ -95,4 +95,13 @@
 /* FONT ICONS */
 .pgn-viewer__pgn-control .font-icon::before {
     font-size: x-large;
+}
+
+.pgn-viewer__game-controls {
+    display: flex;
+}
+
+.pgn-viewer__game-controls > button {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
