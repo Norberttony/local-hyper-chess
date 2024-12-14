@@ -4,6 +4,7 @@ window.gameState = new BoardGraphics(true, true, document.getElementById("main-b
 new AnnotatorWidget(gameState);
 new AnimationWidget(gameState);
 new AudioWidget(gameState);
+new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT);
 
 gameState.display();
 

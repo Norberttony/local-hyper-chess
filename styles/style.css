@@ -94,6 +94,7 @@ button, input[type="submit"] {
 button:disabled::before {
     opacity: 0.5;
 }
+
 button:disabled {
     opacity: 0.5;
 }
@@ -104,4 +105,17 @@ button:hover, input[type="submit"]:hover {
 
 button:active, input[type="submit"]:active {
     background-color: #222;
+}
+
+
+/* to-do: move these styles in a more fitting file */
+
+#extra > * {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#pgnText {
+    resize: vertical;
+    height: 140px;
 }

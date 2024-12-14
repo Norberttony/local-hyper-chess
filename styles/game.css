@@ -27,3 +27,23 @@
 
     user-select: none;
 }
+
+.board-graphics__left {
+    grid-area: left;
+}
+
+.board-graphics__top-bar {
+    grid-area: top_bar;
+}
+
+.board-graphics__bottom-bar {
+    grid-area: bottom_bar;
+}
+
+.board-graphics__right {
+    grid-area: right;
+}
+
+.board-graphics__bottom {
+    grid-area: bottom;
+}
