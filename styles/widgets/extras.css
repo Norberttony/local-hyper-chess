@@ -1,0 +1,10 @@
+
+.board-graphics__extras > * {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.extras__pgn {
+    resize: vertical;
+    height: 140px;
+}

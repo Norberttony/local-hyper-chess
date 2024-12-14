@@ -128,16 +128,3 @@ select {
     border-radius: 50px;
     border: 2px solid #EEE;
 }
-
-
-/* to-do: move these styles in a more fitting file */
-
-#extra > * {
-    box-sizing: border-box;
-    width: 100%;
-}
-
-#pgnText {
-    resize: vertical;
-    height: 140px;
-}
