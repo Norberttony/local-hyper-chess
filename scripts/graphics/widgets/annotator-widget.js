@@ -13,7 +13,6 @@ class AnnotatorWidget extends BoardWidget {
 
         // this currently creates a circular reference which could lead to memory leaks if boardgfx
         // (instance of BoardGraphics) does not delete this .boardgfx reference.
-        this.boardgfx = boardgfx;
         this.annotations = [];
         this.ctx = canvas.getContext("2d");
 

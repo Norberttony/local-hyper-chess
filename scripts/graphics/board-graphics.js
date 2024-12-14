@@ -24,7 +24,6 @@ class BoardGraphics {
         this.state = new Board();
         this.allowInputFrom = { [Piece.white]: allowDragging, [Piece.black]: allowDragging };
         this.piecePointerDown = createPiecePointerDown(this);
-        this.board = new Board();
 
         // threefold and draws require keeping track of repeated positions, and when the last
         // capture was performed.
@@ -133,10 +132,10 @@ class BoardGraphics {
     nextVariation(index = 0){
         const variation = this.currentVariation.next[index];
         if (variation){
-            this.board.makeMove(variation.move);
+            this.state.makeMove(variation.move);
 
             // position reoccurs
-            this.positions[this.board.getPosition()]++;
+            this.positions[this.state.getPosition()]++;
 
             this.lastCapture = variation.fiftyMoveRuleCounter;
 
@@ -150,11 +149,11 @@ class BoardGraphics {
     previousVariation(){
         if (this.currentVariation.prev){
             // position "unoccurs"
-            this.positions[this.board.getPosition()]--;
+            this.positions[this.state.getPosition()]--;
 
             this.lastCapture = this.currentVariation.fiftyMoveRuleCounter;
 
-            this.board.unmakeMove(this.currentVariation.move);
+            this.state.unmakeMove(this.currentVariation.move);
             this.currentVariation = this.currentVariation.prev;
             return true;
         }
@@ -177,7 +176,7 @@ class BoardGraphics {
 
         this.jumpToVariation(this.mainVariation);
         
-        const move = this.board.getMoveOfSAN(san);
+        const move = this.state.getMoveOfSAN(san);
         if (move)
             this.makeMove(move);
 

@@ -2,6 +2,7 @@
 window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
 const aw = new AnnotatorWidget(gameState);
+new AnimationWidget(gameState);
 
 gameState.display();
 

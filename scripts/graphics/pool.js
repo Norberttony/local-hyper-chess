@@ -19,7 +19,7 @@ function fetchElem(className, f, r, boardFlipped){
 }
 
 // sets the location of an element on the board
-function setElemLocation(elem, f, r, boardFlipped = isDisplayFlipped){
+function setElemLocation(elem, f, r, boardFlipped){
     elem.style.transform = `translate(${(boardFlipped ? 7 - f : f) * 100}%, ${(boardFlipped ? r : 7 - r) * 100}%)`;
 }
 

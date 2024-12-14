@@ -17,6 +17,8 @@ class BoardWidget {
             throw new Error("Tried to attach a widget of the same name to a BoardGraphics instance.");
         }
         boardgfx.widgetNames.add(name);
+
+        this.boardgfx = boardgfx;
         this.name = name;
         this.location = location;
     }
