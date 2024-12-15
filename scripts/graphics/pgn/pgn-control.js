@@ -64,7 +64,7 @@ document.body.addEventListener("keydown", function(event){
                 break;
 
             case "f":
-                flipBoard();
+                gameState.flip();
                 break;
 
             // if no bound key was hit, do not prevent event default.

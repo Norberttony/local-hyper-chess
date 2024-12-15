@@ -26,3 +26,7 @@ class BoardWidget {
     enable(){}
     disable(){}
 }
+
+function getFirstElemOfClass(container, className){
+    return container.getElementsByClassName(className)[0];
+}

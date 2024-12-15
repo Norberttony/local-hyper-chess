@@ -56,7 +56,7 @@ class BoardGraphics {
             addFilesAndRanks(boardDiv);
 
         // create widget containers
-        for (const name of [ "left", "top_bar", "bottom_bar", "right", "bottom" ]){
+        for (const name of WIDGET_NAMES){
             const w = document.createElement("div");
             w.classList.add(`board-graphics__${name}`);
             skeleton.appendChild(w);
@@ -71,6 +71,10 @@ class BoardGraphics {
 
     get isFlipped(){
         return this.skeleton.classList.contains("board-graphics--flipped");
+    }
+
+    getWidgetElem(location){
+        return getFirstElemOfClass(this.skeleton, `board-graphics__${WIDGET_NAMES[location]}`);
     }
 
     // =========================== //
@@ -258,6 +262,7 @@ class BoardGraphics {
     flip(){
         this.skeleton.classList.toggle("board-graphics--flipped");
         this.display();
+        this.dispatchEvent("flip");
     }
 
     display(){

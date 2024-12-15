@@ -12,7 +12,7 @@ class ExtrasWidget extends BoardWidget {
             <button class = "extras__set-pgn-button" onclick = "setPGN();">Set PGN</button>
             <input class = "extras__fen" onfocus = "this.select();">
             <button class = "extras__set-fen-button" onclick = "setFEN();" spellcheck = "false">Set FEN</button>`;
-        boardgfx.skeleton.getElementsByClassName(`board-graphics__${WIDGET_NAMES[location]}`)[0].appendChild(container);
+        boardgfx.getWidgetElem(location).appendChild(container);
 
         const pgnText = getFirstElemOfClass(container, "extras__pgn");
         const fenText = getFirstElemOfClass(container, "extras__fen");
@@ -44,9 +44,4 @@ class ExtrasWidget extends BoardWidget {
     updatePGNText(){
         this.pgnText.value = this.boardgfx.pgnData.toString();
     }
-}
-
-
-function getFirstElemOfClass(container, className){
-    return container.getElementsByClassName(className)[0];
 }

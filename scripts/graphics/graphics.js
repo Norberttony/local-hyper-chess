@@ -6,6 +6,10 @@ new AnimationWidget(gameState);
 new AudioWidget(gameState);
 new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT);
 new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM);
+{
+    const pw = new PlayersWidget(gameState);
+    pw.setNames("Anonymous (white)", "Anonymous (black)");
+}
 
 gameState.display();
 

@@ -44,13 +44,14 @@ body {
     #main-board {
         --zoom: 100;
         grid-template-areas:
-            'top_bar    '
-            'board      '
-            'bottom_bar '
-            'left       '
-            'right      '
-            'bottom     ';
+            '  .     top_bar     . '
+            '  .     board       . '
+            '  .     bottom_bar  . '
+            'left    left       left '
+            'right   right      right '
+            'bottom  bottom     bottom ';
         grid-template-rows: min-content min-content;
+        grid-template-columns: auto var(--game-width) auto;
         width: 100%;
     }
     #puzzles, #panel {
