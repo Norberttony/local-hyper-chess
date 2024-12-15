@@ -153,17 +153,13 @@ function setResult(result, termination){
     // when there is a checkmate or a draw by either threefold or fifty move rule, then that result
     // will already be calculated by the game state, and isn't necessary to represent over the
     // network (unlike resignation or draws by agreement)
-    if (!gameState.board.result){
-        gameState.board.setResult(result, termination);
+    if (!gameState.state.result){
+        gameState.state.setResult(result, termination);
         gameState.dispatchEvent("result", {
             result:         result,
-            turn:           gameState.board.turn,
+            turn:           gameState.state.turn,
             termination:    termination
         });
-
-        panel_goToBoardElem.style.display = "block";
-
-        gameState.mainHasResult = true;
     }
 };
 

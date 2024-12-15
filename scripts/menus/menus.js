@@ -167,19 +167,15 @@ registerMenu("multiplayer-game",
         setExtraVisibility(false);
         setPuzzlesVisibility(false);
         gameState.allowVariations = false;
-
-        toggle_bookmarkElem.style.display = "block";
     },
     () => {
         stopWaitingForMove();
         gameState.allowVariations = true;
-        gameState.allowedSides[Piece.white] = true;
-        gameState.allowedSides[Piece.black] = true;
+        gameState.allowInputFrom[Piece.white] = true;
+        gameState.allowInputFrom[Piece.black] = true;
 
-        panel_rematchElem.style.display = "none";
-        panel_goToBoardElem.style.display = "none";
-
-        toggle_bookmarkElem.style.display = "none";
+        // panel_rematchElem.style.display = "none";
+        // panel_goToBoardElem.style.display = "none";
     }
 );
 

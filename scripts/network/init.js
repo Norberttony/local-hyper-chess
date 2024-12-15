@@ -68,7 +68,7 @@ async function loadGame(gameSuperId){
     // notify user
     showDialogBox("Fetching Game...", "The game is being fetched from the database");
 
-    document.getElementById("panel_rematch").style.display = "none";
+    // document.getElementById("panel_rematch").style.display = "none";
 
     console.log("Fetching game information for", gameSuperId);
 
@@ -80,11 +80,11 @@ async function loadGame(gameSuperId){
 
     
     // check if bookmarked
-    const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
-    if (bookmarks.indexOf(`${gameId}_${refNum}`) > -1)
-        toggle_bookmarkElem.innerText = "Remove bookmark?";
-    else
-        toggle_bookmarkElem.innerText = "Add bookmark?";
+    // const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+    // if (bookmarks.indexOf(`${gameId}_${refNum}`) > -1)
+    //     toggle_bookmarkElem.innerText = "Remove bookmark?";
+    // else
+    //     toggle_bookmarkElem.innerText = "Add bookmark?";
 
 
     // in case user reconnects later, store the user id for this game in local storage
@@ -140,7 +140,7 @@ async function loadGame(gameSuperId){
                     term = movesSplit[movesSplit.length - 1];
                     break;
                 }else{
-                    const move = gameState.board.getMoveOfSAN(m);
+                    const move = gameState.state.getMoveOfSAN(m);
                     gameState.makeMove(move);
                 }
             }
@@ -173,9 +173,9 @@ async function loadGame(gameSuperId){
             gameState.jumpToVariation(gameState.variationRoot);
             gameState.applyChanges();
             
-            panel_goToBoardElem.style.display = "block";
+            // panel_goToBoardElem.style.display = "block";
         }else{
-            panel_goToBoardElem.style.display = "none";
+            // panel_goToBoardElem.style.display = "none";
         }
 
         hideDialogBox();

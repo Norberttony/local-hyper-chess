@@ -40,9 +40,6 @@ async function generateInvite(gameConfig){
     document.getElementById("invite-popup-container").style.display = "flex";
     document.getElementById("invite-popup").style.display = "flex";
 
-    // now that a new game is starting, there is no need for this "offer rematch" button
-    panel_rematchElem.style.display = "none";
-
     const { status, chall, msg } = await checkIfAccepted();
 
     if (status == "err")

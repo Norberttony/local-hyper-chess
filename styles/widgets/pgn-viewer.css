@@ -1,4 +1,10 @@
 
+.pgn-viewer {
+    display: grid;
+    max-height: calc(var(--game-height) / 1.5);
+    grid-template-rows: min-content 1fr min-content;
+}
+
 .pgn-viewer__pgn-list {
     background-color: black;
     color: #EEE;
