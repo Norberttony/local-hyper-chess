@@ -1,15 +1,16 @@
 
 window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
-new AnnotatorWidget(gameState);
-new AnimationWidget(gameState);
-new AudioWidget(gameState);
-new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT);
-new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM);
-{
-    const pw = new PlayersWidget(gameState);
-    pw.setNames("Anonymous (white)", "Anonymous (black)");
-}
+const widgets = {
+    annotator: new AnnotatorWidget(gameState),
+    animation: new AnimationWidget(gameState),
+    audio: new AudioWidget(gameState),
+    pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
+    extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
+    players: new PlayersWidget(gameState)
+};
+
+widgets.players.setNames("Anonymous (white)", "Anonymous (black)");
 
 gameState.display();
 

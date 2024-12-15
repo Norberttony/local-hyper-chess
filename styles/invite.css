@@ -1,3 +1,4 @@
+
 #dialog-box-container {
     background-color: rgba(0, 0, 0, 0.4);
 
@@ -40,7 +41,7 @@
     z-index: 10;
 }
 
-#create-game-popup, #invite-popup {
+#create-game, #invite-popup {
     background: black;
     padding: 30px;
     border-radius: 18px;
@@ -56,19 +57,23 @@
     margin: 3px 0px;
 }
 
-#create-game-popup .game_container {
+#create-game__board {
     --game-width: 100%;
     --game-height: 100%;
     width: 40vh;
     height: 40vh;
+    
+    grid-template-areas: 'board';
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
 }
 
-#create-game-fen {
+#create-game__fen {
     width: 450px;
     max-width: 100%;
 }
 
-#create-game-fen:read-only {
+#create-game__fen:read-only {
     opacity: 0.5;
 }
 

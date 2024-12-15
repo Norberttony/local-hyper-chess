@@ -8,7 +8,7 @@ class PGNWidget extends BoardWidget {
 
         const container = document.createElement("div");
         container.classList.add("pgn-viewer");
-        boardgfx.skeleton.getElementsByClassName(`board-graphics__${WIDGET_NAMES[location]}`)[0].appendChild(container);
+        boardgfx.getWidgetElem(location).appendChild(container);
 
         const pgnControl = document.createElement("div");
         pgnControl.classList.add("pgn-viewer__pgn-control");
@@ -30,11 +30,15 @@ class PGNWidget extends BoardWidget {
         const gameButtons = document.createElement("div");
         gameButtons.classList.add("pgn-viewer__game-controls");
         gameButtons.innerHTML = `
-            <button class = "font-icon" data-icon = "" onclick = "gameState.flip();"></button>
-            <button class = "font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
-            <button id = "panel_draw" onclick = "offerDraw();"><span>½</span></button>
-            <button class = "font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>`;
+            <button class = "pgn-viewer__flip font-icon" data-icon = "" onclick = "gameState.flip();"></button>
+            <button class = "pgn-viewer__resign font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
+            <button class = "pgn-viewer__draw" onclick = "offerDraw();"><span>½</span></button>
+            <button class = "pgn-viewer__takeback font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>`;
         container.appendChild(gameButtons);
+
+        this.resignButton = getFirstElemOfClass(gameButtons, "pgn-viewer__resign");
+        this.drawButton = getFirstElemOfClass(gameButtons, "pgn-viewer__draw");
+        this.takebackButton = getFirstElemOfClass(gameButtons, "pgn-viewer__takeback");
 
         this.pgnElem = pgnElem;
         this.boardgfx = boardgfx;
@@ -52,6 +56,18 @@ class PGNWidget extends BoardWidget {
         boardgfx.skeleton.addEventListener("variation-change", (event) => {
             this.onVariationChange(event);
         });
+    }
+
+    networkEnable(){
+        this.resignButton.removeAttribute("disabled");
+        this.drawButton.removeAttribute("disabled");
+        this.takebackButton.removeAttribute("disabled");
+    }
+
+    networkDisable(){
+        this.resignButton.setAttribute("disabled", "false");
+        this.drawButton.setAttribute("disabled", "false");
+        this.takebackButton.setAttribute("disabled", "false");
     }
 
     onNewVariation(event){
@@ -209,7 +225,7 @@ class PGNWidget extends BoardWidget {
         const { fen } = event.detail;
     
         // none of the previous PGN is relevant to this new position, so...
-        clearPGNView();
+        this.pgnElem.innerHTML = "";
         this.boardgfx.pgnData.clear();
     
         if (fen.replace(/ /g, "") != StartingFEN.replace(/ /g, "")){

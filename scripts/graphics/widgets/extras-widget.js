@@ -20,21 +20,34 @@ class ExtrasWidget extends BoardWidget {
         this.boardgfx = boardgfx;
         this.pgnText = pgnText;
         this.fenText = fenText;
+        this.pgnButton = getFirstElemOfClass(container, "extras__set-pgn-button");
+        this.fenButton = getFirstElemOfClass(container, "extras__set-fen-button");
 
         this.updateFENText();
         this.updatePGNText();
 
         // clicking buttons
-        getFirstElemOfClass(container, "extras__set-pgn-button").onclick = () => {
+        this.pgnButton.onclick = () => {
             boardgfx.loadPGN(pgnText.value);
         }
-        getFirstElemOfClass(container, "extras__set-fen-button").onclick = () => {
+        this.fenButton.onclick = () => {
             boardgfx.loadFEN(fenText.value);
         }
 
         // listening to game state events
         boardgfx.skeleton.addEventListener("variation-change", () => this.updateFENText());
+        boardgfx.skeleton.addEventListener("loadFen", () => this.updateFENText(), this.updatePGNText());
         boardgfx.skeleton.addEventListener("new-variation", () => this.updatePGNText());
+    }
+
+    enable(){
+        this.pgnButton.removeAttribute("disabled");
+        this.fenButton.removeAttribute("disabled");
+    }
+
+    disable(){
+        this.pgnButton.setAttribute("disabled", "true");
+        this.fenButton.setAttribute("disabled", "true");
     }
 
     updateFENText(){

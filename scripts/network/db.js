@@ -35,7 +35,7 @@ async function generateInvite(gameConfig){
     peer_idElem.value = `https://norberttony.github.io/local-hyper-chess#chall=${challId}`;
 
     gameState.loadFEN(StartingFEN);
-    displayBoard();
+    gameState.display();
 
     document.getElementById("invite-popup-container").style.display = "flex";
     document.getElementById("invite-popup").style.display = "flex";

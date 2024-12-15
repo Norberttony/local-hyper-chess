@@ -8,6 +8,8 @@ class BoardGraphics {
         if (!skeleton)
             skeleton = createSkeleton();
 
+        skeleton.classList.add("board-graphics", "board-graphics--board-blue", "board-graphics--pieces-cburnett");
+
         const boardDiv = skeleton.getElementsByClassName("board-graphics__board")[0];
         if (!boardDiv)
             throw new Error("Skeleton requires a unique empty div of class name board-graphics__board");
@@ -75,6 +77,59 @@ class BoardGraphics {
 
     getWidgetElem(location){
         return getFirstElemOfClass(this.skeleton, `board-graphics__${WIDGET_NAMES[location]}`);
+    }
+
+    // =========================== //
+    // === LOADING FEN AND PGN === //
+    // =========================== //
+
+    loadFEN(fen){
+        this.state.loadFEN(fen);
+        
+        // clear the positions table
+        this.positions = {};
+        let pos = this.state.getPosition();
+        this.positions[pos] = 1;
+        
+        // just get rid of everything after variation root and have gc handle it
+        this.currentVariation = this.variationRoot;
+        this.variationRoot.next = [];
+
+        this.applyChanges(false);
+        this.graphicalVariation = this.variationRoot;
+        this.dispatchEvent("loadFEN", { fen });
+    }
+
+    loadPGN(pgn){
+        // check if we have to load from position
+        let fen = StartingFEN;
+        const headers = extractHeaders(pgn);
+        if (headers.Variant == "From Position"){
+            fen = headers.FEN;
+        }
+        this.loadFEN(fen);
+
+        // remove headers
+        pgn = pgn.replace(/\[.+?\]\s*/g, "");
+
+        // remove any comments
+        pgn = pgn.replace(/\{.+?\}\s*/g, "");
+
+        // remove full move counters
+        pgn = pgn.replace(/[0-9]+[\.]+/g, "");
+
+        // add a space before and after parentheses
+        pgn = pgn.replace(/\(/g, " ( ").replace(/\)/g, " ) ");
+
+        // make sure there is one space between each move
+        pgn = pgn.replace(/\s+/g, " ");
+        pgn = pgn.trim();
+
+        // start reading san
+        let pgnSplit = pgn.split(" ");
+        this.readVariation(pgnSplit, 0);
+        this.applyChanges(false);
+        this.graphicalVariation = this.variationRoot;
     }
 
     // =========================== //
@@ -321,9 +376,6 @@ class BoardGraphics {
 function createSkeleton(){
     // skeleton contains all widgets including main board display
     const skeleton = document.createElement("div");
-
-    // to-do: allow choosing theme and piece styles
-    skeleton.classList.add("board-graphics board-graphics--board-blue board-graphics--pieces-cburnett");
 
     // create the main board display
     const boardDiv = document.createElement("div");

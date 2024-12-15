@@ -1,10 +1,6 @@
 
 // allows the user to scroll through the PGN.
 
-function clearPGNView(){
-    pgnElem.innerHTML = "";
-}
-
 let selectedVariation = 0;
 function PGNMoveBack(){
     if (gameState.previousVariation())

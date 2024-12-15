@@ -1,10 +1,11 @@
+
 // handles create-game logic
-var createGameFormElem = document.forms["create-game-form"];
-var createGameFormPopup = document.getElementById("create-game-popup");
-var createGameFormBoardElem = createGameFormElem.getElementsByClassName("game")[0];
-var fenTextElem = document.getElementById("fenText");
-var startingFenElem = document.getElementById("starting-fen");
-const createGameFormState = new Board();
+
+const createGameFormElem = document.forms["create-game__form"];
+const createGameFormPopup = document.getElementById("create-game");
+const fenTextElem = document.getElementById("create-game__fen");
+const startingFenElem = document.getElementById("create-game__use-default-fen");
+const createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
 
 createGameFormElem.fen.addEventListener("input", () => {
     setCreateGameFEN(createGameFormElem.fen.value);
@@ -12,16 +13,13 @@ createGameFormElem.fen.addEventListener("input", () => {
 setCreateGameFEN(StartingFEN);
 
 function displayCreateGameBoard(){
-    displayBoard(createGameFormState, false, false, createGameFormBoardElem);
-    for (const p of createGameFormBoardElem.getElementsByClassName("piece")){
-        p.id = "";
-    }
+    createGameFormBoard.display();
 }
 
 function setCreateGameFEN(fen){
     createGameFormElem.fen.value = fen;
     if (!startingFenElem.checked){
-        createGameFormState.loadFEN(fen);
+        createGameFormBoard.loadFEN(fen);
         displayCreateGameBoard();
     }
 }
@@ -56,7 +54,7 @@ function hideCreateGamePopup(){
 startingFenElem.addEventListener("change", () => {
     if (startingFenElem.checked){
         createGameFormElem.fen.readOnly = true;
-        createGameFormState.loadFEN(StartingFEN);
+        createGameFormBoard.loadFEN(StartingFEN);
         displayCreateGameBoard();
     }else{
         createGameFormElem.fen.readOnly = false;
@@ -66,6 +64,6 @@ startingFenElem.addEventListener("change", () => {
 
 if (startingFenElem.checked){
     createGameFormElem.fen.readOnly = true;
-    createGameFormState.loadFEN(StartingFEN);
+    createGameFormBoard.loadFEN(StartingFEN);
     displayCreateGameBoard();
 }

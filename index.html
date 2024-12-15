@@ -151,9 +151,9 @@
         </div>
 
         <div id = "invite-popup-container">
-            <div id = "create-game-popup">
+            <div id = "create-game">
                 <h1>Create a game</h1>
-                <form id = "create-game-form">
+                <form id = "create-game__form">
                     <div class = "input-pair">
                         <label for = "color">You play as:</label>
                         <select name = "color">
@@ -173,19 +173,15 @@
 
                     <div class = "input-pair">
                         <span>
-                            <label for = "fen">FEN:</label>
-                            <input id = "create-game-fen" name = "fen">
+                            <label for = "create-game__fen">FEN:</label>
+                            <input id = "create-game__fen" name = "fen">
                         </span>
                     </div>
-                    <input id = "starting-fen" name = "starting-fen" type = "checkbox" checked = true>
-                    <label for = "starting-fen">Use starting FEN instead</label>
+                    <input id = "create-game__use-default-fen" name = "starting-fen" type = "checkbox" checked = true>
+                    <label for = "create-game__use-default-fen">Use starting FEN instead</label>
 
-                    <div class = "game_container_container blue cburnett" style = "display: block;">
-                        <div class = "game_container">
-                            <div class = "game">
-
-                            </div>
-                        </div>
+                    <div id = "create-game__board">
+                        <div class = "board-graphics__board"></div>
                     </div>
                     
                     <div class = "input-pair">
