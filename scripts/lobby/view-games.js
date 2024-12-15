@@ -6,9 +6,6 @@ const myGames_download = document.getElementById("my-games_download");
 
 const bookmarkedGamesElem = document.getElementById("bookmarked-games");
 
-const boardTemplate = document.getElementById("board-template").children[0];
-
-
 let allMyGames = [];
 let allMyBookmarks = [];
 

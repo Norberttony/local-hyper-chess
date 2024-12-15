@@ -25,6 +25,7 @@ class BoardGraphics {
         this.widgetNames = new Set();
         this.state = new Board();
         this.allowInputFrom = { [Piece.white]: allowDragging, [Piece.black]: allowDragging };
+        this.allowVariations = true;
         this.piecePointerDown = createPiecePointerDown(this);
 
         // threefold and draws require keeping track of repeated positions, and when the last
@@ -51,22 +52,14 @@ class BoardGraphics {
         // currentVariation does not match with graphicalVariation, applyChanges should be called.
         this.graphicalVariation = this.currentVariation;
 
-        boardDiv.onpointerdown = this.piecePointerDown;
-
         // determine if meant to create files and ranks.
         if (displayRanksAndFiles)
             addFilesAndRanks(boardDiv);
 
-        // create widget containers
-        for (const name of WIDGET_NAMES){
-            const w = document.createElement("div");
-            w.classList.add(`board-graphics__${name}`);
-            skeleton.appendChild(w);
-        }
-
         if (allowDragging){
             this.draggingElem = createBoardDraggingElem(skeleton);
 
+            boardDiv.onpointerdown = this.piecePointerDown;
 
         }
     }
@@ -75,8 +68,17 @@ class BoardGraphics {
         return this.skeleton.classList.contains("board-graphics--flipped");
     }
 
+    // retrieves the relevant widget element, creating one if necessary
     getWidgetElem(location){
-        return getFirstElemOfClass(this.skeleton, `board-graphics__${WIDGET_NAMES[location]}`);
+        const widgetName = WIDGET_NAMES[location];
+        const elem = getFirstElemOfClass(this.skeleton, `board-graphics__${widgetName}`);
+        if (elem)
+            return elem;
+        
+        const w = document.createElement("div");
+        w.classList.add(`board-graphics__${widgetName}`);
+        this.skeleton.appendChild(w);
+        return w;
     }
 
     // =========================== //
@@ -225,6 +227,10 @@ class BoardGraphics {
 
     // returns true if the player can move the piece at the given square. Otherwise, returns false.
     canMove(sq){
+        // ensure user is not creating a variation when not allowed to.
+        if (!this.allowVariations && this.currentVariation.next.length > 0)
+            return false;
+
         const piece = this.state.squares[sq];
         const col = Piece.getColor(piece);
         return this.allowInputFrom[col] && !this.state.isImmobilized(sq, piece) && this.state.turn == col;

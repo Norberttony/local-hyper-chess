@@ -1,16 +1,16 @@
 
-#lobby_container {
+.lobby {
     text-align: center;
     font-size: x-large;
 }
 
-#lobby_container h1,
-#lobby_container p {
+.lobby h1,
+.lobby p {
     margin: 0px;
 }
 
-#lobby_container #header,
-#lobby_container .chall {
+.lobby #header,
+.lobby .chall {
     display: grid;
     grid-template-columns: 15% 30% 30% 25%;
 
@@ -22,17 +22,17 @@
     box-sizing: border-box;
 }
 
-#lobby_container #header,
-#lobby_container #lobby {
+.lobby #header,
+.lobby #lobby {
     width: 100%;
 }
 
-#lobby_container #header {
+.lobby #header {
     padding: 5px;
     font-size: large;
 }
 
-#lobby_container #lobby {
+.lobby #lobby {
     background-color: black;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -40,16 +40,16 @@
     height: 100%;
 }
 
-#lobby_container .chall:nth-child(2n){
+.lobby .chall:nth-child(2n){
     background: linear-gradient(rgb(51, 51, 51) 50%, rgb(30, 30, 30) 100%);
 }
 
-#lobby_container .chall:nth-child(2n + 1){
+.lobby .chall:nth-child(2n + 1){
     background: linear-gradient(rgb(125, 125, 125) 50%, rgb(80, 80, 80) 100%);
 }
 
-#create-game-button,
-#play-phil-button {
+.lobby__create-button,
+.lobby__play-phil {
     display: block;
     margin: 10px auto;
     padding-left: 20px;
@@ -58,32 +58,23 @@
     font-size: x-large;
 }
 
-#lobby_featured-game {
+.lobby__featured-game {
     display: none;
     margin-top: 200px;
     text-align: center;
 }
 
-#lobby_featured-game-container .game_container_container {
+#lobby__featured-game-container .board-graphics {
     grid-template-areas:
-        'plyr_up    '
-        'game       '
-        'plyr_dn    ';
-    grid-template-rows: min-content min-content;
+        'top_bar'
+        'board'
+        'bottom_bar';
+    grid-template-rows: min-content auto min-content;
+    height: 400px;
     width: min-content;
 }
 
-#lobby_featured-game-container .game_container_container .player {
-    display: block;
-    width: 100%;
-}
-
-#lobby_featured-game-container .game_container_container .white_player {
-    grid-area: plyr_dn;
-    border-radius: 5px 5px 0px 0px;
-}
-
-#lobby_featured-game-container .game_container_container .black_player {
-    grid-area: plyr_up;
-    border-radius: 0px 0px 5px 5px;
+#lobby__featured-game-container .board-graphics__board {
+    height: 100%;
+    aspect-ratio: 1 / 1;
 }

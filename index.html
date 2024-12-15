@@ -113,22 +113,22 @@
             <div id = "bookmarked-games"></div>
         </div>
 
-        <div id = "lobby_container" style = "display: none;">
-            <button id = "create-game-button" onclick = "showCreateGamePopup();">Click here to create your own challenge</button>
+        <div id = "lobby" class = "lobby" style = "display: none;">
+            <button class = "lobby__create-button" onclick = "showCreateGamePopup();">Click here to create your own challenge</button>
             <p>Or</p>
-            <button id = "play-phil-button" onclick = "changeHash('#web-phil')">Play against a bot</button>
+            <button class = "lobby__play-phil" onclick = "changeHash('#web-phil')">Play against a bot</button>
             <h1>Currently active public challenges:</h1>
-            <div id = "header">
+            <div class = "lobby__header">
                 <span>ID</span>
                 <span>Name</span>
                 <span>Side</span>
                 <span>FEN</span>
             </div>
-            <div id = "lobby"></div>
+            <div class = "lobby__list"></div>
 
-            <div id = "lobby_featured-game">
-                <h1 id = "lobby_featured-title">Featured Game</h1>
-                <div id = "lobby_featured-game-container"></div>
+            <div class = "lobby__featured-game">
+                <h1 class = "lobby__featured-title">Featured Game</h1>
+                <div id = "lobby__featured-game-container"></div>
                 <button onclick = "goToFeaturedGame();">Go to game</button>
             </div>
         </div>

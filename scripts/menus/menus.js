@@ -1,7 +1,7 @@
 
 const MENUS = {
     activeMenu: undefined,
-    containers: [ "main-board", "lobby_container", "my-games_container" ],
+    containers: [ "main-board", "lobby", "my-games_container" ],
     menus: {}
 };
 
@@ -45,15 +45,13 @@ function setNetworkVisibility(vis){
 }
 
 function setExtraVisibility(vis){
-    const setDisplay = vis ? "" : "none";
-
-    document.getElementById("extra").style.display = setDisplay;
+    vis ? widgets.extras.enable() : widgets.extras.disable();
 }
 
 function setPuzzlesVisibility(vis){
     const setDisplay = vis ? "" : "none";
 
-    document.getElementById("puzzles").style.display = setDisplay;
+    getFirstElemOfClass(document, "puzzles-widget").style.display = setDisplay;
 }
 
 function changeHash(newHash, quiet = false){
@@ -104,7 +102,7 @@ const LOBBY = {
 
 registerMenu("lobby",
     () => {
-        activateContainer("lobby_container");
+        activateContainer("lobby");
 
         refreshChallenges();
         LOBBY.interval = setInterval(refreshChallenges, 10000);
@@ -143,10 +141,7 @@ registerMenu("analysis-board",
         setPuzzlesVisibility(false);
         hideNames();
     },
-    () => {
-        // save state of analysis board
-        sessionStorage.setItem("analysisBoardPGN", pgnText.value);
-    }
+    () => {}
 );
 
 registerMenu("puzzles",
@@ -156,24 +151,18 @@ registerMenu("puzzles",
         setExtraVisibility(false);
         setPuzzlesVisibility(true);
         hideNames();
-
-        document.getElementById("panel").style.height = "calc(var(--game-height) / 2)";
     },
     () => {
-        document.getElementById("panel").style.height = "";
-
         stopSolvingPuzzle();
         
         // reset the analysis board's state
-        const pgn = sessionStorage.getItem("analysisBoardPGN");
-        if (pgn)
-            gameState.loadPGN(pgn);
+        gameState.loadFEN(StartingFEN);
     }
 );
 
 registerMenu("multiplayer-game",
     () => {
-        activateContainer("container");
+        activateContainer("main-board");
         setNetworkVisibility(true);
         setExtraVisibility(false);
         setPuzzlesVisibility(false);
@@ -187,9 +176,6 @@ registerMenu("multiplayer-game",
         gameState.allowedSides[Piece.white] = true;
         gameState.allowedSides[Piece.black] = true;
 
-        // save state of analysis board
-        sessionStorage.setItem("analysisBoardPGN", pgnText.value);
-
         panel_rematchElem.style.display = "none";
         panel_goToBoardElem.style.display = "none";
 
@@ -199,7 +185,7 @@ registerMenu("multiplayer-game",
 
 registerMenu("web-phil",
     () => {
-        activateContainer("container");
+        activateContainer("main-board");
         setNetworkVisibility(false);
         setExtraVisibility(true);
         setPuzzlesVisibility(false);

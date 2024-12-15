@@ -1,5 +1,5 @@
 
-#puzzles {
+.puzzles-widget {
     display: none;
     
     grid-area: puzzles;
@@ -15,46 +15,42 @@
     margin-left: 3%;
 }
 
-#puzzles_image_container {
+.puzzles-widget__img-container {
     grid-area: img;
     width: 100%;
     height: 100%;
 }
 
-#puzzles_image {
+.puzzles-widget__img {
     object-fit: contain;
 }
 
-#puzzles_title {
+.puzzles-widget__title {
     grid-area: title;
 }
 
-#puzzles_diff {
+.puzzles-widget__diff {
     grid-area: diff;
 }
 
-#puzzles_solved {
+.puzzles-widget__status {
     grid-area: solved;
 }
 
-#puzzles_title, #puzzles_diff, #puzzles_solved {
+.puzzles-widget__title, .puzzles-widget__diff, .puzzles-widget__status {
     font-size: 30px;
 }
 
-#puzzles_control {
+.puzzles-widget__controls {
     grid-area: control;
     display: flex;
 }
 
-#puzzles_rdm {
+.puzzles-widget__rdm {
     width: 100%;
     margin: 0% 2%;
 }
 
-#puzzles_back, #puzzles_next {
+.puzzles-widget__back, .puzzles-widget__next {
     width: 50px;
-}
-
-#puzzles_desc {
-    grid-area: desc;
 }

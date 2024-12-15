@@ -1,10 +1,32 @@
+
 // handles the client side of puzzles
 
-const puzzlesElem = document.getElementById("puzzles");
-const puzzlesTitleElem = document.getElementById("puzzles_title");
-const puzzlesDiffElem = document.getElementById("puzzles_diff");
-const puzzlesSolvedElem = document.getElementById("puzzles_solved");
-const puzzlesImgElem = document.getElementById("puzzles_image");
+// while this would make sense as a widget, for now just hardcode it to the main board.
+{
+    const puzzles = document.createElement("div");
+    puzzles.classList.add("puzzles-widget");
+    puzzles.innerHTML = `
+        <div class = "puzzles-widget__img-container">
+            <img class = "puzzles-widget__img" src = "">
+        </div>
+        <div class = "puzzles-widget__controls">
+            <button class = "puzzles-widget__back" onclick = "backPuzzle();">&lt;</button>
+            <button class = "puzzles-widget__rdm" onclick = "randomPuzzle();">Click to go to a random puzzle</button>
+            <button class = "puzzles-widget__next" onclick = "nextPuzzle();">&gt;</button>
+        </div>
+        <div class = "puzzles-widget__title">TITLE</div>
+        <div class = "puzzles-widget__diff">Intermediate</div>
+        <div class = "puzzles-widget__status">Unsolved</div>`;
+
+    gameState.getWidgetElem(WIDGET_LOCATIONS.RIGHT).appendChild(puzzles);
+}
+
+
+const puzzlesElem       = getFirstElemOfClass(gameState.skeleton, "puzzles-widget");
+const puzzlesTitleElem  = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__title");
+const puzzlesDiffElem   = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__diff");
+const puzzlesSolvedElem = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__status");
+const puzzlesImgElem    = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__img");
 
 const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
@@ -52,20 +74,20 @@ async function loadPuzzle(id){
     gameState.loadFEN(puzzle.fen);
 
     // disallow moving for enemy side
-    userSide = gameState.turn;
-    oppSide = gameState.turn == Piece.white ? Piece.black : Piece.white;
-    gameState.allowedSides[userSide] = true;
-    gameState.allowedSides[oppSide] = false;
+    userSide = gameState.state.turn;
+    oppSide = gameState.state.turn == Piece.white ? Piece.black : Piece.white;
+    gameState.allowInputFrom[userSide] = true;
+    gameState.allowInputFrom[oppSide] = false;
 
     // flip the board to the user's perspective
-    setFlip(userSide == Piece.black);
+    gameState.setFlip(userSide == Piece.black);
 
     // add an observer that will listen for specific moves from the user
     moveIndex = 0; // index of currently expected move
 
     puzzlesElem.style.display = "";
 
-    containerElem.addEventListener("single-scroll", puzzleOnMadeMove);
+    gameState.skeleton.addEventListener("single-scroll", puzzleOnMadeMove);
     gameState.graphicalVariation = gameState.currentVariation;
 }
 
@@ -80,9 +102,9 @@ function clearPuzzles(){
 function stopSolvingPuzzle(){
     console.log("STOP SOLVING");
     // unlock board and stop listening for moves
-    containerElem.removeEventListener("single-scroll", puzzleOnMadeMove);
-    gameState.allowedSides[Piece.white] = true;
-    gameState.allowedSides[Piece.black] = true;
+    gameState.skeleton.removeEventListener("single-scroll", puzzleOnMadeMove);
+    gameState.allowInputFrom[Piece.white] = true;
+    gameState.allowInputFrom[Piece.black] = true;
 }
 
 function puzzleOnMadeMove(event){
@@ -183,7 +205,7 @@ function puzzleOnMadeMove(event){
 
 function puzzlePlayMove(san){
     setTimeout(() => {
-        const move = gameState.board.getMoveOfSAN(san);
+        const move = gameState.state.getMoveOfSAN(san);
         gameState.makeMove(move);
         gameState.applyChanges();
     }, 800);

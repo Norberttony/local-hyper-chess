@@ -1,18 +1,20 @@
 
-const lobby_featuredGameElem = document.getElementById("lobby_featured-game");
-const lobby_featuredTitleElem = document.getElementById("lobby_featured-title");
-const lobby_featuredGameContainerElem = document.getElementById("lobby_featured-game-container");
+const lobby_featuredGameElem            = getFirstElemOfClass(lobbyElem, "lobby__featured-game");
+const lobby_featuredTitleElem           = getFirstElemOfClass(lobbyElem, "lobby__featured-title");
+const lobby_featuredGameContainerElem = document.getElementById("lobby__featured-game-container");
 
 // populate with a board template
-const featuredGameBoardElem = boardTemplate.cloneNode(true);
-lobby_featuredGameContainerElem.appendChild(featuredGameBoardElem);
-const featuredBoardGameElem = featuredGameBoardElem.getElementsByClassName("game")[0];
+const featuredGameBoard = new BoardGraphics(false);
+lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
+
+const featuredGameWidgets = {
+    players: new PlayersWidget(featuredGameBoard)
+};
 
 let featuredGameId;
 let isUpdatingFeaturedGame = false;
 let keepUpdatingFeaturedGame = false;
 let featuredGameMoveNum;
-let featuredGameBoard;
 
 
 async function fetchFeaturedGame(){
@@ -23,36 +25,25 @@ async function fetchFeaturedGame(){
         lobby_featuredTitleElem.innerText = featured.title;
 
         // featured game actually exists.
-        const board = new Board();
-        board.loadFEN(featured.fen);
+        featuredGameBoard.loadFEN(featured.fen);
         
         const sans = featured.moves.trim().split(" ");
         let lastMove;
         for (const san of sans){
-            const move = board.getMoveOfSAN(san);
+            const move = featuredGameBoard.state.getMoveOfSAN(san);
             if (move){
-                board.makeMove(move);
+                featuredGameBoard.makeMove(move);
                 lastMove = move;
             }
         }
 
         featuredGameMoveNum = sans.length + 1;
 
-        displayBoard(board, lastMove, false, featuredBoardGameElem);
+        featuredGameBoard.display();
 
-        // remove id from all piece elements
-        for (const p of featuredBoardGameElem.getElementsByClassName("piece")){
-            p.id = "";
-        }
-
-        const whiteNameElem = featuredGameBoardElem.getElementsByClassName("white_player")[0].getElementsByClassName("name")[0];
-        const blackNameElem = featuredGameBoardElem.getElementsByClassName("black_player")[0].getElementsByClassName("name")[0];
         const [ whiteName, blackName ] = featured.names.split("_");
-        whiteNameElem.innerText = whiteName;
-        blackNameElem.innerText = blackName;
+        featuredGameWidgets.players.setNames(whiteName, blackName);
 
-        featuredGameBoard = board;
-        
         lobby_featuredGameElem.style.display = "block";
 
         startUpdatingFeaturedGame();
@@ -86,7 +77,7 @@ async function startUpdatingFeaturedGame(){
                 const moveObj = featuredGameBoard.getMoveOfSAN(gameInfo.move);
                 if (moveObj){
                     featuredGameBoard.makeMove(moveObj);
-                    displayBoard(featuredGameBoard, moveObj, false, featuredBoardGameElem);
+                    featuredGameBoard.display();
                     featuredGameMoveNum++;
                 }else{
                     console.error(`Could not interpret move from other player: ${gameInfo.move}`);

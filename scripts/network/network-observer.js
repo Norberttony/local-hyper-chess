@@ -1,7 +1,5 @@
 
-var containerElem = document.getElementById("container");
-
-containerElem.addEventListener("single-scroll", (event) => {
+gameState.skeleton.addEventListener("single-scroll", (event) => {
     const { prevVariation, variation, userInput } = event.detail;
 
     if (!userInput)
@@ -170,7 +168,7 @@ function setResult(result, termination){
 };
 
 // displays a result box
-containerElem.addEventListener("result", (event) => {
+gameState.skeleton.addEventListener("result", (event) => {
     if (!NETWORK.myColor && !WEB_PHIL.playing)
         return;
 

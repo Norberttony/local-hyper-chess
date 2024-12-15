@@ -1,5 +1,6 @@
 
 const lobbyElem = document.getElementById("lobby");
+const lobbyListElem = getFirstElemOfClass(lobbyElem, "lobby__list");
 
 
 function createChallengeTemplate(id, name, isBot, color, fen){
@@ -39,7 +40,7 @@ async function refreshChallenges(){
         challDict[c.challId] = c;
     }
 
-    lobbyElem.innerHTML = "";
+    lobbyListElem.innerHTML = "";
     for (const {id, name, isBot, color, fen} of challenges){
         const challElem = createChallengeTemplate(id, name, isBot, color, fen);
 
@@ -56,7 +57,7 @@ async function refreshChallenges(){
             });
         }
 
-        lobbyElem.appendChild(challElem);
+        lobbyListElem.appendChild(challElem);
     }
 
     // only keep challenges that have no strikes left.

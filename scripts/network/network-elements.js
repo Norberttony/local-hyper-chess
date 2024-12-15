@@ -4,43 +4,16 @@
 
 var outputElem = document.getElementById("output");
 
-var whiteInfoElem = document.getElementById("white_player");
-var blackInfoElem = document.getElementById("black_player");
-
-function setName(elem, name){
-    elem.getElementsByClassName("name")[0].innerText = name;
-}
-
-// elements to disable once a game begins
-let pregameControls = [
-    document.getElementById("panel_set-fen"),
-    document.getElementById("panel_set-pgn")
-];
-// elements to enable once a game begins
-let gameControls = [
-    document.getElementById("panel_resign"),
-    document.getElementById("panel_draw"),
-    document.getElementById("panel_takeback")
-];
-
 // disable current game controls and enable pregame controls
 function activatePreGameControls(){
-    for (let i = 0; i < gameControls.length; i++){
-        gameControls[i].disabled = true;
-    }
-    for (let i = 0; i < pregameControls.length; i++){
-        pregameControls[i].disabled = false;
-    }
+    widgets.pgn.disable();
+    widgets.extras.enable();
 }
 
 // disable pregame controls and enable game controls
 function activateGameControls(){
-    for (let i = 0; i < gameControls.length; i++){
-        gameControls[i].disabled = false;
-    }
-    for (let i = 0; i < pregameControls.length; i++){
-        pregameControls[i].disabled = true;
-    }
+    widgets.pgn.enable();
+    widgets.extras.disable();
 }
 
 activatePreGameControls();
@@ -73,14 +46,11 @@ function setUpBoard(side){
 
     // set up names.
     if (side == 1){
-        setName(whiteInfoElem, "Anonymous (You)");
-        setName(blackInfoElem, "Anonymous (Opponent)");
+        widgets.players.setNames("Anonymous (You)", "Anonymous (Opponent)");
     }else if (side == -1){
-        setName(whiteInfoElem, "Anonymous (Opponent)");
-        setName(blackInfoElem, "Anonymous (You)");
+        widgets.players.setNames("Anonymous (Opponent)", "Anonymous (You)");
     }else{
-        setName(whiteInfoElem, "Anonymous");
-        setName(blackInfoElem, "Anonymous");
+        widgets.players.setNames("Anonymous", "Anonymous");
     }
 
     // disables any elements that should not be active during a live game.

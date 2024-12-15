@@ -124,9 +124,9 @@ async function loadGame(gameSuperId){
         const [ whiteName, blackName ] = names ? names.split("_") : [ "Anonymous", "Anonymous" ];
         if (color != "none"){
             setUpBoard(color == "white" ? 1 : -1);
-            setNames(color == "white" ? "You" : whiteName, color == "black" ? "You" : blackName);
+            widgets.players.setNames(color == "white" ? "You" : whiteName, color == "black" ? "You" : blackName);
         }else{
-            setNames(whiteName, blackName);
+            widgets.players.setNames(whiteName, blackName);
         }
 
         // load the game move by move
@@ -226,17 +226,8 @@ async function acceptChallenge(challengeId){
     }
 }
 
-function setNames(whiteName, blackName){
-    whiteInfoElem.style.display = "block";
-    whiteInfoElem.getElementsByClassName("name")[0].innerText = whiteName;
-
-    blackInfoElem.style.display = "block";
-    blackInfoElem.getElementsByClassName("name")[0].innerText = blackName;
-}
-
 function hideNames(){
-    whiteInfoElem.style.display = "none";
-    blackInfoElem.style.display = "none";
+    widgets.players.disable();
 }
 
 // if the cache contains more than maxGames games, the oldest games are purged.
