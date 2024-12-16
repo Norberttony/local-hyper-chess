@@ -11,6 +11,7 @@ const widgets = {
     players: new PlayersWidget(gameState),
     web_phil: new WebPhilWidget(gameState)
 };
+widgets.web_phil.disable();
 
 widgets.players.setNames("Anonymous (white)", "Anonymous (black)");
 

@@ -14,7 +14,8 @@ class WebPhilWidget extends BoardWidget {
                 <input name = "phil_color" type = "radio" value = "black"> Black
             </div>
             <input value = "Start Game" type = "submit">`;
-
+        
+        this.container = form;
         boardgfx.skeleton.appendChild(form);
 
         this.thinkTime = 1000;
@@ -46,6 +47,14 @@ class WebPhilWidget extends BoardWidget {
         boardgfx.skeleton.addEventListener("single-scroll", (event) => {
             this.onSingleScroll(event);
         });
+    }
+
+    enable(){
+        this.container.style.display = "";
+    }
+
+    disable(){
+        this.container.style.display = "none";
     }
 
     start(){

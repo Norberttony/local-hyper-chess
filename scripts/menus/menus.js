@@ -181,6 +181,8 @@ registerMenu("multiplayer-game",
 
 registerMenu("web-phil",
     () => {
+        widgets.web_phil.enable();
+
         activateContainer("main-board");
         setNetworkVisibility(false);
         setExtraVisibility(true);
@@ -190,6 +192,7 @@ registerMenu("web-phil",
         gameState.loadFEN(StartingFEN);
     },
     () => {
+        widgets.web_phil.disable();
         widgets.web_phil.stop();
     }
 )
