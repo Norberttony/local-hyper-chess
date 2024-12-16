@@ -4,102 +4,11 @@ const myGames_fetchingElem = document.getElementById("my-games_fetching");
 const myGames_menuElem = document.getElementById("my-games_menu");
 const myGames_download = document.getElementById("my-games_download");
 
-const bookmarkedGamesElem = document.getElementById("bookmarked-games");
 
 let allMyGames = [];
-let allMyBookmarks = [];
-
-let activeViewGamesMenu = "my-games";
 
 refreshViewGames();
 
-
-function showMyGames(elem){
-    myGamesElem.style.display = "";
-    bookmarkedGamesElem.style.display = "none";
-
-    myGames_menuElem.getElementsByClassName("active")[0].classList.remove("active");
-    elem.classList.add("active");
-
-    activeViewGamesMenu = "my-games";
-}
-
-function showBookmarkedGames(elem){
-    bookmarkedGamesElem.style.display = "flex";
-    myGamesElem.style.display = "none";
-
-    myGames_menuElem.getElementsByClassName("active")[0].classList.remove("active");
-    elem.classList.add("active");
-
-    activeViewGamesMenu = "bookmarked-games";
-}
-
-
-function prepareBoardElem(id, gameInfo){
-    const { fen, color, result, moves } = gameInfo;
-
-    // load moves using an external board.
-    const board = new Board();
-    board.loadFEN(gameInfo.fen);
-
-    const movesSplit = moves.split(" ");
-    let res;
-    let term;
-    let lastMove;
-    let toPlay = board.turn;
-    for (const m of movesSplit){
-        if (m != ""){
-            if (m.startsWith("1-0") || m.startsWith("0-1") || m.startsWith("1/2-1/2")){
-                res = m;
-                term = movesSplit[movesSplit.length - 1];
-                break;
-            }else{
-                const move = board.getMoveOfSAN(m);
-                board.makeMove(move);
-                lastMove = move;
-                toPlay = board.turn;
-            }
-        }
-    }
-    toPlay = toPlay == Piece.black ? "black" : "white";
-
-    // add the board to the display
-    const boardElem = boardTemplate.cloneNode(true);
-
-    const boardGameElem = boardElem.getElementsByClassName("game")[0];
-
-    displayBoard(board, lastMove, color == "black", boardGameElem);
-
-    // remove id from all piece elements
-    for (const p of boardGameElem.getElementsByClassName("piece")){
-        p.id = "";
-    }
-
-    // if a result exists, display it on the board
-    if (result && result != "*"){
-        const resDiv = document.createElement("div");
-        resDiv.classList.add("result");
-        resDiv.innerText = result.split("-").join(" - ");
-        boardGameElem.appendChild(resDiv);
-    }else{
-        // add a message if it is the user to play
-        const toPlayElem = document.createElement("p");
-        toPlayElem.classList.add("message");
-        boardElem.appendChild(toPlayElem);
-        if (toPlay == color){
-            toPlayElem.innerText = "It is your turn to play";
-        }else{
-            toPlayElem.innerText = "Waiting for opponent";
-        }
-    }
-
-    // clicking on the board should link to the game
-    boardElem.addEventListener("click", () => {
-        changeHash(`#game=${id}`);
-    });
-
-    return [ boardElem, board ];
-}
 
 // when calling refreshViewGames directly, the website layout isn't recalculated or re-set until
 // everything finishes. So, it is separated by a setTimeout to allow the website to update
@@ -115,7 +24,6 @@ function refreshViewGamesSetup(){
     }, 100);
 }
 
-/*
 async function refreshViewGames(){
     if (typeof localStorage === "undefined"){
         myGames_fetchingElem.innerText = "Error: browser's local storage is not enabled";
@@ -128,31 +36,27 @@ async function refreshViewGames(){
     for (const [ k, userId ] of Object.entries(localStorage)){
         if (k.endsWith("_userId")){
 
-            const [ gameId, refNum ] = k.replace("_userId", "").split("_");
+            const [ gameId, rowNum ] = k.replace("_userId", "").split("_");
 
-            const gameSuperId = `${gameId}_${userId}_${refNum}`;
+            console.log(gameId, rowNum, userId);
 
-            // fetch with this information
-            const gameInfo = await fetchGame(gameSuperId);
+            const boardgfx = new BoardGraphics(false, false);
+            const boardElem = boardgfx.skeleton;
 
-            // something might have gone wrong when communicating with the server
-            if (!gameInfo || !gameInfo.status){
-                continue;
-            }
+            const network = new NetworkWidget(boardgfx, WIDGET_LOCATIONS.NONE);
+            const gameInfo = await network.setNetworkId(gameId, rowNum, userId);
 
-            // server could not find game, or the user isn't playing this game.
-            if (gameInfo.status == "err" || gameInfo.color == "none"){
-                localStorage.removeItem(k);
-                continue;
-            }
+            network.active = false;
 
-            const [ boardElem, board ] = prepareBoardElem(`${gameId}_${refNum}`, gameInfo);
-
-            boardElem.addEventListener("click", () => {
-                setMyId(gameSuperId);
-            });
+            boardgfx.jumpToVariation(boardgfx.mainVariation);
+            boardgfx.applyChanges();
 
             if (gameInfo.result && gameInfo.result != "*"){
+                const resDiv = document.createElement("div");
+                resDiv.classList.add("result");
+                resDiv.innerText = gameInfo.result.split("-").join(" - ");
+                boardgfx.boardDiv.appendChild(resDiv);
+
                 // add a delete button for the game
                 const delElem = document.createElement("button");
                 delElem.classList.add("delete");
@@ -163,30 +67,27 @@ async function refreshViewGames(){
                     event.stopImmediatePropagation();
 
                     if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be visible to other users with the link.")){
-                        // in order to keep the user's authentication, store it somewhere
-                        // user should still be able to clear their unwanted archived games but the
-                        // authentication is still stored to prove ownership of a game.
-                        // this also provides (in the future) a way to retrieve games that were accidentally deleted.
-                        const auths = JSON.parse(localStorage.getItem("authentications") || "[]");
-                        auths.push(gameSuperId);
-                        localStorage.setItem("authentications", JSON.stringify(auths));
-
                         // remove from local storage
                         localStorage.removeItem(k);
+                        boardgfx.allowGC();
                         boardElem.parentNode.removeChild(boardElem);
 
                         alert("Game has been removed from your storage");
                     }
                 });
+
+                boardElem.addEventListener("click", () => {
+                    changeHash(`#game=${gameId}_${rowNum}`);
+                });
             }
 
-            let toPlay = board.turn;
+            let toPlay = boardgfx.state.turn;
 
             // gameInfo will be used in sorting.
             const sortGI = Object.assign({}, gameInfo);
             sortGI.elem = boardElem;
             sortGI.toPlay = toPlay;
-            sortGI.id = `${gameId}_${refNum}`;
+            sortGI.id = `${gameId}_${rowNum}`;
 
             // sort the gameInfo with the rest of the games
             const idx = binaryInsert(allMyGames, sortGI, compareGames);
@@ -198,56 +99,12 @@ async function refreshViewGames(){
         }
     }
 
-    await refreshBookmarkedGames();
-
     console.log(allMyGames);
 
     myGames_fetchingElem.innerText = "All games have been fetched";
     myGames_download.removeAttribute("disabled");
     console.log("Refreshing view games done");
 }
-
-async function refreshBookmarkedGames(){
-    const bookmarkedGames = JSON.parse(localStorage.getItem("bookmarks") || "[]");
-
-    let toRemove = [];
-
-    bookmarkedGamesElem.innerHTML = "";
-
-    allMyBookmarks = [];
-
-    for (const b of bookmarkedGames){
-        // fetch with this information
-        const gameInfo = await fetchGame(b);
-
-        // something might have gone wrong when communicating with the server
-        if (!gameInfo || !gameInfo.status){
-            continue;
-        }
-
-        // server could not find game, or the user isn't playing this game.
-        if (gameInfo.status == "err"){
-            toRemove.push(b);
-            continue;
-        }
-
-        const [ boardElem, board ] = prepareBoardElem(b, gameInfo);
-
-        gameInfo.toPlay = board.turn;
-        gameInfo.id = b;
-        gameInfo.elem = boardElem;
-        allMyBookmarks.push(gameInfo);
-
-        bookmarkedGamesElem.appendChild(boardElem);
-    }
-
-    for (const r of toRemove){
-        bookmarkedGames.splice(bookmarkedGames.indexOf(r), 1);
-    }
-
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarkedGames));
-}
-*/
 
 // returns true if game 1 is more important (greater) than game 2 and false otherwise
 function compareGames(g1, g2){

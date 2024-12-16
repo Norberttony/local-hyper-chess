@@ -17,6 +17,10 @@ class PlayersWidget extends BoardWidget {
         this.bottomPlyr = bottomPlyr;
 
         // whenever the board flips, update the player names.
+        boardgfx.skeleton.addEventListener("player-names", (event) => {
+            const { whiteName, blackName } = event.detail;
+            this.setNames(whiteName, blackName);
+        });
         boardgfx.skeleton.addEventListener("flip", () => {
             const temp = topPlyr.innerText;
             topPlyr.innerText = bottomPlyr.innerText;

@@ -101,15 +101,9 @@
             <h1 style = "margin: 20px; font-size: xxx-large">Your games:</h1>
             <p id = "my-games_fetching" style = "font-size: xx-large">Fetching games, please wait...</p>
 
-            <div id = "my-games_menu">
-                <button onclick = "showMyGames(this);" class = "active">Show My Games</button>
-                <button onclick = "showBookmarkedGames(this);">Show Bookmarked Games</button>
-            </div>
-
-            <button id = "my-games_download" onclick = "downloadMyGames(activeViewGamesMenu == 'my-games' ? allMyGames : allMyBookmarks);">Download these games</button>
+            <button id = "my-games_download" onclick = "downloadMyGames(allMyGames);">Download these games</button>
 
             <div id = "my-games"></div>
-            <div id = "bookmarked-games"></div>
         </div>
 
         <div id = "lobby" class = "lobby" style = "display: none;">

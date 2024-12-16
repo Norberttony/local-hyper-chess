@@ -35,7 +35,7 @@ class NetworkWidget extends BoardWidget {
             this.outputElem = outputElem;
 
             this.resignButton.onclick = () => {
-                if (prompt("Are you sure you want to resign?"))
+                if (confirm("Are you sure you want to resign?"))
                     pollDatabase("POST", {
                         type: "resign",
                         gameId: this.gameId,
@@ -44,7 +44,7 @@ class NetworkWidget extends BoardWidget {
                     });
             }
             this.drawButton.onclick = () => {
-                if (prompt("Are you sure you want to offer a draw?"))
+                if (confirm("Are you sure you want to offer a draw?"))
                     pollDatabase("POST", {
                         type: "draw",
                         gameId: this.gameId,
@@ -85,7 +85,7 @@ class NetworkWidget extends BoardWidget {
         this.gameId = gameId;
         this.rowNum = rowNum;
         this.userId = userId;
-        await this.refreshGame();
+        return await this.refreshGame();
     }
 
     async startUpdate(){
@@ -131,7 +131,7 @@ class NetworkWidget extends BoardWidget {
         }
 
         // display any active offers
-        if (gameInfo.offers){
+        if (gameInfo.offers && this.outputElem){
             const validOffers = [ "draw", "takeback", "rematch" ];
 
             this.outputElem.innerText = "";
@@ -167,6 +167,13 @@ class NetworkWidget extends BoardWidget {
 
         const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
         const { names, fen, color, moves, archived } = gameInfo;
+
+        let [ whiteName, blackName ] = names.split("_");
+        if (color == "white" && whiteName == "Anonymous")
+            whiteName = "You";
+        else if (color == "black" && blackName == "Anonymous")
+            blackName = "You";
+        this.boardgfx.setNames(whiteName, blackName);
 
         this.boardgfx.loadFEN(fen);
         this.boardgfx.setFlip(color == "black");
@@ -209,10 +216,13 @@ class NetworkWidget extends BoardWidget {
         if (archived){
             this.boardgfx.jumpToVariation(this.boardgfx.variationRoot);
             this.boardgfx.applyChanges();
+            activatePreGameControls();
         }
         this.boardgfx.pgnData.setHeader("Event", "Hyper Chess Online Game");
 
         this.startUpdate();
+
+        return gameInfo;
     }
 
     // =========================== //

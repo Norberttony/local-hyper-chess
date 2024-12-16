@@ -81,6 +81,10 @@ class BoardGraphics {
         return w;
     }
 
+    setNames(whiteName, blackName){
+        this.dispatchEvent("player-names", { whiteName, blackName });
+    }
+
     // =========================== //
     // === LOADING FEN AND PGN === //
     // =========================== //
