@@ -28,7 +28,6 @@ async function generateInvite(gameConfig){
 
     // extract information from server
     const { challId, userId } = fullId;
-    setMyId(`${challId}_${userId}`);
 
     addChallToLocalStorage(challId);
 
@@ -40,7 +39,7 @@ async function generateInvite(gameConfig){
     document.getElementById("invite-popup-container").style.display = "flex";
     document.getElementById("invite-popup").style.display = "flex";
 
-    const { status, chall, msg } = await checkIfAccepted();
+    const { status, chall, msg } = await checkIfAccepted(challId, userId);
 
     if (status == "err")
         return alert(`Something went wrong with the challenge: ${msg}`);
@@ -57,7 +56,7 @@ async function generateInvite(gameConfig){
 }
 
 let cancelChallengePolling = false;
-async function checkIfAccepted(){
+async function checkIfAccepted(challId, userId){
     
     cancelChallengePolling = false;
 
@@ -66,7 +65,8 @@ async function checkIfAccepted(){
             const val = JSON.parse(
                 await pollDatabase("GET", {
                     type: "challengeStatus",
-                    id: `${NETWORK.gameId}_${NETWORK.userId}`
+                    challId,
+                    userId
                 })
             );
 
@@ -88,6 +88,25 @@ async function checkIfAccepted(){
             }
         }
         if (cancelChallengePolling){
+            const info = await pollDatabase("POST", {
+                type: "cancelChallenge",
+                challId,
+                userId
+            });
+        
+            if (info){
+                if (info.status == "ok"){
+                    console.log("deleted challenge");
+                }else if (info.status == "err"){
+                    alert(`Error deleting challenge: ${info.msg}`);
+                }
+            }else{
+                alert("Something went wrong in deleting the challenge");
+            }
+        
+            // hide invite box
+            hideInvite();
+
             res({ status: "cancelled" });
         }
     });
@@ -116,25 +135,7 @@ function shareInvite(){
 
 // gets rid of the server's challenge
 async function cancelInvite(){
-    const info = await pollDatabase("POST", {
-        type: "cancelChallenge",
-        id: getMyId()
-    });
-
     cancelChallengePolling = true;
-
-    if (info){
-        if (info.status == "ok"){
-            console.log("deleted challenge");
-        }else if (info.status == "err"){
-            alert(`Error deleting challenge: ${info.msg}`);
-        }
-    }else{
-        alert("Something went wrong in deleting the challenge");
-    }
-
-    // hide invite box
-    hideInvite();
 }
 
 function addChallToLocalStorage(challId){

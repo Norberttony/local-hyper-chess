@@ -24,27 +24,33 @@ class NetworkWidget extends BoardWidget {
                 <button class = "pgn-viewer__takeback font-icon" data-icon = "" id = "panel_takeback" disabled></button>`;
             container.appendChild(gameButtons);
 
+            const outputElem = document.createElement("output");
+            container.appendChild(outputElem);
+
             boardgfx.getWidgetElem(location).appendChild(container);
 
             this.resignButton = getFirstElemOfClass(gameButtons, "pgn-viewer__resign");
             this.drawButton = getFirstElemOfClass(gameButtons, "pgn-viewer__draw");
             this.takebackButton = getFirstElemOfClass(gameButtons, "pgn-viewer__takeback");
+            this.outputElem = outputElem;
 
             this.resignButton.onclick = () => {
-                pollDatabase("POST", {
-                    type: "resign",
-                    gameId: this.gameId,
-                    userId: this.userId,
-                    rowNum: this.rowNum
-                });
+                if (prompt("Are you sure you want to resign?"))
+                    pollDatabase("POST", {
+                        type: "resign",
+                        gameId: this.gameId,
+                        userId: this.userId,
+                        rowNum: this.rowNum
+                    });
             }
             this.drawButton.onclick = () => {
-                pollDatabase("POST", {
-                    type: "draw",
-                    gameId: this.gameId,
-                    userId: this.userId,
-                    rowNum: this.rowNum
-                });
+                if (prompt("Are you sure you want to offer a draw?"))
+                    pollDatabase("POST", {
+                        type: "draw",
+                        gameId: this.gameId,
+                        userId: this.userId,
+                        rowNum: this.rowNum
+                    });
             }
         }
 
@@ -83,6 +89,7 @@ class NetworkWidget extends BoardWidget {
     }
 
     async startUpdate(){
+        this.active = true;
         while (this.active){
             await this.getStatus();
             await sleep(1000);
@@ -102,14 +109,14 @@ class NetworkWidget extends BoardWidget {
         if (!this.active)
             return;
 
-        const gameInfo = JSON.parse(rawData);
+        const gameInfo = JSON.parse(JSON.parse(rawData).results);
 
         // play any moves that may have occurred
         if (gameInfo.recentMoves){
             let myPlyCount = this.boardgfx.mainVariation.level + this.plyOffset;
 
             const moves = gameInfo.recentMoves.split(" ");
-            for (let i = 0; i < Math.floor(moves.length / 2); i += 2){
+            for (let i = 0; i < 2 * Math.floor(moves.length / 2); i += 2){
                 const plyCount = parseInt(moves[i]);
                 const move = moves[i + 1];
 
@@ -117,6 +124,7 @@ class NetworkWidget extends BoardWidget {
                     // must refresh the game by refetching it from the database
                 }else if (plyCount - myPlyCount == 1){
                     this.boardgfx.addMoveToEnd(move);
+                    this.boardgfx.applyChanges();
                     myPlyCount++;
                 }
             }
@@ -125,6 +133,8 @@ class NetworkWidget extends BoardWidget {
         // display any active offers
         if (gameInfo.offers){
             const validOffers = [ "draw", "takeback", "rematch" ];
+
+            this.outputElem.innerText = "";
 
             for (let i = 0; i < validOffers.length; i++){
                 if (gameInfo.offers[i] == "n")
@@ -137,7 +147,7 @@ class NetworkWidget extends BoardWidget {
                     offerer = gameInfo.offers[i] == this.color ? "You" : "Your opponent";
                 }
 
-                console.log(`${this.offerer} has offered a ${validOffers[i]}`);
+                this.outputElem.innerText += `${offerer} offered a ${validOffers[i]}\n`;
             }
         }
 
@@ -155,7 +165,7 @@ class NetworkWidget extends BoardWidget {
         if (!this.gameId || !this.rowNum)
             return console.error("Cannot refresh game without gameId and rowNum");
 
-        const gameInfo = await fetchGame(this.gameId, this.rowNum);
+        const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
         const { names, fen, color, moves, archived } = gameInfo;
 
         this.boardgfx.loadFEN(fen);
@@ -187,10 +197,13 @@ class NetworkWidget extends BoardWidget {
         }
         this.boardgfx.applyChanges();
 
-        if (color == "none")
+        if (color == "none"){
             delete this.color;
-        else
+            activatePreGameControls();
+        }else{
             this.color = color[0];
+            activateGameControls();
+        }
 
         // if archived skip to beginning
         if (archived){
@@ -301,5 +314,6 @@ class NetworkWidget extends BoardWidget {
         this.boardgfx.pgnData.setHeader("Termination", termination);
     
         displayResultBox(resultText, mewin, termination);
+        activatePreGameControls();
     }
 }

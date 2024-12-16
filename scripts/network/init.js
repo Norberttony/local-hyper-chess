@@ -29,7 +29,7 @@ function getGameIdParts(gameId){
 }
 
 // fetches the game from the database
-async function fetchGame(gameId, rowNum){
+async function fetchGame(gameId, rowNum, userId){
 
     // check the cache
     const cacheId = `${gameId}_${rowNum}_cached`;
@@ -46,7 +46,8 @@ async function fetchGame(gameId, rowNum){
         await pollDatabase("GET", {
             type: "game",
             gameId,
-            rowNum
+            rowNum,
+            userId
         })
     );
 
@@ -88,10 +89,7 @@ async function acceptChallenge(challengeId){
 
         // set NETWORK variables
         const [ gameId, userId, refNum ] = gameSuperId;
-        NETWORK.gameId = gameId;
-        NETWORK.userId = userId;
-        NETWORK.refNum = refNum;
-        NETWORK.moveNum = 0;
+        widgets.network.setNetworkId(gameId, refNum, userId);
 
         // store user ID and set the hash correctly
         storeUserId(gameId, refNum, userId);

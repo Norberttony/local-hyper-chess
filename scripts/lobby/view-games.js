@@ -115,6 +115,7 @@ function refreshViewGamesSetup(){
     }, 100);
 }
 
+/*
 async function refreshViewGames(){
     if (typeof localStorage === "undefined"){
         myGames_fetchingElem.innerText = "Error: browser's local storage is not enabled";
@@ -246,6 +247,7 @@ async function refreshBookmarkedGames(){
 
     localStorage.setItem("bookmarks", JSON.stringify(bookmarkedGames));
 }
+*/
 
 // returns true if game 1 is more important (greater) than game 2 and false otherwise
 function compareGames(g1, g2){

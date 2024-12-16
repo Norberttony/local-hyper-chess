@@ -95,6 +95,7 @@ class BoardGraphics {
         
         // just get rid of everything after variation root and have gc handle it
         this.currentVariation = this.variationRoot;
+        this.mainVariation = this.currentVariation;
         this.variationRoot.next = [];
 
         this.applyChanges(false);
@@ -238,6 +239,7 @@ class BoardGraphics {
 
     addMoveToEnd(san){
         const previous = this.currentVariation;
+        const doSwitch = this.currentVariation != this.mainVariation;
 
         this.jumpToVariation(this.mainVariation);
         
@@ -245,7 +247,8 @@ class BoardGraphics {
         if (move)
             this.makeMove(move);
 
-        this.jumpToVariation(previous);
+        if (doSwitch)
+            this.jumpToVariation(previous);
     }
 
     

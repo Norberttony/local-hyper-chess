@@ -53,10 +53,6 @@ function displayResultBox(result, mewin, termination){
     // display
     showDialogContainer();
     result_boxElem.style.display = "block";
-
-    // allow player to offer rematch even after closing result box
-    panel_rematchElem.style.display = "block";
-    panel_goToBoardElem.style.display = "block";
 }
 
 function hideResultBox(){
