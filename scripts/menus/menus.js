@@ -84,7 +84,8 @@ function changeHash(newHash, quiet = false){
             const puzzleId = parseInt(newHash.replace("#puzzles=", ""));
             loadPuzzle(puzzleId);
         }else if (newHash.startsWith("#game=")){
-            loadGame(newHash.replace("#game=", ""));
+            const parts = getGameIdParts(newHash.replace("#game=", ""));
+            widgets.network.setNetworkId(parts.gameId, parts.rowNum, parts.userId);
         }else if (newHash.startsWith("#chall=")){
             acceptChallenge(newHash.replace("#chall=", ""));
         }else if (newHash.startsWith("#board,pgn=")){
@@ -169,7 +170,6 @@ registerMenu("multiplayer-game",
         gameState.allowVariations = false;
     },
     () => {
-        stopWaitingForMove();
         gameState.allowVariations = true;
         gameState.allowInputFrom[Piece.white] = true;
         gameState.allowInputFrom[Piece.black] = true;

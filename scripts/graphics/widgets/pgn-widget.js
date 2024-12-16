@@ -27,19 +27,6 @@ class PGNWidget extends BoardWidget {
         pgnElem.classList.add("pgn-viewer__pgn-list");
         container.appendChild(pgnElem);
 
-        const gameButtons = document.createElement("div");
-        gameButtons.classList.add("pgn-viewer__game-controls");
-        gameButtons.innerHTML = `
-            <button class = "pgn-viewer__flip font-icon" data-icon = "" onclick = "gameState.flip();"></button>
-            <button class = "pgn-viewer__resign font-icon" data-icon = "" id = "panel_resign" onclick = "resign();"></button>
-            <button class = "pgn-viewer__draw" onclick = "offerDraw();"><span>½</span></button>
-            <button class = "pgn-viewer__takeback font-icon" data-icon = "" id = "panel_takeback" onclick = "proposeTakeback();" disabled></button>`;
-        container.appendChild(gameButtons);
-
-        this.resignButton = getFirstElemOfClass(gameButtons, "pgn-viewer__resign");
-        this.drawButton = getFirstElemOfClass(gameButtons, "pgn-viewer__draw");
-        this.takebackButton = getFirstElemOfClass(gameButtons, "pgn-viewer__takeback");
-
         this.pgnElem = pgnElem;
         this.boardgfx = boardgfx;
 
@@ -56,18 +43,6 @@ class PGNWidget extends BoardWidget {
         boardgfx.skeleton.addEventListener("variation-change", (event) => {
             this.onVariationChange(event);
         });
-    }
-
-    networkEnable(){
-        this.resignButton.removeAttribute("disabled");
-        this.drawButton.removeAttribute("disabled");
-        this.takebackButton.removeAttribute("disabled");
-    }
-
-    networkDisable(){
-        this.resignButton.setAttribute("disabled", "false");
-        this.drawButton.setAttribute("disabled", "false");
-        this.takebackButton.setAttribute("disabled", "false");
     }
 
     onNewVariation(event){

@@ -1,11 +1,12 @@
 
 const WIDGET_LOCATIONS = {
-    LEFT:       0,
-    TOP_BAR:    1,
-    BOARD:      2,
-    BOTTOM_BAR: 3,
-    RIGHT:      4,
-    BOTTOM:     5
+    NONE:       0,
+    LEFT:       1,
+    TOP_BAR:    2,
+    BOARD:      3,
+    BOTTOM_BAR: 4,
+    RIGHT:      5,
+    BOTTOM:     6
 };
 
 const WIDGET_NAMES = Object.keys(WIDGET_LOCATIONS).map((val) => val.replaceAll("_", "-").toLowerCase());

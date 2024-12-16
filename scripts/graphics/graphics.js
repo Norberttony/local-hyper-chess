@@ -6,6 +6,7 @@ const widgets = {
     animation: new AnimationWidget(gameState),
     audio: new AudioWidget(gameState),
     pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
+    network: new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT),
     extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
     players: new PlayersWidget(gameState)
 };
