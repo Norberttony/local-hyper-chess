@@ -8,7 +8,8 @@ const widgets = {
     pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
     network: new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT),
     extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
-    players: new PlayersWidget(gameState)
+    players: new PlayersWidget(gameState),
+    web_phil: new WebPhilWidget(gameState)
 };
 
 widgets.players.setNames("Anonymous (white)", "Anonymous (black)");

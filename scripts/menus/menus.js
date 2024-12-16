@@ -187,11 +187,9 @@ registerMenu("web-phil",
         setPuzzlesVisibility(false);
         gameState.allowVariations = false;
 
-        document.getElementById("web-phil").style.display = "";
         gameState.loadFEN(StartingFEN);
     },
     () => {
-        document.getElementById("web-phil").style.display = "none";
-        stopWebPhil();
+        widgets.web_phil.stop();
     }
 )

@@ -1,6 +1,6 @@
 
-#web-phil {
-    grid-area: game;
+.board-graphics__web-phil {
+    grid-area: board;
 
     display: flex;
     flex-flow: column;
@@ -17,12 +17,12 @@
     z-index: 30;
 }
 
-#web-phil button {
+.board-graphics__web-phil button {
     font-size: xx-large;
     margin-top: 20px;
 }
 
-#web-phil input[type="radio"] {
+.board-graphics__web-phil input[type="radio"] {
     width: 20px;
     height: 20px;
 }
