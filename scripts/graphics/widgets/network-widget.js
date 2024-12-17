@@ -168,12 +168,14 @@ class NetworkWidget extends BoardWidget {
         const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
         const { names, fen, color, moves, archived } = gameInfo;
 
-        let [ whiteName, blackName ] = names.split("_");
-        if (color == "white" && whiteName == "Anonymous")
-            whiteName = "You";
-        else if (color == "black" && blackName == "Anonymous")
-            blackName = "You";
-        this.boardgfx.setNames(whiteName, blackName);
+        if (names){
+            let [ whiteName, blackName ] = names.split("_");
+            if (color == "white" && whiteName == "Anonymous")
+                whiteName = "You";
+            else if (color == "black" && blackName == "Anonymous")
+                blackName = "You";
+            this.boardgfx.setNames(whiteName, blackName);
+        }
 
         this.boardgfx.loadFEN(fen);
         this.boardgfx.setFlip(color == "black");
