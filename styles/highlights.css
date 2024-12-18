@@ -20,6 +20,6 @@
 .board-graphics__move-highlight--last {
     background-color: var(--last-move-highlight-color);
     opacity: 0.5;
-    z-index: 0;
+    z-index: 1;
     will-change: transform;
 }

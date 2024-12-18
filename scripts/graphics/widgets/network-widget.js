@@ -162,8 +162,9 @@ class NetworkWidget extends BoardWidget {
     }
 
     async refreshGame(){
+        this.boardgfx.loading();
         if (!this.gameId || !this.rowNum)
-            return console.error("Cannot refresh game without gameId and rowNum");
+            return console.error("Cannot refresh game without gameId and rowNum"), this.boardgfx.finishedLoading();
 
         const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
         const { names, fen, color, moves, archived } = gameInfo;
@@ -221,6 +222,8 @@ class NetworkWidget extends BoardWidget {
             activatePreGameControls();
         }
         this.boardgfx.pgnData.setHeader("Event", "Hyper Chess Online Game");
+
+        this.boardgfx.finishedLoading();
 
         this.startUpdate();
 

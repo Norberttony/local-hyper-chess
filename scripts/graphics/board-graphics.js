@@ -5,10 +5,8 @@
 
 class BoardGraphics {
     constructor(allowDragging = true, displayRanksAndFiles = false, skeleton = null){
-        if (!skeleton)
-            skeleton = createSkeleton();
-
-        skeleton.classList.add("board-graphics", "board-graphics--board-blue", "board-graphics--pieces-cburnett");
+        skeleton = createSkeleton(skeleton);
+        skeleton.classList.add("board-graphics--board-blue", "board-graphics--pieces-cburnett");
 
         const boardDiv = skeleton.getElementsByClassName("board-graphics__board")[0];
         if (!boardDiv)
@@ -66,6 +64,14 @@ class BoardGraphics {
 
     get isFlipped(){
         return this.skeleton.classList.contains("board-graphics--flipped");
+    }
+
+    loading(){
+        this.skeleton.classList.add("board-graphics--loading");
+    }
+
+    finishedLoading(){
+        this.skeleton.classList.remove("board-graphics--loading");
     }
 
     // retrieves the relevant widget element, creating one if necessary
@@ -386,14 +392,27 @@ class BoardGraphics {
 // they are generally used to populate the skeleton with graphical features.
 
 // creates a graphical skeleton that is meant to contain a chess board's graphics and widgets.
-function createSkeleton(){
+function createSkeleton(skeleton){
     // skeleton contains all widgets including main board display
-    const skeleton = document.createElement("div");
+    if (!skeleton)
+        skeleton = document.createElement("div");
+
+    skeleton.classList.add("board-graphics");
 
     // create the main board display
     const boardDiv = document.createElement("div");
     boardDiv.classList.add("board-graphics__board");
     skeleton.appendChild(boardDiv);
+
+    // create a loading icon
+    const loadingDiv = document.createElement("div");
+    loadingDiv.classList.add("board-graphics__loading");
+    boardDiv.appendChild(loadingDiv);
+
+    const loadingImg = document.createElement("img");
+    loadingImg.classList.add("board-graphics__loading-img");
+    loadingImg.src = "./images/pieces/immobilizer.png";
+    loadingDiv.appendChild(loadingImg);
 
     return skeleton;
 }

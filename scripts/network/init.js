@@ -95,6 +95,9 @@ async function acceptChallenge(challengeId){
         storeUserId(gameId, refNum, userId);
         changeHash(`#game=${gameId}_${refNum}`);
     }
+
+    hideDialogBox();
+    hideDialogContainer();
 }
 
 function hideNames(){

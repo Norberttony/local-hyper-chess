@@ -15,32 +15,15 @@ const featuredGameWidgets = {
 let featuredGameId;
 let isUpdatingFeaturedGame = false;
 let keepUpdatingFeaturedGame = false;
-let featuredGameMoveNum;
 
 
 async function fetchFeaturedGame(){
+    featuredGameBoard.loading();
     const featured = JSON.parse(await pollDatabase("GET", { type: "featuredGame" }));
 
     if (featured && featured.status == "ok"){
         featuredGameId = featured.id;
         lobby_featuredTitleElem.innerText = featured.title;
-
-        // featured game actually exists.
-        featuredGameBoard.loadFEN(featured.fen);
-        
-        const sans = featured.moves.trim().split(" ");
-        let lastMove;
-        for (const san of sans){
-            const move = featuredGameBoard.state.getMoveOfSAN(san);
-            if (move){
-                featuredGameBoard.makeMove(move);
-                lastMove = move;
-            }
-        }
-
-        featuredGameMoveNum = sans.length + 1;
-
-        featuredGameBoard.display();
 
         const [ whiteName, blackName ] = featured.names.split("_");
         featuredGameWidgets.players.setNames(whiteName, blackName);
@@ -51,6 +34,8 @@ async function fetchFeaturedGame(){
         // jump to the end to show the live game
         featuredGameBoard.jumpToVariation(featuredGameBoard.mainVariation);
         featuredGameBoard.applyChanges();
+
+        featuredGameBoard.skeleton.addEventListener("click", goToFeaturedGame);
     }else{
         lobby_featuredGameElem.style.display = "none";
     }

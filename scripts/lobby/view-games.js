@@ -7,8 +7,6 @@ const myGames_download = document.getElementById("my-games_download");
 
 let allMyGames = [];
 
-refreshViewGames();
-
 
 // when calling refreshViewGames directly, the website layout isn't recalculated or re-set until
 // everything finishes. So, it is separated by a setTimeout to allow the website to update
@@ -16,7 +14,6 @@ refreshViewGames();
 function refreshViewGamesSetup(){
     // start by clearing previous games
     myGamesElem.innerHTML = "";
-    myGames_fetchingElem.innerText = "Fetching your games...";
     myGames_download.disabled = true;
 
     setTimeout(() => {
@@ -44,64 +41,68 @@ async function refreshViewGames(){
             const boardElem = boardgfx.skeleton;
 
             const network = new NetworkWidget(boardgfx, WIDGET_LOCATIONS.NONE);
-            const gameInfo = await network.setNetworkId(gameId, rowNum, userId);
 
-            network.active = false;
+            myGamesElem.appendChild(boardElem);
 
-            boardgfx.jumpToVariation(boardgfx.mainVariation);
-            boardgfx.applyChanges();
+            network.setNetworkId(gameId, rowNum, userId)
+                .then((gameInfo) => {
+                    boardgfx.jumpToVariation(boardgfx.mainVariation);
+                    boardgfx.applyChanges();
 
-            if (gameInfo.result && gameInfo.result != "*"){
-                const resDiv = document.createElement("div");
-                resDiv.classList.add("result");
-                resDiv.innerText = gameInfo.result.split("-").join(" - ");
-                boardgfx.boardDiv.appendChild(resDiv);
+                    if (gameInfo.result && gameInfo.result != "*"){
+                        const resDiv = document.createElement("div");
+                        resDiv.classList.add("result");
+                        resDiv.innerText = gameInfo.result.split("-").join(" - ");
+                        boardgfx.boardDiv.appendChild(resDiv);
 
-                // add a delete button for the game
-                const delElem = document.createElement("button");
-                delElem.classList.add("delete");
-                boardElem.appendChild(delElem);
+                        // add a delete button for the game
+                        const delElem = document.createElement("button");
+                        delElem.classList.add("delete");
+                        boardElem.appendChild(delElem);
 
-                delElem.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
+                        delElem.addEventListener("click", (event) => {
+                            event.preventDefault();
+                            event.stopImmediatePropagation();
 
-                    if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be visible to other users with the link.")){
-                        // remove from local storage
-                        localStorage.removeItem(k);
-                        boardgfx.allowGC();
-                        boardElem.parentNode.removeChild(boardElem);
+                            if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be visible to other users with the link.")){
+                                // remove from local storage
+                                localStorage.removeItem(k);
+                                boardgfx.allowGC();
+                                boardElem.parentNode.removeChild(boardElem);
 
-                        alert("Game has been removed from your storage");
+                                alert("Game has been removed from your storage");
+                            }
+                        });
+                    }
+
+                    boardElem.addEventListener("click", () => {
+                        changeHash(`#game=${gameId}_${rowNum}`);
+                    });
+
+                    let toPlay = boardgfx.state.turn;
+
+                    // gameInfo will be used in sorting.
+                    const sortGI = Object.assign({}, gameInfo);
+                    sortGI.elem = boardElem;
+                    sortGI.toPlay = toPlay;
+                    sortGI.id = `${gameId}_${rowNum}`;
+
+                    // sort the gameInfo with the rest of the games
+                    const idx = binaryInsert(allMyGames, sortGI, compareGames);
+                    if (idx + 1 == allMyGames.length){
+                        myGamesElem.appendChild(boardElem);
+                    }else{
+                        myGamesElem.insertBefore(boardElem, allMyGames[idx + 1].elem);
                     }
                 });
 
-                boardElem.addEventListener("click", () => {
-                    changeHash(`#game=${gameId}_${rowNum}`);
-                });
-            }
 
-            let toPlay = boardgfx.state.turn;
-
-            // gameInfo will be used in sorting.
-            const sortGI = Object.assign({}, gameInfo);
-            sortGI.elem = boardElem;
-            sortGI.toPlay = toPlay;
-            sortGI.id = `${gameId}_${rowNum}`;
-
-            // sort the gameInfo with the rest of the games
-            const idx = binaryInsert(allMyGames, sortGI, compareGames);
-            if (idx + 1 == allMyGames.length){
-                myGamesElem.appendChild(boardElem);
-            }else{
-                myGamesElem.insertBefore(boardElem, allMyGames[idx + 1].elem);
-            }
+            network.active = false;
         }
     }
 
     console.log(allMyGames);
 
-    myGames_fetchingElem.innerText = "All games have been fetched";
     myGames_download.removeAttribute("disabled");
     console.log("Refreshing view games done");
 }

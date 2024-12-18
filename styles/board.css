@@ -12,7 +12,7 @@
     --primary-color: rgb(47 88 139);
     --secondary-color: rgb(234 233 210);
     --move-highlight-color: #262421;
-    --last-move-highlight-color: rgb(0, 165, 255);
+    --last-move-highlight-color: rgb(0, 183, 255);
 
     background-size: 100%;
     image-rendering: pixelated;
@@ -46,4 +46,35 @@
 
 .board-graphics__bottom {
     grid-area: bottom;
+}
+
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.board-graphics:not(.board-graphics--loading) .board-graphics__loading {
+    display: none;
+}
+
+.board-graphics__loading {
+    background-color: rgba(15, 15, 15, 0.8);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+
+    align-content: center;
+    text-align: center;
+    z-index: 6;
+}
+
+.board-graphics__loading-img {
+    animation: rotate 2s linear infinite;
 }
