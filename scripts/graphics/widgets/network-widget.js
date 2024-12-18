@@ -81,15 +81,15 @@ class NetworkWidget extends BoardWidget {
         this.active = false;
     }
 
-    async setNetworkId(gameId, rowNum, userId){
+    async setNetworkId(gameId, rowNum, userId, active = true){
         this.gameId = gameId;
         this.rowNum = rowNum;
         this.userId = userId;
+        this.active = active;
         return await this.refreshGame();
     }
 
     async startUpdate(){
-        this.active = true;
         while (this.active){
             await this.getStatus();
             await sleep(1000);

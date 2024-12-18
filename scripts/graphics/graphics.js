@@ -17,24 +17,8 @@ widgets.players.setNames("Anonymous (white)", "Anonymous (black)");
 
 gameState.display();
 
-const toggle_bookmarkElem = document.getElementById("toggle_bookmark");
-
-function toggleBookmark(elem){
-    const bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
-    const gameId = `${NETWORK.gameId}_${NETWORK.refNum}`;
-
-    const idx = bookmarks.indexOf(gameId);
-    if (idx > -1){
-        // remove
-        bookmarks.splice(idx, 1);
-        elem.innerText = "Add bookmark?";
-    }else{
-        // add
-        bookmarks.push(gameId);
-        elem.innerText = "Remove bookmark?";
-    }
-
-    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+function hideNames(){
+    widgets.players.disable();
 }
 
 // prevent focusing on buttons (so that arrow key presses and other things still register on the

@@ -44,7 +44,7 @@ async function refreshViewGames(){
 
             myGamesElem.appendChild(boardElem);
 
-            network.setNetworkId(gameId, rowNum, userId)
+            network.setNetworkId(gameId, rowNum, userId, false)
                 .then((gameInfo) => {
                     boardgfx.jumpToVariation(boardgfx.mainVariation);
                     boardgfx.applyChanges();
@@ -95,9 +95,6 @@ async function refreshViewGames(){
                         myGamesElem.insertBefore(boardElem, allMyGames[idx + 1].elem);
                     }
                 });
-
-
-            network.active = false;
         }
     }
 

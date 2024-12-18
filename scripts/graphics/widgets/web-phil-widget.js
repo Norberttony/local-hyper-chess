@@ -101,8 +101,8 @@ class WebPhilWidget extends BoardWidget {
     
         // clean up game state config
         this.boardgfx.allowVariations = true;
-        this.boardgfx.allowedSides[Piece.white] = true;
-        this.boardgfx.allowedSides[Piece.black] = true;
+        this.boardgfx.allowInputFrom[Piece.white] = true;
+        this.boardgfx.allowInputFrom[Piece.black] = true;
     }
 
     // =========================== //

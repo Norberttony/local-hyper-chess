@@ -85,7 +85,7 @@ function changeHash(newHash, quiet = false){
             loadPuzzle(puzzleId);
         }else if (newHash.startsWith("#game=")){
             const parts = getGameIdParts(newHash.replace("#game=", ""));
-            widgets.network.setNetworkId(parts.gameId, parts.rowNum, parts.userId);
+            widgets.network.setNetworkId(parts.gameId, parts.rowNum, parts.userId, true);
         }else if (newHash.startsWith("#chall=")){
             acceptChallenge(newHash.replace("#chall=", ""));
         }else if (newHash.startsWith("#board,pgn=")){
@@ -106,7 +106,7 @@ registerMenu("lobby",
         activateContainer("lobby");
 
         refreshChallenges();
-        LOBBY.interval = setInterval(refreshChallenges, 10000);
+        LOBBY.interval = setInterval(refreshChallenges, 4000);
 
         fetchFeaturedGame();
     },

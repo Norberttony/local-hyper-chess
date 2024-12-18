@@ -29,7 +29,7 @@ async function fetchFeaturedGame(){
         featuredGameWidgets.players.setNames(whiteName, blackName);
 
         const [ gameId, rowNum ] = featured.id.split("_");
-        await featuredGameWidgets.network.setNetworkId(gameId, rowNum);
+        await featuredGameWidgets.network.setNetworkId(gameId, rowNum, undefined, false);
 
         // jump to the end to show the live game
         featuredGameBoard.jumpToVariation(featuredGameBoard.mainVariation);

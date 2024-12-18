@@ -112,12 +112,45 @@ async function checkIfAccepted(challId, userId){
     });
 }
 
-async function sleep(amt){
-    return new Promise(async (res, rej) => {
-        setTimeout(() => {
-            res();
-        }, amt);
-    });
+
+async function acceptChallenge(challengeId){
+    showDialogBox("Fetching challenge...", "Looking for an active challenge with this ID");
+
+    // request from server
+    const challengeInfo = JSON.parse(
+        await pollDatabase("GET", {
+            type: "acceptChallenge",
+            challId: challengeId
+        })
+    );
+
+    if (!challengeInfo || challengeInfo.status == "err"){
+        hideDialogBox();
+        hideDialogContainer();
+        alert(`An error occurred: ${challengeInfo.msg}`);
+        return;
+    }
+
+    const gameSuperId = challengeInfo.gameId.split("_");
+
+    if (gameSuperId.length == 2){
+        // a game ID has been given from the server
+        // this challenge was already accepted and now links to this game.
+        changeHash(`#game=${challengeInfo.gameId}`);
+        alert("Too late, the challenge was already accepted. You may spectate the game.");
+    }else if (gameSuperId.length == 3){
+
+        // set network variables
+        const [ gameId, userId, refNum ] = gameSuperId;
+        widgets.network.setNetworkId(gameId, refNum, userId, true);
+
+        // store user ID and set the hash correctly
+        storeUserId(gameId, refNum, userId);
+        changeHash(`#game=${gameId}_${refNum}`);
+    }
+
+    hideDialogBox();
+    hideDialogContainer();
 }
 
 // user wants to share the invitation!
@@ -136,23 +169,4 @@ function shareInvite(){
 // gets rid of the server's challenge
 async function cancelInvite(){
     cancelChallengePolling = true;
-}
-
-function addChallToLocalStorage(challId){
-    const challenges = getChallengesFromLocalStorage();
-    challenges.push({ challId, strikes: 3 });
-
-    localStorage.setItem("user_challenges", JSON.stringify(challenges));
-}
-
-function getChallengesFromLocalStorage(){
-    if (!localStorage.getItem("user_challenges"))
-        localStorage.setItem("user_challenges", "[]");
-
-    return JSON.parse(localStorage.getItem("user_challenges"));
-}
-
-function setChallengesToLocalStorage(challenges){
-    console.log(challenges);
-    localStorage.setItem("user_challenges", JSON.stringify(challenges));
 }
