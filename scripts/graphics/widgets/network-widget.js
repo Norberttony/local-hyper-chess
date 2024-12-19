@@ -34,24 +34,24 @@ class NetworkWidget extends BoardWidget {
             this.takebackButton = getFirstElemOfClass(gameButtons, "pgn-viewer__takeback");
             this.outputElem = outputElem;
 
-            this.resignButton.onclick = () => {
-                if (confirm("Are you sure you want to resign?"))
+            this.resignButton.addEventListener("onclick", () => {
+                if (this.active && confirm("Are you sure you want to resign?"))
                     pollDatabase("POST", {
                         type: "resign",
                         gameId: this.gameId,
                         userId: this.userId,
                         rowNum: this.rowNum
                     });
-            }
-            this.drawButton.onclick = () => {
-                if (confirm("Are you sure you want to offer a draw?"))
+            });
+            this.drawButton.addEventListener("onclick", () => {
+                if (this.active && confirm("Are you sure you want to offer a draw?"))
                     pollDatabase("POST", {
                         type: "draw",
                         gameId: this.gameId,
                         userId: this.userId,
                         rowNum: this.rowNum
                     });
-            }
+            });
         }
 
 
@@ -73,7 +73,7 @@ class NetworkWidget extends BoardWidget {
     }
 
     disable(){
-        if (this.location){
+        if (this.location && this.active){
             this.resignButton.setAttribute("disabled", "true");
             this.drawButton.setAttribute("disabled", "true");
             this.takebackButton.setAttribute("disabled", "true");
@@ -86,7 +86,7 @@ class NetworkWidget extends BoardWidget {
         this.rowNum = rowNum;
         this.userId = userId;
         this.active = active;
-        return await this.refreshGame();
+        return await this.refreshGame(true);
     }
 
     async startUpdate(){
@@ -161,13 +161,16 @@ class NetworkWidget extends BoardWidget {
         }
     }
 
-    async refreshGame(){
+    async refreshGame(forceActive = false){
         this.boardgfx.loading();
         if (!this.gameId || !this.rowNum)
             return console.error("Cannot refresh game without gameId and rowNum"), this.boardgfx.finishedLoading();
 
         const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
         const { names, fen, color, moves, archived } = gameInfo;
+
+        if (!this.active && !forceActive)
+            return;
 
         if (names){
             let [ whiteName, blackName ] = names.split("_");
@@ -235,6 +238,9 @@ class NetworkWidget extends BoardWidget {
     // =========================== //
 
     onSingleScroll(event){
+        if (!this.active)
+            return;
+
         const { prevVariation, variation, userInput } = event.detail;
 
         if (!userInput)

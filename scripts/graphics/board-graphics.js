@@ -108,8 +108,8 @@ class BoardGraphics {
         this.mainVariation = this.currentVariation;
         this.variationRoot.next = [];
 
-        this.applyChanges(false);
         this.graphicalVariation = this.variationRoot;
+        this.applyChanges(false);
         this.dispatchEvent("loadFEN", { fen });
     }
 
@@ -142,7 +142,6 @@ class BoardGraphics {
         let pgnSplit = pgn.split(" ");
         this.readVariation(pgnSplit, 0);
         this.applyChanges(false);
-        this.graphicalVariation = this.variationRoot;
     }
 
     // =========================== //
@@ -240,6 +239,10 @@ class BoardGraphics {
     canMove(sq){
         // ensure user is not creating a variation when not allowed to.
         if (!this.allowVariations && this.currentVariation.next.length > 0)
+            return false;
+
+        // prevent user from playing when a result is already set
+        if (this.state.result)
             return false;
 
         const piece = this.state.squares[sq];

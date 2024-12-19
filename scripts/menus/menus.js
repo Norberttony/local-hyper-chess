@@ -181,18 +181,19 @@ registerMenu("multiplayer-game",
 
 registerMenu("web-phil",
     () => {
+        setNetworkVisibility(false);
+
         widgets.web_phil.enable();
 
         activateContainer("main-board");
-        setNetworkVisibility(false);
         setExtraVisibility(true);
         setPuzzlesVisibility(false);
         gameState.allowVariations = false;
-
-        gameState.loadFEN(StartingFEN);
     },
     () => {
         widgets.web_phil.disable();
         widgets.web_phil.stop();
+
+        gameState.allowVariations = true;
     }
 )

@@ -3,58 +3,49 @@ class WebPhilWidget extends BoardWidget {
     constructor(boardgfx){
         super(boardgfx, "Web Phil", WIDGET_LOCATIONS.BOARD);
 
-        const form = document.createElement("form");
-        form.classList.add("board-graphics__web-phil");
-        form.innerHTML = `
-            <label for = "phil_color">You play as:</label>
-            <div>
-                <input name = "phil_color" type = "radio" value = "white" checked = true> White
-            </div>
-            <div>
-                <input name = "phil_color" type = "radio" value = "black"> Black
-            </div>
-            <input value = "Start Game" type = "submit">`;
-        
-        this.container = form;
-        boardgfx.skeleton.appendChild(form);
-
         this.thinkTime = 1000;
         this.worker = undefined;
         this.playing = false;
+        this.botName = "Web Phil";
 
-        // user starts game against web phil
-        form.addEventListener("submit", (event) => {
-            event.preventDefault();
-
-            form.style.display = "none";
-            const playAs = form.phil_color.value == "white" ? Piece.white : Piece.black;
-
-            this.userColor = playAs;
-            boardgfx.allowInputFrom[Piece.white] = false;
-            boardgfx.allowInputFrom[Piece.black] = false;
-            boardgfx.allowInputFrom[playAs] = true;
-
-            boardgfx.setFlip(playAs == Piece.black);
-
-            this.start();
-        });
         window.addEventListener("beforeunload", (event) => {
             if (this.playing)
                 event.preventDefault();
         });
 
+        const resignButton = getFirstElemOfClass(this.boardgfx.skeleton, "pgn-viewer__resign");
+        if (resignButton){
+            this.resignButton = resignButton;
+            resignButton.addEventListener("click", () => {
+                if (this.playing){
+                    const result = this.userColor == Piece.white ? "0-1" : "1-0";
+                    this.boardgfx.dispatchEvent("result", {
+                        result,
+                        termination: "resignation",
+                        turn: this.boardgfx.state.turn
+                    });
+                    this.boardgfx.state.setResult(result, "resignation");
+                }
+            });
+        }
+
         // board events
         boardgfx.skeleton.addEventListener("single-scroll", (event) => {
             this.onSingleScroll(event);
         });
+        boardgfx.skeleton.addEventListener("result", (event) => {
+            this.onResult(event);
+        });
     }
 
     enable(){
-        this.container.style.display = "";
+        if (this.resignButton)
+            this.resignButton.removeAttribute("disabled");
     }
 
     disable(){
-        this.container.style.display = "none";
+        if (this.resignButton)
+            this.resignButton.setAttribute("disabled", "true");
     }
 
     start(){
@@ -62,6 +53,8 @@ class WebPhilWidget extends BoardWidget {
             return;
     
         this.playing = true;
+        this.startingFEN = this.boardgfx.state.getFEN();
+        this.gameMoves = [];
     
         const phil = new Worker("./scripts/hyper-active/main.js");
         this.worker = phil;
@@ -76,6 +69,7 @@ class WebPhilWidget extends BoardWidget {
             console.log(san);
     
             if (cmd == "searchFinished"){
+                this.gameMoves.push(san);
                 if (!this.boardgfx.currentVariation.isMain() || this.boardgfx.currentVariation.next.length > 0){
                     this.boardgfx.addMoveToEnd(san);
                 }else{
@@ -121,8 +115,44 @@ class WebPhilWidget extends BoardWidget {
         // ensure user is making moves on the main variation itself
         if (variation.next.length > 0 || !variation.isMain())
             return;
+
+        this.gameMoves.push(variation.san);
     
         this.worker.postMessage({ cmd: "move", san: variation.san });
         this.worker.postMessage({ cmd: "search", thinkTime: this.thinkTime });
+    }
+
+    async onResult(event){
+        if (!this.playing)
+            return;
+
+        let { result, turn, termination } = event.detail;
+
+        if (result == "/"){
+            result = "1/2 - 1/2";
+        }else if (result == "#"){
+            if (turn == Piece.white)
+                result = "0-1";
+            else
+                result = "1-0";
+        }
+
+        if (this.gameMoves.length >= 20){
+            const dbInfo = {
+                type: "bot-game",
+                fen: this.startingFEN,
+                botColor: this.userColor == Piece.white ? "black" : "white",
+                result,
+                plyCount: this.gameMoves.length,
+                moves: this.gameMoves.join(" ") + " " + result + " " + termination
+            };
+            const gameInfo = JSON.parse(await pollDatabase("POST", dbInfo));
+            const [ gameId, rowNum ] = gameInfo.gameId.split("_");
+            storeUserId(gameId, rowNum, gameInfo.userId);
+            changeHash(`#game=${gameInfo.gameId}`);
+        }
+
+        this.stop();
+        this.disable();
     }
 }

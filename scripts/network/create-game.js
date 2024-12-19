@@ -24,7 +24,15 @@ function setCreateGameFEN(fen){
     }
 }
 
-function showCreateGamePopup(){
+function showCreateGamePopup(isMultiplayer){
+    if (isMultiplayer){
+        createGameFormElem.classList.remove("create-game-form--bot");
+        createGameFormElem.classList.add("create-game-form--multiplayer");
+    }else{
+        createGameFormElem.classList.remove("create-game-form--multiplayer");
+        createGameFormElem.classList.add("create-game-form--bot");
+    }
+
     document.getElementById("invite-popup-container").style.display = "flex";
     document.getElementById("invite-popup").style.display = "none";
     createGameFormPopup.style.display = "block";
@@ -36,14 +44,32 @@ function showCreateGamePopup(){
 createGameFormElem.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const gameConfig = {
-        color: createGameFormElem.color.value,
-        fen: startingFenElem.checked ? StartingFEN : createGameFormElem.fen.value,
-        visibility: createGameFormElem.visibility.value
-    };
+    const fen = startingFenElem.checked ? StartingFEN : createGameFormElem.fen.value;
+    if (createGameFormElem.classList.contains("create-game-form--multiplayer")){
+        const gameConfig = {
+            color: createGameFormElem.color.value,
+            fen,
+            visibility: createGameFormElem.visibility.value
+        };
 
-    hideCreateGamePopup();
-    generateInvite(gameConfig);
+        hideCreateGamePopup();
+        generateInvite(gameConfig);
+    }else{
+        openMenu("web-phil");
+
+        let col = createGameFormElem.color.value;
+        if (col == "random")
+            col = Math.random() > 0.5 ? "white" : "black";
+
+        col = col == "white" ? Piece.white : Piece.black;
+
+        gameState.loadFEN(fen);
+        gameState.setFlip(col == Piece.black);
+        widgets.web_phil.userColor = col;
+        widgets.web_phil.start();
+        
+        hideCreateGamePopup();
+    }
 });
 
 function hideCreateGamePopup(){

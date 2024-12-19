@@ -57,6 +57,8 @@
     margin: 3px 0px;
 }
 
+/* Create game styles start */
+
 #create-game__board {
     --game-width: 100%;
     --game-height: 100%;
@@ -77,11 +79,21 @@
     opacity: 0.5;
 }
 
-.input-pair {
+.create-game-form__input-pair {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
+
+.create-game-form:not(.create-game-form--multiplayer) .create-game-form__input-pair--multiplayer {
+    display: none;
+}
+
+.create-game-form:not(.create-game-form--bot) .create-game-form__input-pair--bot {
+    display: none;
+}
+
+/* Create game styles end */
 
 #invite-popup p {
     margin: 0px;

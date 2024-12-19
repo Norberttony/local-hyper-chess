@@ -107,9 +107,9 @@
         </div>
 
         <div id = "lobby" class = "lobby" style = "display: none;">
-            <button class = "lobby__create-button" onclick = "showCreateGamePopup();">Click here to create your own challenge</button>
+            <button class = "lobby__create-button" onclick = "showCreateGamePopup(true);">Click here to create your own challenge</button>
             <p>Or</p>
-            <button class = "lobby__play-phil" onclick = "changeHash('#web-phil')">Play against a bot</button>
+            <button class = "lobby__play-phil" onclick = "showCreateGamePopup(false);">Play against a bot</button>
             <h1>Currently active public challenges:</h1>
             <div class = "lobby__header">
                 <span>ID</span>
@@ -144,8 +144,8 @@
         <div id = "invite-popup-container">
             <div id = "create-game">
                 <h1>Create a game</h1>
-                <form id = "create-game__form">
-                    <div class = "input-pair">
+                <form id = "create-game__form" class = "create-game-form create-game-form--multiplayer">
+                    <div class = "create-game-form__input-pair">
                         <label for = "color">You play as:</label>
                         <select name = "color">
                             <option value = "random">Random</option>
@@ -154,7 +154,7 @@
                         </select>
                     </div>
 
-                    <div class = "input-pair">
+                    <div class = "create-game-form__input-pair create-game-form__input-pair--multiplayer">
                         <label for = "visibility">Game visibility:</label>
                         <div>
                             <input style = "width: auto;" name = "visibility" type = "radio" value = "public" checked = true> Public
@@ -162,7 +162,14 @@
                         </div>
                     </div>
 
-                    <div class = "input-pair">
+                    <div class = "create-game-form__input-pair create-game-form__input-pair--bot">
+                        <label for = "bot">Playing against:</label>
+                        <select name = "bot">
+                            <option value = "random">Phil</option>
+                        </select>
+                    </div>
+
+                    <div class = "create-game-form__input-pair">
                         <span>
                             <label for = "create-game__fen">FEN:</label>
                             <input id = "create-game__fen" name = "fen">
@@ -173,7 +180,7 @@
 
                     <div id = "create-game__board"></div>
                     
-                    <div class = "input-pair">
+                    <div class = "create-game-form__input-pair">
                         <input style = "width: 100%;" type = "submit" value = "Enter">
                     </div>
                 </form>

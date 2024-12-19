@@ -1,6 +1,7 @@
 
 // disable current game controls and enable pregame controls
 function activatePreGameControls(){
+    widgets.network.active = true;
     widgets.network.disable();
     widgets.extras.enable();
 }
