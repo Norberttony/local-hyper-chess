@@ -13,7 +13,10 @@
     --game-height: 300px;
 
     position: relative;
-    display: block;
+    grid-template-areas:
+        'top_bar'
+        'board'
+        'bottom_bar';
 
     background-color: black;
 
@@ -27,7 +30,7 @@
 }
 
 #my-games .board-graphics:hover {
-    background-color: #111;
+    background-color: #181818;
     padding: 25px;
 }
 
@@ -36,7 +39,7 @@
     margin-top: 10px;
 }
 
-.board-graphics .result {
+.board-graphics__result {
     position: absolute;
     left: 0px;
     top: 0px;
@@ -44,17 +47,23 @@
     height: 100%;
 
     color: white;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.8);
     
     z-index: 30;
 
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     flex-wrap: wrap;
+    justify-content: center;
     align-content: center;
 
     font-family: sans-serif;
     font-size: xxx-large;
+    font-weight: bold;
+}
+
+.board-graphics_result__user-win {
+    font-size: xx-large;
 }
 
 #my-games_download {

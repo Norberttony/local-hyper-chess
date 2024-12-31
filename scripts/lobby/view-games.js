@@ -30,78 +30,99 @@ async function refreshViewGames(){
     allMyGames = [];
 
     // go through every game the user might have played
+    let i = 0;
     for (const [ k, userId ] of Object.entries(localStorage)){
         if (k.endsWith("_userId")){
 
             const [ gameId, rowNum ] = k.replace("_userId", "").split("_");
 
-            console.log(gameId, rowNum, userId);
-
             const boardgfx = new BoardGraphics(false, false);
             const boardElem = boardgfx.skeleton;
 
             const network = new NetworkWidget(boardgfx, WIDGET_LOCATIONS.NONE);
+            new PlayersWidget(boardgfx);
 
             myGamesElem.appendChild(boardElem);
 
             network.setNetworkId(gameId, rowNum, userId, false)
                 .then((gameInfo) => {
-                    boardgfx.jumpToVariation(boardgfx.mainVariation);
-                    boardgfx.applyChanges();
-
-                    if (gameInfo.result && gameInfo.result != "*"){
-                        const resDiv = document.createElement("div");
-                        resDiv.classList.add("result");
-                        resDiv.innerText = gameInfo.result.split("-").join(" - ");
-                        boardgfx.boardDiv.appendChild(resDiv);
-
-                        // add a delete button for the game
-                        const delElem = document.createElement("button");
-                        delElem.classList.add("delete");
-                        boardElem.appendChild(delElem);
-
-                        delElem.addEventListener("click", (event) => {
-                            event.preventDefault();
-                            event.stopImmediatePropagation();
-
-                            if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be visible to other users with the link.")){
-                                // remove from local storage
-                                localStorage.removeItem(k);
-                                boardgfx.allowGC();
-                                boardElem.parentNode.removeChild(boardElem);
-
-                                alert("Game has been removed from your storage");
-                            }
-                        });
-                    }
-
-                    boardElem.addEventListener("click", () => {
-                        changeHash(`#game=${gameId}_${rowNum}`);
-                    });
-
-                    let toPlay = boardgfx.state.turn;
-
-                    // gameInfo will be used in sorting.
-                    const sortGI = Object.assign({}, gameInfo);
-                    sortGI.elem = boardElem;
-                    sortGI.toPlay = toPlay;
-                    sortGI.id = `${gameId}_${rowNum}`;
-
-                    // sort the gameInfo with the rest of the games
-                    const idx = binaryInsert(allMyGames, sortGI, compareGames);
-                    if (idx + 1 == allMyGames.length){
-                        myGamesElem.appendChild(boardElem);
-                    }else{
-                        myGamesElem.insertBefore(boardElem, allMyGames[idx + 1].elem);
-                    }
+                    initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId);
                 });
         }
     }
 
-    console.log(allMyGames);
-
     myGames_download.removeAttribute("disabled");
     console.log("Refreshing view games done");
+}
+
+function initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId){
+    const boardElem = boardgfx.skeleton;
+    boardgfx.jumpToVariation(boardgfx.mainVariation);
+    boardgfx.applyChanges();
+
+    const names = gameInfo.names.split("_");
+    if (gameInfo.color == "white")
+        names[0] = "You";
+    else if (gameInfo.color == "black")
+        names[1] = "You";
+    boardgfx.setNames(...names);
+
+    if (gameInfo.result && gameInfo.result != "*"){
+        const isWinner = gameInfo.result == "0-1" && gameInfo.color == "black" || gameInfo.result == "1-0" && gameInfo.color == "white";
+
+        const resDiv = document.createElement("div");
+        resDiv.classList.add("board-graphics__result");
+
+        const resText = document.createElement("span");
+        resText.innerText = gameInfo.result.split("-").join(" - ");
+        resDiv.appendChild(resText);
+
+        const winText = document.createElement("span");
+        winText.classList.add("board-graphics_result__user-win");
+        winText.innerText = "You " + (gameInfo.result == "1/2-1/2" ? "drew" : (isWinner ? "won" : "lost"));
+        resDiv.appendChild(winText);
+
+        boardgfx.boardDiv.appendChild(resDiv);
+
+        // add a delete button for the game
+        const delElem = document.createElement("button");
+        delElem.classList.add("delete");
+        boardElem.appendChild(delElem);
+
+        delElem.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be visible to other users with the link.")){
+                // remove from local storage
+                localStorage.removeItem(k);
+                boardgfx.allowGC();
+                boardElem.parentNode.removeChild(boardElem);
+
+                alert("Game has been removed from your storage");
+            }
+        });
+    }
+
+    boardElem.addEventListener("click", () => {
+        changeHash(`#game=${gameId}_${rowNum}`);
+    });
+
+    let toPlay = boardgfx.state.turn;
+
+    // gameInfo will be used in sorting.
+    const sortGI = Object.assign({}, gameInfo);
+    sortGI.elem = boardElem;
+    sortGI.toPlay = toPlay;
+    sortGI.id = `${gameId}_${rowNum}`;
+
+    // sort the gameInfo with the rest of the games
+    const idx = binaryInsert(allMyGames, sortGI, compareGames);
+    if (idx + 1 == allMyGames.length){
+        myGamesElem.appendChild(boardElem);
+    }else{
+        myGamesElem.insertBefore(boardElem, allMyGames[idx + 1].elem);
+    }
 }
 
 // returns true if game 1 is more important (greater) than game 2 and false otherwise
