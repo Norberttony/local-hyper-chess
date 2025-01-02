@@ -110,14 +110,19 @@
             <button class = "lobby__create-button" onclick = "showCreateGamePopup(true);">Click here to create your own challenge</button>
             <p>Or</p>
             <button class = "lobby__play-phil" onclick = "showCreateGamePopup(false);">Play against a bot</button>
-            <h1>Currently active public challenges:</h1>
+            <h1>Public Challenges</h1>
             <div class = "lobby__header">
                 <span>ID</span>
                 <span>Name</span>
                 <span>Side</span>
                 <span>FEN</span>
             </div>
-            <div class = "lobby__list"></div>
+            <div class = "lobby__list">
+                <div class="lobby__list-loading">
+                    <img class="lobby__list-loading-img" src="./images/pieces/immobilizer.png">
+                </div>
+                <div class = "lobby__list-items"></div>
+            </div>
 
             <div class = "lobby__featured-game">
                 <h1 class = "lobby__featured-title">Featured Game</h1>

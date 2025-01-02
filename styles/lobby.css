@@ -9,7 +9,7 @@
     margin: 0px;
 }
 
-.lobby #header,
+.lobby__header,
 .lobby .chall {
     display: grid;
     grid-template-columns: 15% 30% 30% 25%;
@@ -22,22 +22,32 @@
     box-sizing: border-box;
 }
 
-.lobby #header,
+.lobby__header,
 .lobby #lobby {
     width: 100%;
 }
 
-.lobby #header {
+.lobby__header {
     padding: 5px;
     font-size: large;
 }
 
-.lobby #lobby {
+.lobby__list {
+    position: relative;
+
     background-color: black;
     overflow-y: scroll;
     overflow-x: hidden;
 
-    height: 100%;
+    min-height: 100px;
+    max-height: 43vmin;
+}
+
+@media (min-width: 700px){
+    .lobby__list, .lobby__header {
+        width: 80%;
+        margin: auto;
+    }
 }
 
 .lobby .chall:nth-child(2n){
@@ -59,7 +69,7 @@
 }
 
 .lobby__featured-game {
-    margin-top: 200px;
+    margin-top: 10px;
     text-align: center;
 }
 
@@ -69,11 +79,26 @@
         'board'
         'bottom_bar';
     grid-template-rows: min-content auto min-content;
-    height: 400px;
-    width: min-content;
+    --game-width: 75vmin;
+    --game-height: 75vmin;
 }
 
-#lobby__featured-game-container .board-graphics__board {
-    height: 100%;
-    aspect-ratio: 1 / 1;
+
+.lobby__list:not(.lobby__list--refreshing) .lobby__list-loading {
+    display: none;
+}
+
+.lobby__list-loading {
+    position: absolute;
+    right: 10px;
+    bottom: 2px;
+
+    align-content: center;
+    text-align: center;
+    z-index: 6;
+}
+
+.lobby__list-loading-img {
+    animation: rotate 2s linear infinite;
+    width: 50px;
 }

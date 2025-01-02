@@ -1,7 +1,7 @@
 
 const lobbyElem = document.getElementById("lobby");
-const lobbyListElem = getFirstElemOfClass(lobbyElem, "lobby__list");
-
+const lobbyListContainer = getFirstElemOfClass(lobbyElem, "lobby__list");
+const lobbyListElem = getFirstElemOfClass(lobbyElem, "lobby__list-items");
 
 function createChallengeTemplate(id, name, isBot, color, fen){
     const challElem = document.createElement("div");
@@ -26,6 +26,8 @@ function createChallengeTemplate(id, name, isBot, color, fen){
 }
 
 async function refreshChallenges(){
+    lobbyListContainer.classList.add("lobby__list--refreshing");
+
     const challenges = JSON.parse(
         await pollDatabase("GET", {
             type: "publicChallenges"
@@ -62,4 +64,6 @@ async function refreshChallenges(){
 
     // only keep challenges that have no strikes left.
     setChallengesToLocalStorage(userChallenges.filter(v => v.strikes > 0));
+
+    lobbyListContainer.classList.remove("lobby__list--refreshing");
 }
