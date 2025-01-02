@@ -30,7 +30,6 @@ async function refreshViewGames(){
     allMyGames = [];
 
     // go through every game the user might have played
-    let i = 0;
     for (const [ k, userId ] of Object.entries(localStorage)){
         if (k.endsWith("_userId")){
 
@@ -60,7 +59,7 @@ function initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId){
     boardgfx.jumpToVariation(boardgfx.mainVariation);
     boardgfx.applyChanges();
 
-    const names = gameInfo.names.split("_");
+    const names = (gameInfo.names || "Anonymous_Anonymous").split("_");
     if (gameInfo.color == "white")
         names[0] = "You";
     else if (gameInfo.color == "black")

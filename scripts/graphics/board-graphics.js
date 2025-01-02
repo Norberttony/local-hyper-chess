@@ -231,6 +231,26 @@ class BoardGraphics {
         return false;
     }
 
+    deleteVariation(variation, isHelper = false){
+        for (const n of variation.next)
+            this.deleteVariation(n, true);
+
+        this.dispatchEvent("delete-variation", { variation });
+
+        // if removing part of the main variation, scroll back
+        if (variation == this.mainVariation)
+            this.mainVariation = variation.prev;
+
+        if (variation == this.currentVariation)
+            this.previousVariation();
+
+        // only apply changes if this is the root of the call tree
+        if (!isHelper){
+            variation.prev.next.splice(variation.prev.next.indexOf(variation), 1);
+            this.applyChanges(false);
+        }
+    }
+
     // ========================== //
     // === HANDLING MAKE MOVE === //
     // ========================== //

@@ -43,6 +43,9 @@ class PGNWidget extends BoardWidget {
         boardgfx.skeleton.addEventListener("variation-change", (event) => {
             this.onVariationChange(event);
         });
+        boardgfx.skeleton.addEventListener("delete-variation", (event) => {
+            this.onDeleteVariation(event);
+        });
     }
 
     onNewVariation(event){
@@ -193,6 +196,8 @@ class PGNWidget extends BoardWidget {
         pgn_resultElem.innerHTML = `<span>${resultText}</span><br /><span style = "font-size: large;">${flavorText} ${termination}</span>`;
         this.pgnElem.appendChild(pgn_resultElem);
 
+        this.resultElem = pgn_resultElem;
+
         this.boardgfx.pgnData.setHeader("Result", resultText);
     }
 
@@ -213,6 +218,26 @@ class PGNWidget extends BoardWidget {
         const { variation } = event.detail;
     
         selectPGNElem(this.pgnElem, variation.element);
+    }
+
+    onDeleteVariation(event){
+        const { variation } = event.detail;
+
+        if (variation == this.boardgfx.mainVariation && this.resultElem){
+            this.resultElem.parentNode.removeChild(this.resultElem);
+            delete this.resultElem;
+        }
+
+        this.deletePGNElement(variation.element);
+    }
+
+    deletePGNElement(elem){
+        const parent = elem.parentNode;
+        parent.removeChild(elem);
+
+        // if the moveline no longer contains any moves, it's useless and should be removed.
+        if (!getFirstElemOfClass(parent, "pgn-viewer__pgn-elem--type-san"))
+            parent.parentNode.removeChild(parent);
     }
 }
 

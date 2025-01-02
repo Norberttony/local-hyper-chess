@@ -7,6 +7,7 @@ class NetworkWidget extends BoardWidget {
 
         this.active = false;
         this.color = undefined;
+        this.userJustMadeMove = false;
 
         // the server keeps track of ply count to determine whose turn it is, but this requires
         // offsetting it by 1 if a custom position with BTP was chosen.
@@ -34,7 +35,7 @@ class NetworkWidget extends BoardWidget {
             this.takebackButton = getFirstElemOfClass(gameButtons, "pgn-viewer__takeback");
             this.outputElem = outputElem;
 
-            this.resignButton.addEventListener("onclick", () => {
+            this.resignButton.addEventListener("click", () => {
                 if (this.active && confirm("Are you sure you want to resign?"))
                     pollDatabase("POST", {
                         type: "resign",
@@ -43,7 +44,7 @@ class NetworkWidget extends BoardWidget {
                         rowNum: this.rowNum
                     });
             });
-            this.drawButton.addEventListener("onclick", () => {
+            this.drawButton.addEventListener("click", () => {
                 if (this.active && confirm("Are you sure you want to offer a draw?"))
                     pollDatabase("POST", {
                         type: "draw",
@@ -52,6 +53,17 @@ class NetworkWidget extends BoardWidget {
                         rowNum: this.rowNum
                     });
             });
+            this.takebackButton.addEventListener("click", () => {
+                if (this.active && confirm("Are you sure you want to offer a takeback?")){
+                    this.userJustMadeMove = false;
+                    pollDatabase("POST", {
+                        type: "takeback",
+                        gameId: this.gameId,
+                        userId: this.userId,
+                        rowNum: this.rowNum
+                    });
+                }
+            })
         }
 
 
@@ -121,11 +133,30 @@ class NetworkWidget extends BoardWidget {
                 const move = moves[i + 1];
 
                 if (plyCount - myPlyCount > 1){
+                    this.userJustMadeMove = false;
                     // must refresh the game by refetching it from the database
+                    this.refreshGame();
                 }else if (plyCount - myPlyCount == 1){
+                    this.userJustMadeMove = false;
                     this.boardgfx.addMoveToEnd(move);
                     this.boardgfx.applyChanges();
                     myPlyCount++;
+                }else{
+                    // verify that these moves are on the board. if not, maybe a takeback occurred, or
+                    // some moves were deleted in place of new ones...
+                    let cmpTo = this.boardgfx.mainVariation;
+                    for (let i = 0; i < myPlyCount - plyCount; i++){
+                        cmpTo = cmpTo.prev;
+                    }
+
+                    let isLastIter = i + 2 >= 2 * Math.floor(moves.length / 2);
+                    let clientInterpolation = this.userJustMadeMove && myPlyCount - plyCount == 1;
+                    if (cmpTo.san != move || isLastIter && myPlyCount != plyCount && !clientInterpolation){
+                        // looks like they don't match.
+                        this.boardgfx.deleteVariation(cmpTo);
+                        this.boardgfx.addMoveToEnd(move);
+                        this.boardgfx.applyChanges();
+                    }
                 }
             }
         }
@@ -192,6 +223,14 @@ class NetworkWidget extends BoardWidget {
         else if (color == "white")
             this.boardgfx.allowInputFrom[Piece.white] = true;
 
+        if (color == "none"){
+            delete this.color;
+            activatePreGameControls();
+        }else{
+            this.color = color[0];
+            activateGameControls();
+        }
+
         // play out moves
         const movesSplit = moves.split(" ");
         let res;
@@ -209,14 +248,6 @@ class NetworkWidget extends BoardWidget {
             }
         }
         this.boardgfx.applyChanges();
-
-        if (color == "none"){
-            delete this.color;
-            activatePreGameControls();
-        }else{
-            this.color = color[0];
-            activateGameControls();
-        }
 
         // if archived skip to beginning
         if (archived){
@@ -250,6 +281,7 @@ class NetworkWidget extends BoardWidget {
         if (variation.isMain() && this.userId){
             // the move wasn't from this user. let's send it over to the other user.
             console.log("SEND MOVE TO USER", variation.san);
+            this.userJustMadeMove = true;
             pollDatabase("POST", {
                 type: "move",
                 gameId: this.gameId,
