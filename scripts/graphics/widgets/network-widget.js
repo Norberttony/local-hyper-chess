@@ -198,6 +198,8 @@ class NetworkWidget extends BoardWidget {
             return console.error("Cannot refresh game without gameId and rowNum"), this.boardgfx.finishedLoading();
 
         const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
+        if (gameInfo.status == "err")
+            throw new Error(gameInfo.msg);
         const { names, fen, color, moves, archived } = gameInfo;
 
         if (!this.active && !forceActive)

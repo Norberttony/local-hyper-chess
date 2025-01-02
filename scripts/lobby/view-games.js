@@ -46,6 +46,16 @@ async function refreshViewGames(){
             network.setNetworkId(gameId, rowNum, userId, false)
                 .then((gameInfo) => {
                     initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId);
+                })
+                .catch((msg) => {
+                    // delete board elem
+                    myGamesElem.removeChild(boardElem);
+                    console.warn(`Could not load game ${gameId}_${rowNum} because ${msg}`);
+
+                    // if the game no longer exists or the user no longer has access to it, it
+                    // is removed entirely.
+                    if (msg == "Error: ID has an illegal reference")
+                        localStorage.removeItem(k);
                 });
         }
     }
