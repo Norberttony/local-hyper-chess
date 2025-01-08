@@ -68,6 +68,7 @@ onmessage = async (e) => {
             console.log(`FEN set to ${myBoard.getFEN()}`);
             break;
     }
+    postMessage({ cmd: "update-fen", fen: myBoard.getFEN() });
 }
 
 

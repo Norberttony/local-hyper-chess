@@ -4,7 +4,7 @@ class WebPhilWidget extends BoardWidget {
         super(boardgfx, "Web Phil", WIDGET_LOCATIONS.BOARD);
 
         this.thinkTime = 1000;
-        this.worker = undefined;
+        this.bot = new HyperChessBot("./scripts/hyper-active/main.js");
         this.playing = false;
         this.botName = "Web Phil";
 
@@ -56,34 +56,12 @@ class WebPhilWidget extends BoardWidget {
         this.startingFEN = this.boardgfx.state.getFEN();
         this.gameMoves = [];
     
-        const phil = new Worker("./scripts/hyper-active/main.js");
-        this.worker = phil;
-        
-        phil.onmessage = (e) => {
-            if (!this.playing)
-                return;
-    
-            const { cmd, val, san, depth } = e.data;
-    
-            console.log(`Web Phil believes his position is valued at ${val} after calculating to a depth of ${depth} ply.`);
-            console.log(san);
-    
-            if (cmd == "searchFinished"){
-                this.gameMoves.push(san);
-                if (!this.boardgfx.currentVariation.isMain() || this.boardgfx.currentVariation.next.length > 0){
-                    this.boardgfx.addMoveToEnd(san);
-                }else{
-                    this.boardgfx.makeMove(this.boardgfx.state.getMoveOfSAN(san));
-                    this.boardgfx.applyChanges(false);
-                }
-            }
-        }
-    
-        phil.postMessage({ cmd: "fen", fen: this.boardgfx.state.getFEN() });
+        this.bot.startWorker();
+        this.bot.setFEN(this.boardgfx.state.getFEN());
     
         // if not user's turn, it's web phil's turn!
         if (this.userColor != this.boardgfx.state.turn)
-            this.worker.postMessage({ cmd: "search", thinkTime: this.thinkTime });
+            this.bot.thinkFor(this.thinkTime).then(data => this.#botPlaysMove(data));
     }
 
     stop(){
@@ -91,12 +69,25 @@ class WebPhilWidget extends BoardWidget {
             return;
     
         this.playing = false;
-        this.worker.terminate();
+        this.bot.stopWorker();
     
         // clean up game state config
         this.boardgfx.allowVariations = true;
         this.boardgfx.allowInputFrom[Piece.white] = true;
         this.boardgfx.allowInputFrom[Piece.black] = true;
+    }
+
+    #botPlaysMove({ san }){
+        if (!this.playing)
+            return;
+
+        this.gameMoves.push(san);
+        if (!this.boardgfx.currentVariation.isMain() || this.boardgfx.currentVariation.next.length > 0){
+            this.boardgfx.addMoveToEnd(san);
+        }else{
+            this.boardgfx.makeMove(this.boardgfx.state.getMoveOfSAN(san));
+            this.boardgfx.applyChanges(false);
+        }
     }
 
     // =========================== //
@@ -118,8 +109,8 @@ class WebPhilWidget extends BoardWidget {
 
         this.gameMoves.push(variation.san);
     
-        this.worker.postMessage({ cmd: "move", san: variation.san });
-        this.worker.postMessage({ cmd: "search", thinkTime: this.thinkTime });
+        this.bot.playMove(variation.san);
+        this.bot.thinkFor(this.thinkTime).then(data => this.#botPlaysMove(data));
     }
 
     async onResult(event){
