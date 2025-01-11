@@ -6,6 +6,7 @@ const myGames_download = document.getElementById("my-games_download");
 
 
 let allMyGames = [];
+let allMyGamesTicket = 0;
 
 
 // when calling refreshViewGames directly, the website layout isn't recalculated or re-set until
@@ -15,13 +16,18 @@ function refreshViewGamesSetup(){
     // start by clearing previous games
     myGamesElem.innerHTML = "";
     myGames_download.disabled = true;
+    let myTicket = ++allMyGamesTicket;
+    
+    // clear gameloader tasks...
+    gameLoader.tasks = [];
 
     setTimeout(() => {
-        refreshViewGames();
+        if (myTicket == allMyGamesTicket)
+            refreshViewGames(allMyGamesTicket);
     }, 100);
 }
 
-async function refreshViewGames(){
+async function refreshViewGames(ticket){
     if (typeof localStorage === "undefined"){
         myGames_fetchingElem.innerText = "Error: browser's local storage is not enabled";
         return;
@@ -35,6 +41,8 @@ async function refreshViewGames(){
 
             const [ gameId, rowNum ] = k.replace("_userId", "").split("_");
 
+            console.log(gameId, rowNum);
+
             const boardgfx = new BoardGraphics(false, false);
             const boardElem = boardgfx.skeleton;
 
@@ -45,12 +53,14 @@ async function refreshViewGames(){
 
             network.setNetworkId(gameId, rowNum, userId, false)
                 .then((gameInfo) => {
-                    initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId);
+                    if (allMyGamesTicket == ticket)
+                        initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId);
                 })
                 .catch((msg) => {
+                    console.warn(`Could not load game ${gameId}_${rowNum} because ${msg}`);
+
                     // delete board elem
                     myGamesElem.removeChild(boardElem);
-                    console.warn(`Could not load game ${gameId}_${rowNum} because ${msg}`);
 
                     // if the game no longer exists or the user no longer has access to it, it
                     // is removed entirely.
