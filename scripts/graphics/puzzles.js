@@ -116,7 +116,7 @@ function puzzleOnMadeMove(event){
         return;
 
     let pgn = removeGlyphs(variation.san);
-    const correctMove = puzzle.solution[moveIndex];
+    const correctMove = puzzle.solution[prevVariation.level];
 
     // check if the move that the user played is one of the correct moves.
     let isCorrectMove = false;
@@ -131,18 +131,23 @@ function puzzleOnMadeMove(event){
     // ensure player is actually following the puzzle's correct variation.
     const correctVariation =
         !variation.prev || !variation.prev.prev ||
-        removeGlyphs(variation.prev.prev.san) == puzzle.solution[moveIndex - 2];
+        removeGlyphs(variation.prev.prev.san) == puzzle.solution[prevVariation.level - 2];
+
+    const canIncMoveIndex = moveIndex == prevVariation.level;
 
     if (isCorrectMove && correctVariation){
         variation.glyphs.push(PUZZLE.glyphCorrectSrc);
 
-        moveIndex++;
+        if (canIncMoveIndex)
+            moveIndex++;
+
         puzzlesImgElem.src = PUZZLE.checkSrc;
         
         // play opponent's next move
-        if (moveIndex < puzzle.solution.length){
-            puzzlePlayMove(puzzle.solution[moveIndex]);
-            moveIndex++;
+        if (prevVariation.level + 1 < puzzle.solution.length){
+            puzzlePlayMove(puzzle.solution[prevVariation.level + 1]);
+            if (canIncMoveIndex)
+                moveIndex++;
         }else{
             // check if finished puzzle
             puzzlesImgElem.src = PUZZLE.starSrc;

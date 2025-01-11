@@ -21,7 +21,7 @@ class HyperChessBot {
         this.worker.addEventListener("message", (event) => {
             if (event.data.cmd == "update-fen")
                 this.fen = event.data.fen;
-        })
+        });
     }
 
     stopWorker(){
