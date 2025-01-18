@@ -322,7 +322,7 @@ class BoardGraphics {
 
         // the only issue is that this does not handle board (if moved to its latest state)
         if (this.positions[pos] >= 3)
-            this.state.setResult("/", "three-fold repetition");
+            this.state.setResult("1/2-1/2", "three-fold repetition", 0);
 
         // handle the fifty move rule
         this.lastCapture++;
@@ -331,15 +331,16 @@ class BoardGraphics {
         }
         variation.fiftyMoveRuleCounter = this.lastCapture;
         if (this.lastCapture >= 100)
-            this.state.setResult("/", "fifty move rule");
+            this.state.setResult("1/2-1/2", "fifty move rule", 0);
 
         // check and dispatch event for any results
         this.state.isGameOver();
         if (this.state.result){
             this.dispatchEvent("result", {
-                result:         this.state.result,
+                result:         this.state.result.result,
                 turn:           this.state.turn,
-                termination:    this.state.termination
+                termination:    this.state.result.termination,
+                winner:         this.state.result.winner
             });
         }
     }

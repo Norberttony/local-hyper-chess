@@ -46,8 +46,8 @@ function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)){
 
     // is game over?
     let result = board.isGameOver();
-    if (result == "#"){
-        SAN += result;
+    if (result && result.result != "1/2-1/2"){
+        SAN += "#";
     }else{
         // does this move threaten to take the king on the next turn?
         board.nextTurn();

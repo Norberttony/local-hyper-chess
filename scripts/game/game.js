@@ -22,7 +22,6 @@ class Board {
         this.squares = new Uint8Array(64);
 
         this.result;
-        this.termination;
 
         this.turn = Piece.white;
 
@@ -56,31 +55,32 @@ class Board {
         position += this.turn;
         return position;
     }
-    setResult(result, termination){
-        this.result = result;
-        this.termination = termination;
-        return result;
+    setResult(result, termination, winner){
+        this.result = { result, termination, winner };
+        return this.result;
     }
     // checks if the current player is checkmated... or stalemated...
     isGameOver(moves = this.generateMoves()){
-        if (this.result) return this.result;
-
-        // yup. this code is not broken. ha ha.
-        this.nextTurn();
+        if (this.result)
+            return this.result;
 
         // no legal moves?!
         if (moves.length == 0){
+            this.nextTurn();
             if (this.isAttacked(this.getKingSq())){
                 // CHECKMATE!!!
-                this.setResult("#", "checkmate");
+                this.winner = this.turn;
+                if (this.winner == Piece.black)
+                    this.setResult("0-1", "checkmate", this.turn);
+                else
+                    this.setResult("1-0", "checkmate", this.turn);
             }else{
                 // stalemate...!
-                this.setResult("/", "stalemate");
+                this.winner = 0;
+                this.setResult("1/2-1/2", "stalemate", 0);
             }
+            this.nextTurn();
         }
-
-        // nothing to see here...!
-        this.nextTurn();
 
         return this.result;
     }
@@ -805,7 +805,6 @@ class Board {
 
         // removes any stored result
         delete this.result;
-        delete this.termination;
     }
     // ==== END MOVE GENERATION AND CHECKING ==== //
 

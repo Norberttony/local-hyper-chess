@@ -184,6 +184,10 @@ registerMenu("web-phil",
         setNetworkVisibility(false);
 
         widgets.web_phil.enable();
+        widgets.network.active = false;
+        delete widgets.network.color;
+        delete widgets.network.gameId;
+        delete widgets.network.userId;
 
         activateContainer("main-board");
         setExtraVisibility(true);

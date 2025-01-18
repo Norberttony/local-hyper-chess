@@ -43,7 +43,7 @@ class AnnotatorWidget extends BoardWidget {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
         for (const coords of this.annotations){
             coords.split("").map((val) => parseInt(val));
-            drawAnnotation(...coords);
+            this.drawAnnotation(...coords);
         }
     }
 

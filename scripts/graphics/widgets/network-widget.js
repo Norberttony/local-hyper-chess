@@ -133,8 +133,12 @@ class NetworkWidget extends BoardWidget {
             this.boardgfx.loading();
             return;
         }
+
+        if (!this.active)
+            return;
         
         if (new Date() - this.lastUpdate >= 60000){
+            console.log("Refreshing game...");
             await this.refreshGame();
             // it is possible that rawData is now inaccurate.
             return;
@@ -323,36 +327,17 @@ class NetworkWidget extends BoardWidget {
 
         this.active = false;
     
-        const { result, turn, termination } = event.detail;
-    
-        // get result text of game
-        let resultNum;
-        if      (result == "0-1" || (result == "#" && turn == Piece.white))
-            resultNum = -1;
-        else if (result == "1-0" || (result == "#" && turn == Piece.black))
-            resultNum = 1;
-        else
-            resultNum = 0;
+        const { result, turn, termination, winner } = event.detail;
     
         // an on-board result will either be / or #, whereas a result from the server will either
         // be 1-0, 0-1, or 1/2-1/2. It is a bit confusing and likely needs reworking, but... this works
         if (result){
-            let resultText;
-    
-            if (resultNum == -1){
-                resultText = "0-1";
-            }else if (resultNum == 1){
-                resultText = "1-0";
-            }else{
-                resultText = "1/2-1/2";
-            }
-    
             pollDatabase("POST", {
                 gameId: this.gameId,
                 userId: this.userId,
                 rowNum: this.rowNum,
                 type: "result",
-                result: resultText,
+                result,
                 termination: termination
             });
     
@@ -361,23 +346,23 @@ class NetworkWidget extends BoardWidget {
         }
     
         let resultText;
-        switch(resultNum){
-            case -1:
+        switch(result){
+            case "0-1":
                 resultText = `Black won by ${termination}`;
                 break;
-            case 0:
+            case "1/2-1/2":
                 resultText = "Game ended in a draw";
                 break;
-            case 1:
+            case "1-0":
                 resultText = `White won by ${termination}`;
                 break;
         }
     
         // did this player win?
         let mewin;
-        if (resultNum == 0){
+        if (result == "1/2-1/2"){
             mewin = "drew";
-        }else if (this.color == "w" && resultNum == 1 || this.color == "b" && resultNum == -1){
+        }else if (this.color == "w" && result == "1-0" || this.color == "b" && result == "0-1"){
             mewin = "won";
         }else{
             mewin = "lost";

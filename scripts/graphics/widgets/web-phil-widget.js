@@ -19,12 +19,14 @@ class WebPhilWidget extends BoardWidget {
             resignButton.addEventListener("click", () => {
                 if (this.playing){
                     const result = this.userColor == Piece.white ? "0-1" : "1-0";
+                    const winner = this.userColor == Piece.white ? Piece.black : Piece.white;
                     this.boardgfx.dispatchEvent("result", {
                         result,
                         termination: "resignation",
-                        turn: this.boardgfx.state.turn
+                        turn: this.boardgfx.state.turn,
+                        winner
                     });
-                    this.boardgfx.state.setResult(result, "resignation");
+                    this.boardgfx.state.setResult(result, "resignation", winner);
                 }
             });
         }
@@ -117,16 +119,7 @@ class WebPhilWidget extends BoardWidget {
         if (!this.playing)
             return;
 
-        let { result, turn, termination } = event.detail;
-
-        if (result == "/"){
-            result = "1/2 - 1/2";
-        }else if (result == "#"){
-            if (turn == Piece.white)
-                result = "0-1";
-            else
-                result = "1-0";
-        }
+        const { result, turn, termination } = event.detail;
 
         if (this.gameMoves.length >= 20){
             const dbInfo = {

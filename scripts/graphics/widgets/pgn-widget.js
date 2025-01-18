@@ -167,26 +167,14 @@ class PGNWidget extends BoardWidget {
     onResult(event){
         const { result, turn, termination } = event.detail;
 
-        // 0 for draw, 1 if white wins, -1 if black wins
-        let resultNum;
-        if (result == "/" || result == "1/2-1/2")
-            resultNum = 0;
-        else if (result == "#" && turn == Piece.white || result == "0-1")
-            resultNum = -1;
-        else if (result == "#" && turn == Piece.black || result == "1-0")
-            resultNum = 1;
-
         // based on the result number, add some result text and flavor text
-        let resultText;
+        const resultText = result.split("-").join(" - ");
         let flavorText;
-        if (resultNum == 0){
-            resultText = "1/2 - 1/2";
+        if (result == "1/2-1/2"){
             flavorText = "Game ended by";
-        }else if (resultNum == -1){
-            resultText = "0 - 1";
+        }else if (result == "0-1"){
             flavorText = "Black wins by";
-        }else if (resultNum == 1){
-            resultText = "1 - 0";
+        }else if (result == "1-0"){
             flavorText = "White wins by";
         }
 

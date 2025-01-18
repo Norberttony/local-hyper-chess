@@ -112,7 +112,7 @@ function countStats(state, depth, maxDepth = depth){
             moveCapturesAmt++;
             piecesCapturedAmt += m.captures.length;
         }
-        if (state.isGameOver() == "#"){
+        if (state.isGameOver().termination == "#"){
             checkmatesAmt++;
             //console.log(state.getFEN());
         }
@@ -162,7 +162,7 @@ function divide(state, depth, maxDepth = depth){
             moveCapturesAmt++;
             piecesCapturedAmt += m.captures.length;
         }
-        if (state.isGameOver() == "#"){
+        if (state.isGameOver().termination == "#"){
             checkmatesAmt++;
         }
 
