@@ -25,9 +25,6 @@ async function fetchFeaturedGame(){
         featuredGameId = featured.id;
         lobby_featuredTitleElem.innerText = featured.title;
 
-        const [ whiteName, blackName ] = featured.names.split("_");
-        featuredGameWidgets.players.setNames(whiteName, blackName);
-
         const [ gameId, rowNum ] = featured.id.split("_");
         await featuredGameWidgets.network.setNetworkId(gameId, rowNum, undefined, false);
 

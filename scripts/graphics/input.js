@@ -44,7 +44,7 @@ function piecePointerdown(event){
     if (!elem.classList.contains("board-graphics__move-highlight"))
         setAllMoveHighlightsToPool(INPUT.gameState.skeleton);
     else
-        return;
+        return draggingPointerup(event);
 
     if (!elem.dataset.coords)
         return;

@@ -18,6 +18,8 @@ class NetworkWidget extends BoardWidget {
         // offsetting it by 1 if a custom position with BTP was chosen.
         this.plyOffset = 0;
 
+        this.lastUpdate = new Date();
+
         if (location != WIDGET_LOCATIONS.NONE){
             const container = document.createElement("div");
 
@@ -117,11 +119,26 @@ class NetworkWidget extends BoardWidget {
         if (!this.active)
             return;
 
-        const rawData = await pollDatabase("GET", {
-            type: "gameStatus",
-            gameId: this.gameId,
-            rowNum: this.rowNum
-        });
+        let rawData;
+        try {
+            rawData = await pollDatabase("GET", {
+                type: "gameStatus",
+                gameId: this.gameId,
+                rowNum: this.rowNum
+            });
+            this.boardgfx.finishedLoading();
+        }
+        catch(err){
+            console.error("Failed to fetch game status. Check internet connection or database.");
+            this.boardgfx.loading();
+            return;
+        }
+        
+        if (new Date() - this.lastUpdate >= 60000){
+            await this.refreshGame();
+            // it is possible that rawData is now inaccurate.
+            return;
+        }
 
         if (!this.active)
             return;
@@ -195,6 +212,8 @@ class NetworkWidget extends BoardWidget {
                 termination: gameInfo.termination
             });
         }
+
+        this.lastUpdate = new Date();
     }
 
     async refreshGame(forceActive = false){
@@ -217,6 +236,10 @@ class NetworkWidget extends BoardWidget {
             else if (color == "black" && blackName == "Anonymous")
                 blackName = "You";
             this.boardgfx.setNames(whiteName, blackName);
+        }else if (color == "white" || color == "black"){
+            this.boardgfx.setNames(color == "white" ? "You" : "Anonymous", color == "white" ? "Anonymous" : "You");
+        }else{
+            this.boardgfx.setNames("Anonymous (white)", "Anonymous (black)");
         }
 
         this.boardgfx.loadFEN(fen);
@@ -257,7 +280,11 @@ class NetworkWidget extends BoardWidget {
 
         this.boardgfx.finishedLoading();
 
-        this.startUpdate();
+        if (forceActive){
+            this.active = true;
+            this.lastUpdate = new Date();
+            this.startUpdate();
+        }
 
         return gameInfo;
     }

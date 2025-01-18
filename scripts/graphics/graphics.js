@@ -13,7 +13,7 @@ const widgets = {
 };
 widgets.web_phil.disable();
 
-widgets.players.setNames("Anonymous (white)", "Anonymous (black)");
+widgets.players.setNames("-", "-");
 
 gameState.display();
 
