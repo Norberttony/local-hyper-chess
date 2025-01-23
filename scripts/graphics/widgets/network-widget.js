@@ -161,7 +161,7 @@ class NetworkWidget extends BoardWidget {
                 if (plyCount - myPlyCount > 1){
                     this.userJustMadeMove = false;
                     // must refresh the game by refetching it from the database
-                    this.refreshGame();
+                    await this.refreshGame();
                 }else if (plyCount - myPlyCount == 1){
                     this.userJustMadeMove = false;
                     this.boardgfx.addMoveToEnd(move);
@@ -229,6 +229,8 @@ class NetworkWidget extends BoardWidget {
         if (gameInfo.status == "err")
             throw new Error(gameInfo.msg);
         const { names, fen, color, moves, archived } = gameInfo;
+
+        this.lastUpdate = new Date();
 
         if (!this.active && !forceActive)
             return;
