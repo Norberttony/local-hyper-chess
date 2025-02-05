@@ -41,7 +41,7 @@ function activateContainer(id){
 // network is hidden, the pregame controls should always be activated.
 function setNetworkVisibility(vis){
     if (!vis)
-        activatePreGameControls();
+        widgets.network.disable();
 }
 
 function setExtraVisibility(vis){

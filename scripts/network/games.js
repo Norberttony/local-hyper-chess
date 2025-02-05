@@ -5,7 +5,7 @@ async function fetchGame(gameId, rowNum, userId){
     // check the cache
     const cacheId = `${gameId}_${rowNum}_cached`;
     const cachedGame = JSON.parse(localStorage.getItem(cacheId));
-    if (cachedGame){
+    if (cachedGame && cachedGame.lastActive){
         // update timestamp
         cachedGame.timestamp = new Date();
         localStorage.setItem(cacheId, JSON.stringify(cachedGame));

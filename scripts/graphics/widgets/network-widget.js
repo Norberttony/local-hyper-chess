@@ -83,29 +83,24 @@ class NetworkWidget extends BoardWidget {
     }
 
     enable(){
-        if (this.location){
-            this.resignButton.removeAttribute("disabled");
-            this.drawButton.removeAttribute("disabled");
-            this.takebackButton.removeAttribute("disabled");
-        }
-        this.active = true;
+        this.activateGameControls();
+        if (this.gameId)
+            this.setActive();
     }
 
     disable(){
-        if (this.location && this.active){
-            this.resignButton.setAttribute("disabled", "true");
-            this.drawButton.setAttribute("disabled", "true");
-            this.takebackButton.setAttribute("disabled", "true");
-        }
-        this.active = false;
+        this.activatePreGameControls();
+        this.unsetActive();
     }
 
     setNetworkId(gameId, rowNum, userId, active = true){
         this.gameId = gameId;
         this.rowNum = rowNum;
         this.userId = userId;
-        this.active = active;
-        return this.refreshGame(true);
+        if (active)
+            this.setActive();
+        
+        return this.refreshGame(active);
     }
 
     async startUpdate(){
@@ -121,11 +116,13 @@ class NetworkWidget extends BoardWidget {
 
         let rawData;
         try {
+            console.log("Fetching from db");
             rawData = await pollDatabase("GET", {
                 type: "gameStatus",
                 gameId: this.gameId,
                 rowNum: this.rowNum
             });
+            console.log("Fetched.");
             this.boardgfx.finishedLoading();
         }
         catch(err){
@@ -226,14 +223,12 @@ class NetworkWidget extends BoardWidget {
             return console.error("Cannot refresh game without gameId and rowNum"), this.boardgfx.finishedLoading();
 
         const gameInfo = await fetchGame(this.gameId, this.rowNum, this.userId);
+        console.log("Refreshing game...", gameInfo);
         if (gameInfo.status == "err")
             throw new Error(gameInfo.msg);
         const { names, fen, color, moves, archived } = gameInfo;
 
         this.lastUpdate = new Date();
-
-        if (!this.active && !forceActive)
-            return;
 
         if (names){
             let [ whiteName, blackName ] = names.split("_");
@@ -261,10 +256,11 @@ class NetworkWidget extends BoardWidget {
 
         if (color == "none"){
             delete this.color;
-            activatePreGameControls();
+            this.activatePreGameControls();
+            
         }else{
             this.color = color[0];
-            activateGameControls();
+            this.activateGameControls();
         }
 
         // play out moves
@@ -280,19 +276,43 @@ class NetworkWidget extends BoardWidget {
         if (archived){
             this.boardgfx.jumpToVariation(this.boardgfx.variationRoot);
             this.boardgfx.applyChanges();
-            activatePreGameControls();
+            this.activatePreGameControls();
         }
         this.boardgfx.pgnData.setHeader("Event", "Hyper Chess Online Game");
 
         this.boardgfx.finishedLoading();
 
-        if (forceActive){
+        return gameInfo;
+    }
+
+    setActive(){
+        if (!this.active){
             this.active = true;
             this.lastUpdate = new Date();
             this.startUpdate();
         }
+    }
 
-        return gameInfo;
+    unsetActive(){
+        if (this.active){
+            this.active = false;
+        }
+    }
+
+    activateGameControls(){
+        if (this.location){
+            this.resignButton.removeAttribute("disabled");
+            this.drawButton.removeAttribute("disabled");
+            this.takebackButton.removeAttribute("disabled");
+        }
+    }
+
+    activatePreGameControls(){
+        if (this.location && this.active){
+            this.resignButton.setAttribute("disabled", "true");
+            this.drawButton.setAttribute("disabled", "true");
+            this.takebackButton.setAttribute("disabled", "true");
+        }
     }
 
     // =========================== //
@@ -379,6 +399,6 @@ class NetworkWidget extends BoardWidget {
         this.boardgfx.pgnData.setHeader("Termination", termination);
     
         displayResultBox(resultText, mewin, termination);
-        activatePreGameControls();
+        this.activatePreGameControls();
     }
 }

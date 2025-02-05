@@ -30,6 +30,14 @@ class WebPhilWidget extends BoardWidget {
                 }
             });
         }
+        const drawButton = getFirstElemOfClass(this.boardgfx.skeleton, "pgn-viewer__draw");
+        if (drawButton){
+            this.drawButton = drawButton;
+        }
+        const takebackButton = getFirstElemOfClass(this.boardgfx.skeleton, "pgn-viewer__takeback");
+        if (takebackButton){
+            this.takebackButton = takebackButton;
+        }
 
         // board events
         boardgfx.skeleton.addEventListener("single-scroll", (event) => {
@@ -41,11 +49,17 @@ class WebPhilWidget extends BoardWidget {
     }
 
     enable(){
+        console.log("Enabled Web Phil");
         if (this.resignButton)
             this.resignButton.removeAttribute("disabled");
+        if (this.drawButton)
+            this.drawButton.setAttribute("disabled", "true");
+        if (this.takebackButton)
+            this.takebackButton.setAttribute("disabled", "true");
     }
 
     disable(){
+        console.log("Disabled Web Phil");
         if (this.resignButton)
             this.resignButton.setAttribute("disabled", "true");
     }
