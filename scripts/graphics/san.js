@@ -1,8 +1,5 @@
 
-import { squareToAlgebraic, squareToAlgebraicRank, squareToAlgebraicFile } from "./coords.mjs";
-import { Piece, PieceASCII } from "./piece.mjs";
-
-export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)){
+function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)){
     let SAN;
 
     /* collects information on move collision ambiguity */

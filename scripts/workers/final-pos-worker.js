@@ -3,23 +3,18 @@ const workerUrl = location + "";
 const basePath = workerUrl.replace(/\/[^/]+$/, '/');
 
 importScripts(
-    basePath + "/../../game/module-loader.js"
+    basePath + "/../../game/pre-game.js",
+    basePath + "/../../game/coords.js",
+    basePath + "/../../game/move.js",
+    basePath + "/../../game/piece.js",
+    basePath + "/../../game/game.js",
+    basePath + "/../../graphics/san.js"
 );
 
-const loader = new Module_Loader();
+const board = new Board();
 
-let board;
-
-loader.load(basePath + "/../../game/game.mjs")
-    .then((module) => {
-        board = new module.Board();
-    });
-
-onmessage = async (event) => {
+onmessage = (event) => {
     const { fen, moves } = event.data;
-
-    if (!board)
-        await loader.waitForAll();
 
     board.loadFEN(fen);
     

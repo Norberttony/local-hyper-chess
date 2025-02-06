@@ -2,20 +2,13 @@
 
 // this code REPEATEDLY violates the DRY principle. read at your own risk.
 
-import { algebraicToSquare, getFileFromSq, getRankFromSq } from "./coords.mjs";
-import { Piece, FENToPiece, PieceTypeToFEN } from "./piece.mjs";
-import { Move } from "./move.mjs";
-import { numSquaresToEdge, dirOffsets } from "./pre-game.mjs";
-import { getMoveSAN } from "./san.mjs";
-
-
 // removes all glyphs from SAN
-export function removeGlyphs(san){
+function removeGlyphs(san){
     san = san.replace(/[#+?!]/g, "");
     return san;
 }
 
-export const StartingFEN = "unbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNU w 1";
+const StartingFEN = "unbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNU w 1";
 
 // The Board object contains a game state of the board. Certain moves can be done or undone, but
 // they are not stored.
@@ -23,7 +16,7 @@ export const StartingFEN = "unbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNU w 1";
 // - class Board DOES NOT handle it currently! all of it is done by the GraphicalState (because it
 //      is rather slow). I was considering implementing Zobrist hashing for Board to allow really
 //      fast searching, albeit occasionally very very slightly inaccurate. That has not been done :)
-export class Board {
+class Board {
     constructor(){
         // contains the type and color of every piece on all 64 squares (Piece[Color] | Piece[Type])
         this.squares = new Uint8Array(64);
