@@ -4,17 +4,22 @@ const basePath = workerUrl.replace(/\/[^/]+$/, '/');
 
 
 importScripts(
-    basePath + "/../../game/pre-game.js",
-    basePath + "/../../game/coords.js",
-    basePath + "/../../game/move.js",
-    basePath + "/../../game/piece.js",
-    basePath + "/../../game/game.js",
-    basePath + "/../../graphics/san.js",
+    basePath + "/../../game/module-loader.js",
     basePath + "/hyper-active.js"
 );
 
-const myBoard = new Board();
+const loader = new Module_Loader();
+
+let myBoard;
 let moduleLoaded = false;
+
+loader.load(basePath + "/../../game/game.mjs")
+    .then((module) => {
+        myBoard = new module.Board();
+    });
+
+loader.load(basePath + "/../../game/san.mjs").then(globalize);
+loader.load(basePath + "/../../game/coords.mjs").then(globalize);
 
 Module["onRuntimeInitialized"] = () => {
     moduleLoaded = true;

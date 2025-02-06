@@ -4,7 +4,9 @@
 //  - "captures"    is an array of {square, captured} where "square" is the location of the
 //                      captured piece and "captured" is the piece itself.
 
-class Move {
+import { squareToAlgebraic } from "./coords.mjs";
+
+export class Move {
     constructor(to, from, captures = []){
         this.to = to;
         this.from = from;

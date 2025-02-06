@@ -2,9 +2,9 @@
 
 // Precomputes distance to edge of board from every square based on direction.
 // organized as N, E, S, W, then NE, SE, SW, NW
-const dirOffsets = [8, 1, -8, -1, 9, -7, -9, 7];
+export const dirOffsets = [8, 1, -8, -1, 9, -7, -9, 7];
 
-const numSquaresToEdge = [];
+export const numSquaresToEdge = [];
 for (let r = 0; r < 8; r++){
     for (let f = 0; f < 8; f++){
         let n = 7 - r;
