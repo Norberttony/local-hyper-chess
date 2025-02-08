@@ -60,9 +60,12 @@ class Board {
         return this.result;
     }
     // checks if the current player is checkmated... or stalemated...
-    isGameOver(moves = this.generateMoves()){
+    isGameOver(moves){
         if (this.result)
             return this.result;
+
+        if (!moves)
+            moves = this.generateMoves();
 
         // no legal moves?!
         if (moves.length == 0){
