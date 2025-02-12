@@ -1,8 +1,15 @@
 
 // handles the client side of puzzles
 
+let puzzlesElem;
+let puzzlesTitleElem;
+let puzzlesDiffElem;
+let puzzlesSolvedElem;
+let puzzlesImgElem;
+
 // while this would make sense as a widget, for now just hardcode it to the main board.
-{
+function puzzleInit(){
+    console.log("puzzle init");
     const puzzles = document.createElement("div");
     puzzles.classList.add("puzzles-widget");
     puzzles.innerHTML = `
@@ -19,14 +26,15 @@
         <div class = "puzzles-widget__status">Unsolved</div>`;
 
     gameState.getWidgetElem(WIDGET_LOCATIONS.RIGHT).appendChild(puzzles);
+
+    puzzlesElem       = getFirstElemOfClass(gameState.skeleton, "puzzles-widget");
+    puzzlesTitleElem  = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__title");
+    puzzlesDiffElem   = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__diff");
+    puzzlesSolvedElem = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__status");
+    puzzlesImgElem    = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__img");
+
+    clearPuzzles();
 }
-
-
-const puzzlesElem       = getFirstElemOfClass(gameState.skeleton, "puzzles-widget");
-const puzzlesTitleElem  = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__title");
-const puzzlesDiffElem   = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__diff");
-const puzzlesSolvedElem = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__status");
-const puzzlesImgElem    = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__img");
 
 const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
@@ -48,7 +56,6 @@ let puzzle;
 
 const puzzlesSolved = loadPuzzlesSolvedData();
 
-clearPuzzles();
 
 async function loadPuzzle(id){
     if (!PUZZLES)

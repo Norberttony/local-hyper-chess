@@ -54,7 +54,7 @@ function setPuzzlesVisibility(vis){
     getFirstElemOfClass(document, "puzzles-widget").style.display = setDisplay;
 }
 
-function changeHash(newHash, quiet = false){
+async function changeHash(newHash, quiet = false){
     history.pushState(null, "", newHash);
 
     // deactivate active menu button

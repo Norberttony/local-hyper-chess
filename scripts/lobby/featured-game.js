@@ -4,20 +4,28 @@ const lobby_featuredTitleElem           = getFirstElemOfClass(lobbyElem, "lobby_
 const lobby_featuredGameContainerElem = document.getElementById("lobby__featured-game-container");
 
 // populate with a board template
-const featuredGameBoard = new BoardGraphics(false);
-lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
-
-const featuredGameWidgets = {
-    players: new PlayersWidget(featuredGameBoard),
-    network: new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE)
-};
+let featuredGameBoard;
+let featuredGameWidgets;
 
 let featuredGameId;
 let isUpdatingFeaturedGame = false;
 let keepUpdatingFeaturedGame = false;
 
 
+function featuredGameInit(){
+    featuredGameBoard = new BoardGraphics(false);
+    lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
+
+    featuredGameWidgets = {
+        players: new PlayersWidget(featuredGameBoard),
+        network: new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE)
+    };
+}
+
+
 async function fetchFeaturedGame(){
+    await module_loader.waitForAll();
+
     featuredGameBoard.loading();
     const featured = JSON.parse(await pollDatabase("GET", { type: "featuredGame" }));
 

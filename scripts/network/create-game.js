@@ -5,12 +5,22 @@ const createGameFormElem = document.forms["create-game__form"];
 const createGameFormPopup = document.getElementById("create-game");
 const fenTextElem = document.getElementById("create-game__fen");
 const startingFenElem = document.getElementById("create-game__use-default-fen");
-const createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
+let createGameFormBoard;
+
+function createGameFormInit(){
+    createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
+    setCreateGameFEN(StartingFEN);
+
+    if (startingFenElem.checked){
+        createGameFormElem.fen.readOnly = true;
+        createGameFormBoard.loadFEN(StartingFEN);
+        displayCreateGameBoard();
+    }
+}
 
 createGameFormElem.fen.addEventListener("input", () => {
     setCreateGameFEN(createGameFormElem.fen.value);
 });
-setCreateGameFEN(StartingFEN);
 
 function displayCreateGameBoard(){
     createGameFormBoard.display();
@@ -87,9 +97,3 @@ startingFenElem.addEventListener("change", () => {
         setCreateGameFEN(createGameFormElem.fen.value);
     }
 });
-
-if (startingFenElem.checked){
-    createGameFormElem.fen.readOnly = true;
-    createGameFormBoard.loadFEN(StartingFEN);
-    displayCreateGameBoard();
-}

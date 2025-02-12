@@ -11,4 +11,11 @@ const module_loader = new Module_Loader();
     }
 
     await module_loader.waitForAll();
+    console.log("Modules loaded.");
+
+    gameStateInit();
+    puzzleInit();
+    createGameFormInit();
+    featuredGameInit();
+    hashInit();
 })();

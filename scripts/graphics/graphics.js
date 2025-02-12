@@ -1,11 +1,7 @@
 
 let widgets;
 
-(async () => {
-
-    // if necessary, wait until all of the modules have actually loaded.
-    await module_loader.waitForAll();
-
+function gameStateInit(){
     window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
     widgets = {
@@ -23,7 +19,7 @@ let widgets;
     widgets.players.setNames("-", "-");
 
     gameState.display();
-})();
+}
 
 function hideNames(){
     widgets.players.disable();
