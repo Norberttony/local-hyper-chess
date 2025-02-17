@@ -176,6 +176,17 @@ class BoardGraphics {
                 attachGlyph(this.getPieceElem(toX, toY), g);
             }
         }
+
+        // check and dispatch event for any results
+        this.state.isGameOver();
+        if (this.state.result){
+            this.dispatchEvent("result", {
+                result:         this.state.result.result,
+                turn:           this.state.turn,
+                termination:    this.state.result.termination,
+                winner:         this.state.result.winner
+            });
+        }
     }
 
     // board jumps to the given variation
@@ -288,8 +299,7 @@ class BoardGraphics {
     // assumes move is legal
     // performs the move without making any graphical updates. To perform graphical updates, run the
     // applyChanges method.
-    makeMove(move){
-        const SAN = getMoveSAN(this.state, move);
+    makeMove(move, SAN = getMoveSAN(this.state, move)){
         
         // search for an existing variation with this move
         for (const v of this.currentVariation.next){
@@ -320,7 +330,6 @@ class BoardGraphics {
         if (this.positions[pos]) this.positions[pos]++;
         else                     this.positions[pos] = 1;
 
-        // the only issue is that this does not handle board (if moved to its latest state)
         if (this.positions[pos] >= 3)
             this.state.setResult("1/2-1/2", "three-fold repetition", 0);
 
@@ -332,17 +341,6 @@ class BoardGraphics {
         variation.fiftyMoveRuleCounter = this.lastCapture;
         if (this.lastCapture >= 100)
             this.state.setResult("1/2-1/2", "fifty move rule", 0);
-
-        // check and dispatch event for any results
-        this.state.isGameOver();
-        if (this.state.result){
-            this.dispatchEvent("result", {
-                result:         this.state.result.result,
-                turn:           this.state.turn,
-                termination:    this.state.result.termination,
-                winner:         this.state.result.winner
-            });
-        }
     }
 
     // ============================== //

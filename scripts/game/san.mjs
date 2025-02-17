@@ -2,7 +2,7 @@
 import { squareToAlgebraic, squareToAlgebraicRank, squareToAlgebraicFile } from "./coords.mjs";
 import { Piece, PieceASCII } from "./piece.mjs";
 
-export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)){
+export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false), withGlyphs = true){
     let SAN;
 
     /* collects information on move collision ambiguity */
@@ -45,34 +45,36 @@ export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)
 
     SAN = `${PieceASCII[movingPieceType]}${resolvedSquare}${move.captures.length > 0 ? "x": ""}${squareToAlgebraic(move.to)}`;
 
-    board.makeMove(move);
 
-    // is game over?
-    let result = board.isGameOver();
-    if (result && result.result != "1/2-1/2"){
-        SAN += "#";
-    }else{
-        // does this move threaten to take the king on the next turn?
-        board.nextTurn();
-        const moves = board.generateMoves(false);
-        board.nextTurn();
+    if (withGlyphs){
+        board.makeMove(move);
 
-        let isCheck = false;
-        for (const m of moves){
-            for (const c of m.captures){
-                if (Piece.ofType(c.captured, Piece.king)){
-                    isCheck = true;
-                    break;
+        // is game over?
+        let result = board.isGameOver();
+        if (result && result.result != "1/2-1/2"){
+            SAN += "#";
+        }else{
+            // does this move threaten to take the king on the next turn?
+            board.nextTurn();
+            const moves = board.generateMoves(false);
+            board.nextTurn();
+
+            let isCheck = false;
+            for (const m of moves){
+                for (const c of m.captures){
+                    if (Piece.ofType(c.captured, Piece.king)){
+                        isCheck = true;
+                        break;
+                    }
                 }
+                if (isCheck)
+                    break;
             }
             if (isCheck)
-                break;
+                SAN += "+";
         }
-        if (isCheck)
-            SAN += "+";
+        board.unmakeMove(move);
     }
-
-    board.unmakeMove(move);
 
     return SAN;
 }

@@ -29,6 +29,7 @@ onmessage = async (event) => {
         if (move){
             board.makeMove(move);
             moveObjects.push(move);
+            move.san = m;
         }
     }
 

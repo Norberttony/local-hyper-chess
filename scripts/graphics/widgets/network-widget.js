@@ -268,7 +268,7 @@ class NetworkWidget extends BoardWidget {
         const moveObjects = await gameLoader.doTask({ fen, moves: movesString });
         for (const m of moveObjects){
             const move = new Move(m.to, m.from, m.captures);
-            this.boardgfx.makeMove(move);
+            this.boardgfx.makeMove(move, m.san);
         }
         this.boardgfx.applyChanges();
 

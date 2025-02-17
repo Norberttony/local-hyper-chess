@@ -2,7 +2,7 @@
 
 // this code REPEATEDLY violates the DRY principle. read at your own risk.
 
-import { algebraicToSquare, getFileFromSq, getRankFromSq } from "./coords.mjs";
+import { algebraicToSquare, getFileFromSq, getRankFromSq, squareToAlgebraic } from "./coords.mjs";
 import { Piece, FENToPiece, PieceTypeToFEN } from "./piece.mjs";
 import { Move } from "./move.mjs";
 import { numSquaresToEdge, dirOffsets } from "./pre-game.mjs";
@@ -97,7 +97,7 @@ export class Board {
 
     // ========================================= GENERATE MOVES START ========================================= //
     // detects which piece this is, and generates moves for it. Generally used for graphical side of app.
-    generatePieceMoves(start, piece){
+    generatePieceMoves(start, piece, filter = true){
         let moves = [];
 
         if (Piece.ofColor(piece, this.turn)){
@@ -126,7 +126,10 @@ export class Board {
             }
         }
 
-        return this.filterLegalMoves(moves);
+        if (filter)
+            return this.filterLegalMoves(moves);
+        else
+            return moves;
     }
     // generates all possible moves for the given turn
     generateMoves(filter = true){
@@ -827,20 +830,52 @@ export class Board {
         // take a short cut by considering the destination square of the san and the move piece's type
         san = removeGlyphs(san);
         const toSq = algebraicToSquare(san.substring(san.length - 2));
-        const pieceType = FENToPiece[this.turn == Piece.white ? san[0] : san[0].toLowerCase()];
+        const pieceValue = FENToPiece[this.turn == Piece.white ? san[0] : san[0].toLowerCase()];
 
-        const moves = this.generateMoves(false);
+        if (toSq < 0 || toSq >= 64 || isNaN(toSq))
+            return;
 
-        for (const m of moves){
+        const possibleMoves = [];
+        for (let j = 0; j < dirOffsets.length; j++){
+            let blockerCase = Piece.ofType(pieceValue, Piece.springer) || Piece.ofType(pieceValue, Piece.chameleon) ? 1 : 0;
+            let isCham = Piece.ofType(pieceValue, Piece.chameleon);
+            for (let i = 1; i <= numSquaresToEdge[toSq][j]; i++){
+                const startSq = toSq + i * dirOffsets[j];
+                const val = this.squares[startSq];
+                if (val){
+                    if (val == pieceValue){
+                        const pieceMoves = this.generatePieceMoves(startSq, val, false);
+                        for (const m of pieceMoves){
+                            if (m.to == toSq){
+                                possibleMoves.push(m);
+                            }
+                        }
+                    }
+                    if (Piece.getColor(pieceValue) != Piece.getColor(val)){
+                        if (blockerCase && (!isCham || Piece.ofType(val, Piece.springer)))
+                            blockerCase--;
+                        else
+                            break;
+                    }else{
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (const m of possibleMoves){
             // only consider SAN if to squares and piece types match
-            if (m.to != toSq || this.squares[m.from] != pieceType)
+            if (m.to != toSq || this.squares[m.from] != pieceValue)
                 continue;
 
-            const SAN = getMoveSAN(this, m, moves);
+            const SAN = getMoveSAN(this, m, possibleMoves, false);
             if (removeGlyphs(SAN) == san){
                 return m;
             }
         }
+
+        console.error(san, possibleMoves, this.getFEN());
+        throw new Error(`Move of SAN ${san} could not be found.`);
 
         return;
     }
