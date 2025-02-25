@@ -2,7 +2,7 @@
 
 // this code REPEATEDLY violates the DRY principle. read at your own risk.
 
-import { algebraicToSquare, getFileFromSq, getRankFromSq, squareToAlgebraic } from "./coords.mjs";
+import { algebraicToSquare, getFileFromSq, getRankFromSq } from "./coords.mjs";
 import { Piece, FENToPiece, PieceTypeToFEN } from "./piece.mjs";
 import { Move } from "./move.mjs";
 import { numSquaresToEdge, dirOffsets } from "./pre-game.mjs";

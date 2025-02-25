@@ -7,16 +7,17 @@ const fenTextElem = document.getElementById("create-game__fen");
 const startingFenElem = document.getElementById("create-game__use-default-fen");
 let createGameFormBoard;
 
-function createGameFormInit(){
-    createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
-    setCreateGameFEN(StartingFEN);
+module_loader.waitForAll()
+    .then(() => {
+        createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
+        setCreateGameFEN(StartingFEN);
 
-    if (startingFenElem.checked){
-        createGameFormElem.fen.readOnly = true;
-        createGameFormBoard.loadFEN(StartingFEN);
-        displayCreateGameBoard();
-    }
-}
+        if (startingFenElem.checked){
+            createGameFormElem.fen.readOnly = true;
+            createGameFormBoard.loadFEN(StartingFEN);
+            displayCreateGameBoard();
+        }
+    });
 
 createGameFormElem.fen.addEventListener("input", () => {
     setCreateGameFEN(createGameFormElem.fen.value);

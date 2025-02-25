@@ -1,25 +1,26 @@
 
 let widgets;
 
-function gameStateInit(){
-    window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
+module_loader.waitForAll()
+    .then(() => {
+        window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
-    widgets = {
-        annotator: new AnnotatorWidget(gameState),
-        animation: new AnimationWidget(gameState),
-        audio: new AudioWidget(gameState),
-        pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
-        network: new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT),
-        extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
-        players: new PlayersWidget(gameState),
-        web_phil: new WebPhilWidget(gameState)
-    };
-    widgets.web_phil.disable();
+        widgets = {
+            annotator: new AnnotatorWidget(gameState),
+            animation: new AnimationWidget(gameState),
+            audio: new AudioWidget(gameState),
+            pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
+            network: new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT),
+            extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
+            players: new PlayersWidget(gameState),
+            web_phil: new WebPhilWidget(gameState)
+        };
+        widgets.web_phil.disable();
 
-    widgets.players.setNames("-", "-");
+        widgets.players.setNames("-", "-");
 
-    gameState.display();
-}
+        gameState.display();
+    });
 
 function hideNames(){
     widgets.players.disable();

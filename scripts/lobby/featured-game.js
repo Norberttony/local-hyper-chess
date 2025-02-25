@@ -12,15 +12,16 @@ let isUpdatingFeaturedGame = false;
 let keepUpdatingFeaturedGame = false;
 
 
-function featuredGameInit(){
-    featuredGameBoard = new BoardGraphics(false);
-    lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
+module_loader.waitForAll()
+    .then(() => {
+        featuredGameBoard = new BoardGraphics(false);
+        lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
 
-    featuredGameWidgets = {
-        players: new PlayersWidget(featuredGameBoard),
-        network: new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE)
-    };
-}
+        featuredGameWidgets = {
+            players: new PlayersWidget(featuredGameBoard),
+            network: new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE)
+        };
+    });
 
 
 async function fetchFeaturedGame(){

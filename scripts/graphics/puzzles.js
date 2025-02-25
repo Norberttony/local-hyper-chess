@@ -8,33 +8,34 @@ let puzzlesSolvedElem;
 let puzzlesImgElem;
 
 // while this would make sense as a widget, for now just hardcode it to the main board.
-function puzzleInit(){
-    console.log("puzzle init");
-    const puzzles = document.createElement("div");
-    puzzles.classList.add("puzzles-widget");
-    puzzles.innerHTML = `
-        <div class = "puzzles-widget__img-container">
-            <img class = "puzzles-widget__img" src = "">
-        </div>
-        <div class = "puzzles-widget__controls">
-            <button class = "puzzles-widget__back" onclick = "backPuzzle();">&lt;</button>
-            <button class = "puzzles-widget__rdm" onclick = "randomPuzzle();">Click to go to a random puzzle</button>
-            <button class = "puzzles-widget__next" onclick = "nextPuzzle();">&gt;</button>
-        </div>
-        <div class = "puzzles-widget__title">TITLE</div>
-        <div class = "puzzles-widget__diff">Intermediate</div>
-        <div class = "puzzles-widget__status">Unsolved</div>`;
+module_loader.waitForAll()
+    .then(() => {
+        console.log("puzzle init");
+        const puzzles = document.createElement("div");
+        puzzles.classList.add("puzzles-widget");
+        puzzles.innerHTML = `
+            <div class = "puzzles-widget__img-container">
+                <img class = "puzzles-widget__img" src = "">
+            </div>
+            <div class = "puzzles-widget__controls">
+                <button class = "puzzles-widget__back" onclick = "backPuzzle();">&lt;</button>
+                <button class = "puzzles-widget__rdm" onclick = "randomPuzzle();">Click to go to a random puzzle</button>
+                <button class = "puzzles-widget__next" onclick = "nextPuzzle();">&gt;</button>
+            </div>
+            <div class = "puzzles-widget__title">TITLE</div>
+            <div class = "puzzles-widget__diff">Intermediate</div>
+            <div class = "puzzles-widget__status">Unsolved</div>`;
 
-    gameState.getWidgetElem(WIDGET_LOCATIONS.RIGHT).appendChild(puzzles);
+        gameState.getWidgetElem(WIDGET_LOCATIONS.RIGHT).appendChild(puzzles);
 
-    puzzlesElem       = getFirstElemOfClass(gameState.skeleton, "puzzles-widget");
-    puzzlesTitleElem  = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__title");
-    puzzlesDiffElem   = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__diff");
-    puzzlesSolvedElem = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__status");
-    puzzlesImgElem    = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__img");
+        puzzlesElem       = getFirstElemOfClass(gameState.skeleton, "puzzles-widget");
+        puzzlesTitleElem  = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__title");
+        puzzlesDiffElem   = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__diff");
+        puzzlesSolvedElem = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__status");
+        puzzlesImgElem    = getFirstElemOfClass(gameState.skeleton, "puzzles-widget__img");
 
-    clearPuzzles();
-}
+        clearPuzzles();
+    });
 
 const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
