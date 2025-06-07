@@ -114,13 +114,28 @@ class BoardGraphics {
     }
 
     loadPGN(pgn){
-        // check if we have to load from position
         let fen = StartingFEN;
+        
         const headers = extractHeaders(pgn);
+        
+        // check if we have to load from position
         if (headers.Variant == "From Position"){
             fen = headers.FEN;
         }
+
+        let whiteScore = "";
+        let blackScore = "";
+        if (headers.Result)
+            [ whiteScore, blackScore ] = headers.Result.split("-");
+
+        this.setNames((headers.White || "") + " | " + whiteScore, (headers.Black || "") + " | " + blackScore);
+
         this.loadFEN(fen);
+
+        // set headers of pgnData
+        this.pgnData.clearHeaders();
+        for (const [ name, value ] of Object.entries(headers))
+            this.pgnData.setHeader(name, value);
 
         // remove headers
         pgn = pgn.replace(/\[.+?\]\s*/g, "");
@@ -458,20 +473,11 @@ function createSkeleton(skeleton){
 
     skeleton.classList.add("board-graphics");
 
-    // create the main board display
-    const boardDiv = document.createElement("div");
-    boardDiv.classList.add("board-graphics__board");
-    skeleton.appendChild(boardDiv);
-
-    // create a loading icon
-    const loadingDiv = document.createElement("div");
-    loadingDiv.classList.add("board-graphics__loading");
-    boardDiv.appendChild(loadingDiv);
-
-    const loadingImg = document.createElement("img");
-    loadingImg.classList.add("board-graphics__loading-img");
-    loadingImg.src = "./images/pieces/immobilizer.png";
-    loadingDiv.appendChild(loadingImg);
+    skeleton.innerHTML = `<div class = "board-graphics__board">
+    <div class = "board-graphics__loading">
+        <img class = "board-graphics__loading-img" src = "./images/pieces/immobilizer.png">
+    </div>
+</div>`;
 
     return skeleton;
 }

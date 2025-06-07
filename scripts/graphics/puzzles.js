@@ -291,3 +291,28 @@ async function fetchPuzzleData(){
         hideDialogBox();
     }
 }
+
+function verifyPuzzles(){
+    const board = new Board();
+    let id = 2;
+    for (const { fen, solution } of PUZZLES){
+        board.loadFEN(fen);
+
+        try {
+            for (const branch of solution){
+                if (typeof branch == "string"){
+                    const san = branch;
+                    const move = board.getMoveOfSAN(san);
+                    board.makeMove(move);
+                }else{
+                    for (const san of branch)
+                        board.getMoveOfSAN(san);
+                }
+            }
+        }catch(err){
+            console.error(`Checking puzzle #${id} results in error:`, err);
+        }
+
+        id++;
+    }
+}

@@ -87,8 +87,9 @@ function addPointerHoldListener(elem, action){
     let maxTimes = 4;
     let times;
 
-    function startHold(){
-        cancelHold();
+    function startHold(event){
+        event.preventDefault();
+        cancelHold(event);
         time = maxTime;
         times = 0;
         pingHold();
@@ -104,11 +105,22 @@ function addPointerHoldListener(elem, action){
         }
     }
 
-    function cancelHold(){
+    function cancelHold(event){
+        event.preventDefault();
         clearTimeout(holdTimeout);
     }
 
     elem.addEventListener("pointerdown", startHold);
     elem.addEventListener("pointerleave", cancelHold);
     elem.addEventListener("pointerup", cancelHold);
+
+    // disable text highlighting on iOS when screen is held down for a short period of time.
+    function preventTouch(event){
+        event.preventDefault();
+    }
+
+    elem.addEventListener("touchstart", preventTouch);
+    elem.addEventListener("touchmove", preventTouch);
+    elem.addEventListener("touchend", preventTouch);
+    elem.addEventListener("touchcancel", preventTouch);
 }
