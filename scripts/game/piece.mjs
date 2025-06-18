@@ -33,7 +33,7 @@ export const Piece = {
     }
 };
 
-export const PieceASCII = ["?", "K", "Q", "B", "N", "R", "P", "U"];
+export const PieceTypeToASCII = [ "?", "K", "Q", "B", "N", "R", "P", "U" ];
 
 export const FENToPiece = {
     k: Piece.black | Piece.king,
@@ -61,10 +61,4 @@ export const PieceTypeToFEN = {
     [Piece.coordinator]: "r",
     [Piece.straddler]: "p",
     [Piece.immobilizer]: "u"
-};
-
-// for graphical purposes
-export const colorToBackground = {
-    [Piece.white]: "0%",
-    [Piece.black]: "100%"
 };

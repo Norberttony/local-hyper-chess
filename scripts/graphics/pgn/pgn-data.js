@@ -29,6 +29,10 @@ class PGNData {
         this.initHeaders();
     }
 
+    clearHeaders(){
+        this.headers = {};
+    }
+
     setHeader(hdr, value){
         this.headers[hdr] = value;
 

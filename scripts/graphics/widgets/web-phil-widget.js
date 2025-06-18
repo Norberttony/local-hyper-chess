@@ -72,7 +72,7 @@ class WebPhilWidget extends BoardWidget {
         this.startingFEN = this.boardgfx.state.getFEN();
         this.gameMoves = [];
     
-        this.bot.startWorker();
+        this.bot.start();
         this.bot.setFEN(this.boardgfx.state.getFEN());
     
         // if not user's turn, it's web phil's turn!
@@ -85,7 +85,7 @@ class WebPhilWidget extends BoardWidget {
             return;
     
         this.playing = false;
-        this.bot.stopWorker();
+        this.bot.stop();
     
         // clean up game state config
         this.boardgfx.allowVariations = true;
@@ -93,7 +93,7 @@ class WebPhilWidget extends BoardWidget {
         this.boardgfx.allowInputFrom[Piece.black] = true;
     }
 
-    #botPlaysMove({ san }){
+    #botPlaysMove(san){
         if (!this.playing)
             return;
 

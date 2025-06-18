@@ -1,6 +1,6 @@
 
 import { squareToAlgebraic, squareToAlgebraicRank, squareToAlgebraicFile } from "./coords.mjs";
-import { Piece, PieceASCII } from "./piece.mjs";
+import { Piece, PieceTypeToASCII } from "./piece.mjs";
 
 export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false), withGlyphs = true){
     let SAN;
@@ -43,8 +43,9 @@ export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false)
         resolvedSquare = squareToAlgebraicFile(move.from);
     }
 
-    SAN = `${PieceASCII[movingPieceType]}${resolvedSquare}${move.captures.length > 0 ? "x": ""}${squareToAlgebraic(move.to)}`;
-
+    const ascii = PieceTypeToASCII[movingPieceType];
+    const capt = move.captures.length > 0 ? "x": "";
+    SAN = `${ascii}${resolvedSquare}${capt}${squareToAlgebraic(move.to)}`;
 
     if (withGlyphs){
         board.makeMove(move);

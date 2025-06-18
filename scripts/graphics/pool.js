@@ -46,7 +46,7 @@ function getPieceFromPool(f, r, boardFlipped, pieceType, pieceColor){
     piece.classList.add(coords);
     piece.classList.add(`board-graphics__piece--type-${fen}`);
     
-    piece.style.backgroundPositionY = colorToBackground[pieceColor];
+    piece.style.backgroundPositionY = pieceColor == Piece.white ? "0%" : "100%";
     
     return piece;
 }
