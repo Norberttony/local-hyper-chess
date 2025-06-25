@@ -9,11 +9,12 @@ module_loader.waitForAll()
             annotator: new AnnotatorWidget(gameState),
             animation: new AnimationWidget(gameState),
             audio: new AudioWidget(gameState),
+            engine: new EngineWidget(gameState),
             pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
             network: new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT),
             extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
             players: new PlayersWidget(gameState),
-            web_phil: new WebPhilWidget(gameState)
+            // web_phil: new WebPhilWidget(gameState)
         };
         widgets.web_phil.disable();
 

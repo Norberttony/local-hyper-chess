@@ -4,9 +4,9 @@
 class HyperChessBot {
     constructor(path){
         this.workerPath = path;
-        this.thinking = false;
         this.fen = "";
         this.board = new Board();
+        this.running = false;
 
         this.start();
     }
@@ -16,7 +16,9 @@ class HyperChessBot {
             this.stop();
 
         this.worker = new Worker(this.workerPath);
+        this.running = true;
         this.worker.onerror = (err) => {
+            this.running = false;
             throw new Error(`Could not start hyper chess bot web worker: ${err.message}`);
         }
     }
@@ -25,6 +27,7 @@ class HyperChessBot {
         if (!this.worker)
             return;
 
+        this.running = false;
         this.worker.terminate();
     }
 
@@ -42,12 +45,11 @@ class HyperChessBot {
         this.board.loadFEN(fen);
     }
 
+    async uciready(){
+    }
+
     // thinks for ms milliseconds, and then returns the best move.
     async thinkFor(ms){
-        if (this.thinking)
-            throw new Error("Cannot think about two positions simultaneously.");
-        this.thinking = true;
-
         return new Promise((res, rej) => {
             let t = this;
 
@@ -57,7 +59,6 @@ class HyperChessBot {
                 this.restart();
                 this.setFEN(this.fen);
                 this.postMessage(`go movetime ${ms}`);
-                this.thinking = false;
                 t.worker.removeEventListener("message", listener);
                 res(await this.thinkFor(ms));
             }, ms + 4000);
@@ -65,7 +66,6 @@ class HyperChessBot {
             function listener(event){
                 if (event.data.startsWith("bestmove")){
                     clearTimeout(timeout);
-                    t.thinking = false;
                     t.worker.removeEventListener("message", listener);
 
                     const lan = event.data.split(" ")[1].trim();
@@ -84,6 +84,21 @@ class HyperChessBot {
             this.worker.addEventListener("message", listener);
             this.worker.postMessage(`go movetime ${ms}`);
         });
+    }
+
+    sendCmd(cmd){
+        this.worker.postMessage(cmd);
+    }
+
+    read(callback){
+        let t = this;
+
+        function listener(event){
+            if (callback(event.data))
+                t.worker.removeEventListener("message", listener);
+        }
+
+        this.worker.addEventListener("message", listener);
     }
 
     playMove(san){
