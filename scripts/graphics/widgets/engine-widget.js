@@ -42,12 +42,13 @@ class EngineWidget extends BoardWidget {
 
     enable(){
         this.activeElem.checked = true;
-        if (this.engine.running)
-            this.engine.stop();
 
         this.setName();
 
+        this.engine.start();
+
         this.engine.read((data) => {
+            console.log(data);
             const words = data.trim().split(" ");
 
             // get eval
@@ -105,9 +106,9 @@ class EngineWidget extends BoardWidget {
     startThinking(){
         console.log(this.engine);
         if (this.engine.running){
-            // this.engine.sendCmd("stop");
-            // this.engine.sendCmd(`position fen ${this.boardgfx.state.getFEN()}`);
-            // this.engine.sendCmd("go");
+            this.engine.sendCmd("stop");
+            this.engine.sendCmd(`position fen ${this.boardgfx.state.getFEN()}`);
+            this.engine.sendCmd("go");
         }
     }
 

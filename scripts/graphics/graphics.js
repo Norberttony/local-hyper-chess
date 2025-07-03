@@ -16,7 +16,7 @@ module_loader.waitForAll()
             players: new PlayersWidget(gameState),
             // web_phil: new WebPhilWidget(gameState)
         };
-        widgets.web_phil.disable();
+        // widgets.web_phil.disable();
 
         widgets.players.setNames("-", "-");
 

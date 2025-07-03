@@ -7,11 +7,19 @@ const channel = {
     addInput(txt){
         console.log("> ", txt);
         this.input += txt + "\n";
-        Module.pauseAnalysis = 1;
     },
 
-    unpause(){
-        Module.pauseAnalysis = 0;
+    dropline(){
+        this.input = this.input.substring(this.input.indexOf("\n") + 1);
+    },
+
+    C_readline(){
+        if (this.input == "")
+            this.input = "\n";
+        const idx = this.input.indexOf("\n");
+        const ptr = Module.stringToNewUTF8(this.input.substring(0, idx + 1));
+        this.input = this.input.substring(idx + 1);
+        return ptr;
     },
 
     msg(txt){
@@ -20,45 +28,17 @@ const channel = {
     },
 
     flush(){
-        this.msg(this.output);
+        this.msg(this.output.trim());
         this.output = "";
     }
 }
 
 // hook up the wasm code to the channel
 var Module = {
-    "onRuntimeInitialized": () => {
-        // Module.ccall("main", "number", null, null, { async: true });
-    },
-    "preRun": [
-        () => {
-            Module.pauseAnalysis = 0;
-
-            const lineBreak = "\n".charCodeAt(0);
-            function input(){
-                console.log("need input");
-                if (channel.input.length == 0){
-                    Module.pauseAnalysis = 0;
-                    return lineBreak;
-                }
-                const c = channel.input[0];
-                channel.input = channel.input.substring(1);
-                return c.charCodeAt(0);
-            }
-
-            function output(code){
-                console.log("outputting");
-                const char = String.fromCharCode(code);
-                channel.output += char;
-                if (char == "\n")
-                    channel.flush();
-            }
-
-            console.log("FS init");
-            Module.FS.init(input, output, output);
-        }
-    ],
-    "print": () => 0
+    "print": (txt) => {
+        console.log("PRINT: ", txt);
+        postMessage(txt);
+    }
 };
 
 console.log(this);
@@ -68,8 +48,6 @@ const workerUrl = location + "";
 const basePath = workerUrl.replace(/\/[^/]+$/, '/');
 
 importScripts(basePath + "/hyper-active.js");
-
-run();
 
 setInterval(() => console.log("Heartbeat"), 1000);
 

@@ -21,6 +21,9 @@ class HyperChessBot {
             this.running = false;
             throw new Error(`Could not start hyper chess bot web worker: ${err.message}`);
         }
+        this.worker.onmessageerror = (err) => {
+            throw new Error(err);
+        }
     }
 
     stop(){
@@ -43,9 +46,6 @@ class HyperChessBot {
 
         this.worker.postMessage(`position fen ${fen}`);
         this.board.loadFEN(fen);
-    }
-
-    async uciready(){
     }
 
     // thinks for ms milliseconds, and then returns the best move.
