@@ -13,8 +13,9 @@ class EngineWidget extends BoardWidget {
             <input class = "engine__active" type = "checkbox">
             <span class = "engine__eval">-</span>
             <span class = "engine__name">Hyper Chess Engine</span>
-            at depth
+            depth
             <span class = "engine__depth"></span>
+            (<span class = "engine__nps"></span>nps)
             <div class = "engine__pv">-</div>`;
         boardgfx.getWidgetElem(this.location).appendChild(container);
 
@@ -26,6 +27,7 @@ class EngineWidget extends BoardWidget {
         this.evalElem = this.container.getElementsByClassName("engine__eval")[0];
         this.pvElem = this.container.getElementsByClassName("engine__pv")[0];
         this.depthElem = this.container.getElementsByClassName("engine__depth")[0];
+        this.npsElem = this.container.getElementsByClassName("engine__nps")[0];
 
         this.activeElem.addEventListener("change", (event) => {
             if (event.target.checked){
@@ -61,7 +63,7 @@ class EngineWidget extends BoardWidget {
                 if (words[scoreIdx + 1] == "cp"){
                     this.evalElem.innerText = `${sign}${(score / 100).toFixed(1)}`;
                 }else if (words[scoreIdx + 1] == "mate"){
-                    this.evalElem.innerText = `#${sign}${score}`;
+                    this.evalElem.innerText = `#${sign}${Math.floor((score + 1) / 2)}`;
                 }else{
                     console.error(`Did not recognize score type ${words[scoreIdx + 1]} from engine messsage ${data}`);
                 }
@@ -71,12 +73,18 @@ class EngineWidget extends BoardWidget {
             const pvIdx = words.indexOf("pv");
             if (pvIdx > -1){
                 const pv = words.splice(pvIdx + 1);
-                let pvSan = "";
 
                 const b = new Board();
-                b.loadFEN(this.boardgfx.state.getFEN());
+                const state = this.boardgfx.state;
+                b.loadFEN(state.getFEN());
+                let fullmove = state.fullmove;
+                let pvSan = state.turn == Piece.white ? "" : `${fullmove}... `;
                 for (const m of pv){
                     const move = b.getMoveOfLAN(m);
+                    if (b.turn == Piece.white)
+                        pvSan += `${fullmove}. `
+                    else
+                        fullmove++;
                     pvSan += getMoveSAN(b, move) + " ";
                     b.makeMove(move);
                 }
@@ -88,6 +96,22 @@ class EngineWidget extends BoardWidget {
             const depthIdx = words.indexOf("depth");
             if (depthIdx > -1){
                 this.depthElem.innerText = words[depthIdx + 1];
+            }
+
+            // get nps
+            const nodesIdx = words.indexOf("nodes");
+            const timeIdx = words.indexOf("time");
+            if (nodesIdx > -1 && timeIdx > -1){
+                const nodes = parseInt(words[nodesIdx + 1]);
+                const time = parseInt(words[timeIdx + 1]);
+                const nps = nodes / (time / 1000);
+
+                // prefixes determined by every one thousand
+                const prefixes = [ "", "k", "m", "g" ];
+                const prefixIdx = Math.floor(Math.log(nps) / Math.log(1000));
+                const nptime = (nps / Math.pow(1000, prefixIdx)).toPrecision(3);
+
+                this.npsElem.innerText = `${nptime} ${prefixes[prefixIdx]}`;
             }
         });
 

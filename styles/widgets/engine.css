@@ -1,0 +1,10 @@
+
+.engine__active {
+    width: 15px;
+    height: 15px;
+}
+
+.engine__eval {
+    font-size: 20px;
+    font-weight: bold;
+}
