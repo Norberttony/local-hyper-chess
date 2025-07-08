@@ -46,8 +46,6 @@ const basePath = workerUrl.replace(/\/[^/]+$/, '/');
 
 importScripts(basePath + "/hyper-active.js");
 
-setInterval(() => console.log("Heartbeat"), 1000);
-
 onmessage = (e) => {
     channel.addInput(e.data);
 }
