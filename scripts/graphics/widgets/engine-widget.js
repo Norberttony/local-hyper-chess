@@ -42,6 +42,7 @@ class EngineWidget extends BoardWidget {
 
     enable(){
         this.activeElem.checked = true;
+        this.container.style.display = "";
 
         this.setName();
 
@@ -123,6 +124,8 @@ class EngineWidget extends BoardWidget {
             return;
 
         this.engine.stop();
+
+        this.container.style.display = "none";
     }
 
     startThinking(){

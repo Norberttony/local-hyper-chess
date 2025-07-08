@@ -91,7 +91,7 @@ class BoardGraphics {
             console.error("Attempted to attach ", name, " as a widget to ", this, " when an instance of this widget is already attached.");
             throw new Error("Tried to attach a widget of the same name to a BoardGraphics instance.");
         }
-        boardgfx.widgetNames.add(name);
+        this.widgetNames.add(name);
         this.widgets[name] = widget;
     }
 

@@ -6,10 +6,11 @@ module_loader.waitForAll()
         new AnnotatorWidget(gameState);
         new AnimationWidget(gameState);
         new AudioWidget(gameState);
-        new EngineWidget(gameState);
+        new EngineWidget(gameState, WIDGET_LOCATIONS.RIGHT);
         new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT);
         new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT);
         new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM);
+        new PuzzlesWidget(gameState);
         const players = new PlayersWidget(gameState);
         const webPhil = new WebPhilWidget(gameState);
 

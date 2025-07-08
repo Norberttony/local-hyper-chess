@@ -65,7 +65,8 @@ async function changeHash(newHash, quiet = false){
     if (!quiet){
         if (newHash.startsWith("#puzzles=")){
             const puzzleId = parseInt(newHash.replace("#puzzles=", ""));
-            loadPuzzle(puzzleId);
+            await gameState.widgets.PuzzlesWidget.puzzles;
+            gameState.widgets.PuzzlesWidget.loadPuzzle(puzzleId);
         }else if (newHash.startsWith("#game=")){
             const parts = getGameIdParts(newHash.replace("#game=", ""));
             gameState.widgets.NetworkWidget.setNetworkId(parts.gameId, parts.rowNum, parts.userId, true);
@@ -97,16 +98,13 @@ const LOBBY = {
 registerMenu("lobby",
     () => {
         activateContainer("lobby");
-
         refreshChallenges();
         LOBBY.interval = setInterval(refreshChallenges, 6000);
-
         fetchFeaturedGame();
     },
     () => {
         if (LOBBY.interval)
             clearInterval(LOBBY.interval);
-
         stopUpdatingFeaturedGame();
     }
 );
@@ -115,14 +113,11 @@ registerMenu("view-games",
     () => {
         document.getElementById("menu_my-games").classList.add("active");
         activateContainer("my-games_container");
-
         // for some reason, activating this menu causes the entire UI to wait until all games
         // are refreshed (even though it is async...?)
         refreshViewGamesSetup();
     },
-    () => {
-
-    }
+    () => 0
 );
 
 registerMenu("analysis-board",
@@ -137,7 +132,7 @@ registerMenu("analysis-board",
 
         activateContainer("main-board");
     },
-    () => {}
+    () => 0
 );
 
 registerMenu("puzzles",
@@ -147,18 +142,12 @@ registerMenu("puzzles",
             "AnnotatorWidget",
             "AudioWidget",
             "AnimationsWidget",
-            
+            "PuzzlesWidget"
         ]));
 
         activateContainer("main-board");
-        setNetworkVisibility(false);
-        setExtraVisibility(false);
-        setPuzzlesVisibility(true);
-        hideNames();
     },
     () => {
-        stopSolvingPuzzle();
-        
         // reset the analysis board's state
         gameState.loadFEN(StartingFEN);
     }
@@ -167,40 +156,36 @@ registerMenu("puzzles",
 registerMenu("multiplayer-game",
     () => {
         activateContainer("main-board");
-        setNetworkVisibility(true);
-        setExtraVisibility(false);
-        setPuzzlesVisibility(false);
+        setWidgetsActive(new Set([
+            "PGNWidget",
+            "AnnotatorWidget",
+            "AudioWidget",
+            "AnimationsWidget"
+        ]));
         gameState.allowVariations = false;
     },
     () => {
         gameState.allowVariations = true;
         gameState.allowInputFrom[Piece.white] = true;
         gameState.allowInputFrom[Piece.black] = true;
-
-        // panel_rematchElem.style.display = "none";
-        // panel_goToBoardElem.style.display = "none";
     }
 );
 
 registerMenu("web-phil",
     () => {
-        setNetworkVisibility(false);
-
-        widgets.web_phil.enable();
-        widgets.network.active = false;
-        delete widgets.network.color;
-        delete widgets.network.gameId;
-        delete widgets.network.userId;
+        setWidgetsActive(new Set([
+            "PGNWidget",
+            "AnnotatorWidget",
+            "AudioWidget",
+            "AnimationsWidget",
+            "WebPhilWidget",
+            "ExtrasWidget"
+        ]));
 
         activateContainer("main-board");
-        setExtraVisibility(true);
-        setPuzzlesVisibility(false);
         gameState.allowVariations = false;
     },
     () => {
-        widgets.web_phil.disable();
-        widgets.web_phil.stop();
-
         gameState.allowVariations = true;
     }
 )
