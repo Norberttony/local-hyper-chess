@@ -31,9 +31,12 @@ function purgeCache(maxGames){
             }
 
             const game = JSON.parse(v);
+            if (game.fen.split(" ").length == 3){
+                localStorage.removeItem(k);
+                continue;
+            }
             game.key = k;
             cachedGames.push(game);
-
         }
     }
 

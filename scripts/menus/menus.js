@@ -127,7 +127,8 @@ registerMenu("analysis-board",
             "PGNWidget",
             "AnnotatorWidget",
             "AudioWidget",
-            "AnimationsWidget"
+            "AnimationsWidget",
+            "EngineWidget"
         ]));
 
         activateContainer("main-board");

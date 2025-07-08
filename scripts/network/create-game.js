@@ -76,8 +76,8 @@ createGameFormElem.addEventListener("submit", (event) => {
 
         gameState.loadFEN(fen);
         gameState.setFlip(col == Piece.black);
-        widgets.web_phil.userColor = col;
-        widgets.web_phil.start();
+        gameState.widgets.WebPhilWidget.userColor = col;
+        gameState.widgets.WebPhilWidget.start();
         
         hideCreateGamePopup();
     }

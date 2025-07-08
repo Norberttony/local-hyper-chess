@@ -36,12 +36,9 @@ const channel = {
 // hook up the wasm code to the channel
 var Module = {
     "print": (txt) => {
-        console.log("PRINT: ", txt);
         postMessage(txt);
     }
 };
-
-console.log(this);
 
 // import the JS glue code for the wasm
 const workerUrl = location + "";

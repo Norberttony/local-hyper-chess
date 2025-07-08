@@ -29,9 +29,9 @@ class EngineWidget extends BoardWidget {
 
         this.activeElem.addEventListener("change", (event) => {
             if (event.target.checked){
-                this.enable();
+                this.start();
             }else{
-                this.disable();
+                this.stop();
             }
         });
 
@@ -41,8 +41,21 @@ class EngineWidget extends BoardWidget {
     }
 
     enable(){
-        this.activeElem.checked = true;
+        if (this.boardgfx.widgets.NetworkWidget.active)
+            return;
         this.container.style.display = "";
+    }
+
+    disable(){
+        this.container.style.display = "none";
+        this.stop();
+    }
+
+    start(){
+        if (this.boardgfx.widgets.NetworkWidget.active)
+            return;
+
+        this.activeElem.checked = true;
 
         this.setName();
 
@@ -106,7 +119,7 @@ class EngineWidget extends BoardWidget {
                 const nps = nodes / (time / 1000);
 
                 // prefixes determined by every one thousand
-                const prefixes = [ "", "k", "m", "g" ];
+                const prefixes = [ "", "K", "M", "G" ];
                 const prefixIdx = Math.floor(Math.log(nps) / Math.log(1000));
                 const nptime = (nps / Math.pow(1000, prefixIdx)).toPrecision(3);
 
@@ -117,15 +130,11 @@ class EngineWidget extends BoardWidget {
         this.startThinking();
     }
 
-    disable(){
+    stop(){
         this.activeElem.checked = false;
 
-        if (!this.engine.running)
-            return;
-
-        this.engine.stop();
-
-        this.container.style.display = "none";
+        if (this.engine.running)
+            this.engine.stop();
     }
 
     startThinking(){

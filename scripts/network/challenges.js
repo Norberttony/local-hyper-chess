@@ -142,7 +142,7 @@ async function acceptChallenge(challengeId){
 
         // set network variables
         const [ gameId, userId, refNum ] = gameSuperId;
-        widgets.network.setNetworkId(gameId, refNum, userId, true);
+        gameState.widgets.NetworkWidget.setNetworkId(gameId, refNum, userId, true);
 
         // store user ID and set the hash correctly
         storeUserId(gameId, refNum, userId);

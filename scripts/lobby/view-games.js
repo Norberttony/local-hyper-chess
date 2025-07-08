@@ -114,7 +114,7 @@ function initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId){
 
             if (confirm("Are you sure you want to remove this game from your storage?\nThe game will still be accessible to users with the link.")){
                 // remove from local storage
-                localStorage.removeItem(k);
+                localStorage.removeItem(`${gameId}_${rowNum}_userId`);
                 boardElem.parentNode.removeChild(boardElem);
 
                 alert("Game has been removed from your storage");
