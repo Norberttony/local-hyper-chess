@@ -37,23 +37,6 @@ function activateContainer(id){
     document.getElementById(id).style.display = "";
 }
 
-// network handles activating game controls (spectators have no game controls) but whenever
-// network is hidden, the pregame controls should always be activated.
-function setNetworkVisibility(vis){
-    if (!vis)
-        widgets.network.disable();
-}
-
-function setExtraVisibility(vis){
-    vis ? widgets.extras.enable() : widgets.extras.disable();
-}
-
-function setPuzzlesVisibility(vis){
-    const setDisplay = vis ? "" : "none";
-
-    getFirstElemOfClass(document, "puzzles-widget").style.display = setDisplay;
-}
-
 async function changeHash(newHash, quiet = false){
     history.pushState(null, "", newHash);
 
@@ -85,7 +68,7 @@ async function changeHash(newHash, quiet = false){
             loadPuzzle(puzzleId);
         }else if (newHash.startsWith("#game=")){
             const parts = getGameIdParts(newHash.replace("#game=", ""));
-            widgets.network.setNetworkId(parts.gameId, parts.rowNum, parts.userId, true);
+            gameState.widgets.NetworkWidget.setNetworkId(parts.gameId, parts.rowNum, parts.userId, true);
         }else if (newHash.startsWith("#chall=")){
             acceptChallenge(newHash.replace("#chall=", ""));
         }else if (newHash.startsWith("#board,pgn=")){
@@ -94,6 +77,16 @@ async function changeHash(newHash, quiet = false){
             gameState.loadPGN(pgn);
             return;
         }
+    }
+}
+
+// expects widgets to be a set
+function setWidgetsActive(widgets){
+    for (const [ name, widget ] of Object.entries(gameState.widgets)){
+        if (widgets.has(name))
+            widget.enable();
+        else
+            widget.disable();
     }
 }
 
@@ -134,19 +127,29 @@ registerMenu("view-games",
 
 registerMenu("analysis-board",
     () => {
-        // pgnText.value = gameState.pgnData.toString();
+        setWidgetsActive(new Set([
+            "ExtrasWidget",
+            "PGNWidget",
+            "AnnotatorWidget",
+            "AudioWidget",
+            "AnimationsWidget"
+        ]));
 
         activateContainer("main-board");
-        setNetworkVisibility(false);
-        setExtraVisibility(true);
-        setPuzzlesVisibility(false);
-        hideNames();
     },
     () => {}
 );
 
 registerMenu("puzzles",
     () => {
+        setWidgetsActive(new Set([
+            "PGNWidget",
+            "AnnotatorWidget",
+            "AudioWidget",
+            "AnimationsWidget",
+            
+        ]));
+
         activateContainer("main-board");
         setNetworkVisibility(false);
         setExtraVisibility(false);

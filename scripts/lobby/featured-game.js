@@ -5,7 +5,6 @@ const lobby_featuredGameContainerElem = document.getElementById("lobby__featured
 
 // populate with a board template
 let featuredGameBoard;
-let featuredGameWidgets;
 
 let featuredGameId;
 let isUpdatingFeaturedGame = false;
@@ -17,10 +16,8 @@ module_loader.waitForAll()
         featuredGameBoard = new BoardGraphics(false);
         lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
 
-        featuredGameWidgets = {
-            players: new PlayersWidget(featuredGameBoard),
-            network: new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE)
-        };
+        new PlayersWidget(featuredGameBoard);
+        new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE);
     });
 
 
@@ -35,7 +32,7 @@ async function fetchFeaturedGame(){
         lobby_featuredTitleElem.innerText = featured.title;
 
         const [ gameId, rowNum ] = featured.id.split("_");
-        await featuredGameWidgets.network.setNetworkId(gameId, rowNum, undefined, false);
+        await featuredGameBoard.widgets.NetworkWidget.setNetworkId(gameId, rowNum, undefined, false);
 
         // jump to the end to show the live game
         featuredGameBoard.jumpToVariation(featuredGameBoard.mainVariation);
@@ -52,5 +49,5 @@ function goToFeaturedGame(){
 }
 
 function stopUpdatingFeaturedGame(){
-    featuredGameWidgets.network.disable();
+    featuredGameBoard.widgets.NetworkWidget.disable();
 }

@@ -1,7 +1,7 @@
 
 class WebPhilWidget extends BoardWidget {
     constructor(boardgfx){
-        super(boardgfx, "Web Phil", WIDGET_LOCATIONS.BOARD);
+        super(boardgfx);
 
         this.thinkTime = 1000;
         this.bot = new HyperChessBot("./scripts/hyper-active/main.js");

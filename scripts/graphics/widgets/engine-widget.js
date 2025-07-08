@@ -1,9 +1,7 @@
 
 class EngineWidget extends BoardWidget {
-    constructor(boardgfx){
-        super(boardgfx, "engine", WIDGET_LOCATIONS.RIGHT);
-
-        console.log(this);
+    constructor(boardgfx, location){
+        super(boardgfx);
 
         this.engine = new HyperChessBot("./scripts/hyper-active/main.js");
 
@@ -17,7 +15,7 @@ class EngineWidget extends BoardWidget {
             <span class = "engine__depth"></span>
             (<span class = "engine__nps"></span>nps)
             <div class = "engine__pv">-</div>`;
-        boardgfx.getWidgetElem(this.location).appendChild(container);
+        boardgfx.getWidgetElem(location).appendChild(container);
 
         this.container = container;
 

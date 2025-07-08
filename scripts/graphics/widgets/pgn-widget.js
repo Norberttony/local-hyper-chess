@@ -4,7 +4,7 @@
 
 class PGNWidget extends BoardWidget {
     constructor(boardgfx, location){
-        super(boardgfx, "PGN Viewer", location);
+        super(boardgfx);
 
         const container = document.createElement("div");
         container.classList.add("pgn-viewer");

@@ -17,7 +17,7 @@ let bufferedAudio = {
 
 class AudioWidget extends BoardWidget {
     constructor(boardgfx){
-        super(boardgfx, "Audio", WIDGET_LOCATIONS.BOARD);
+        super(boardgfx);
 
         boardgfx.skeleton.addEventListener("single-scroll", (event) => {
             let { prevVariation, variation, userInput } = event.detail;

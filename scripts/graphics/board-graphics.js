@@ -17,6 +17,7 @@ class BoardGraphics {
         boardDiv.appendChild(piecesDiv);
 
         // set attributes
+        this.widgets = {};
         this.skeleton = skeleton;
         this.boardDiv = boardDiv;
         this.piecesDiv = piecesDiv;
@@ -29,7 +30,6 @@ class BoardGraphics {
         // threefold and draws require keeping track of repeated positions, and when the last
         // capture was performed.
         this.positions = {};
-        this.lastCapture = 0;
 
         // variations in the position are stored via a tree. The root is the very first empty
         // variation (sentinel node).
@@ -56,9 +56,7 @@ class BoardGraphics {
 
         if (allowDragging){
             this.draggingElem = createBoardDraggingElem(skeleton);
-
             boardDiv.onpointerdown = this.piecePointerDown;
-
         }
     }
 
@@ -85,6 +83,16 @@ class BoardGraphics {
         w.classList.add(`board-graphics__${widgetName}`);
         this.skeleton.appendChild(w);
         return w;
+    }
+
+    attachWidget(widget){
+        const name = widget.constructor.name;
+        if (this.widgetNames.has(name)){
+            console.error("Attempted to attach ", name, " as a widget to ", this, " when an instance of this widget is already attached.");
+            throw new Error("Tried to attach a widget of the same name to a BoardGraphics instance.");
+        }
+        boardgfx.widgetNames.add(name);
+        this.widgets[name] = widget;
     }
 
     setNames(whiteName, blackName){
@@ -234,8 +242,6 @@ class BoardGraphics {
             // position reoccurs
             this.positions[this.state.getPosition()]++;
 
-            this.lastCapture = variation.fiftyMoveRuleCounter;
-
             this.currentVariation = variation;
             return true;
         }
@@ -247,8 +253,6 @@ class BoardGraphics {
         if (this.currentVariation.prev){
             // position "unoccurs"
             this.positions[this.state.getPosition()]--;
-
-            this.lastCapture = this.currentVariation.fiftyMoveRuleCounter;
 
             this.state.unmakeMove(this.currentVariation.move);
             this.currentVariation = this.currentVariation.prev;
@@ -349,12 +353,7 @@ class BoardGraphics {
             this.state.setResult("1/2-1/2", "three-fold repetition", 0);
 
         // handle the fifty move rule
-        this.lastCapture++;
-        if (move.captures.length > 0){
-            this.lastCapture = 0;
-        }
-        variation.fiftyMoveRuleCounter = this.lastCapture;
-        if (this.lastCapture >= 100)
+        if (this.state.halfmoves[0] >= 100)
             this.state.setResult("1/2-1/2", "fifty move rule", 0);
     }
 
@@ -412,13 +411,6 @@ class BoardGraphics {
         return this.piecesDiv.getElementsByClassName(`${f}_${r}`)[0];
     }
 
-    // allows this object to be garbage collected.
-    // do not use the object after running this method.
-    // only run this method if you intend to delete the BoardGraphics object entirely.
-    allowGC(){
-        delete this.piecePointerDown;
-    }
-    
     dispatchEvent(name, detail){
         this.skeleton.dispatchEvent(new CustomEvent(name, { detail }));
     }

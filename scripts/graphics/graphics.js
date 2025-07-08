@@ -1,30 +1,27 @@
 
-let widgets;
-
 module_loader.waitForAll()
     .then(() => {
         window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
-        widgets = {
-            annotator: new AnnotatorWidget(gameState),
-            animation: new AnimationWidget(gameState),
-            audio: new AudioWidget(gameState),
-            engine: new EngineWidget(gameState),
-            pgn: new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT),
-            network: new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT),
-            extras: new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM),
-            players: new PlayersWidget(gameState),
-            // web_phil: new WebPhilWidget(gameState)
-        };
-        // widgets.web_phil.disable();
+        new AnnotatorWidget(gameState);
+        new AnimationWidget(gameState);
+        new AudioWidget(gameState);
+        new EngineWidget(gameState);
+        new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT);
+        new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT);
+        new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM);
+        const players = new PlayersWidget(gameState);
+        const webPhil = new WebPhilWidget(gameState);
 
-        widgets.players.setNames("-", "-");
+        webPhil.disable();
+
+        players.setNames("-", "-");
 
         gameState.display();
     });
 
 function hideNames(){
-    widgets.players.disable();
+    gameState.widgets.PlayersWidget.disable();
 }
 
 // prevent focusing on buttons (so that arrow key presses and other things still register on the

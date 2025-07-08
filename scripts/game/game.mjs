@@ -15,7 +15,7 @@ export function removeGlyphs(san){
     return san;
 }
 
-export const StartingFEN = "unbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNU w 1";
+export const StartingFEN = "unbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNU w 0 1";
 
 // The Board object contains a game state of the board. Certain moves can be done or undone, but
 // they are not stored.
@@ -44,8 +44,12 @@ export class Board {
         // fullmove counter
         this.fullmove = 1;
 
+        // keeps track of the history of halfmoves (to allow for undoing moves)
+        this.halfmoves = [];
+
         this.loadFEN(StartingFEN);
     }
+
     // returns any unique identifiers to a position (arrangement of pieces, castling rights, en passant, whose turn it is, etc)
     getPosition(){
         let position = "";
@@ -62,10 +66,12 @@ export class Board {
         position += this.turn;
         return position;
     }
+
     setResult(result, termination, winner){
         this.result = { result, termination, winner };
         return this.result;
     }
+
     // checks if the current player is checkmated... or stalemated...
     isGameOver(moves = undefined){
         if (this.result)
@@ -131,6 +137,7 @@ export class Board {
         else
             return moves;
     }
+
     // generates all possible moves for the given turn
     generateMoves(filter = true){
         let moves = [];
@@ -629,21 +636,26 @@ export class Board {
         }
         return moves;
     }
+
     // retrieves the current player's king's square
     getKingSq(){
         return this.turn == Piece.black ? this.kings[0] : this.kings[1];
     }
+
     // actually retrieves the current player's king's square
     getCurKingSq(){
         return this.turn == Piece.white ? this.kings[0] : this.kings[1];
     }
+
     getEnemyKingSq(){
         return this.turn == Piece.white ? this.kings[1] : this.kings[0];
     }
+
     // retrieves the current player's coordinator's square
     getCurCoordSq(){
         return this.turn == Piece.white ? this.coordinators[0] : this.coordinators[1];
     }
+
     // checks if a move is legal
     isMoveLegal(move){
         this.makeMove(move);
@@ -656,6 +668,7 @@ export class Board {
 
         return !attacksKing;
     }
+
     // checks if a certain square is attacked
     isAttacked(sq){
 
@@ -670,9 +683,14 @@ export class Board {
 
         return false;
     }
+
     // performs a move on the board. this method assumes that the given move is LEGAL
     // if the move is not legal, then some funny behavior could occur.
     makeMove(move){
+        // update halfmove counter
+        this.halfmoves.unshift(this.halfmoves[0] + 1);
+        if (move.captures.length > 0)
+            this.halfmoves[0] = 0;
 
         // update king locations if necessary.
         if (Piece.ofType(this.squares[move.from], Piece.king)){
@@ -749,8 +767,12 @@ export class Board {
         // set turn
         this.nextTurn();
     }
+
     // un-does a move on the board (make sure that the move being undone is the most recent made move)
     unmakeMove(move){
+        // update halfmove counter
+        this.halfmoves.shift();
+
         // unmove the piece and uncapture whatever it captured.
         this.squares[move.from] = this.squares[move.to];
         this.squares[move.to] = 0;
@@ -876,8 +898,6 @@ export class Board {
 
         console.error(san, possibleMoves, this.getFEN());
         throw new Error(`Move of SAN ${san} could not be found.`);
-
-        return;
     }
     
     nextTurn(){
@@ -956,8 +976,11 @@ export class Board {
             this.turn = Piece.black;
         }
 
+        // halfmove clock
+        this.halfmoves = [ parseInt(segments[2]) || 0 ];
+
         // fullmove clock
-        this.fullmove = parseInt(segments[2]);
+        this.fullmove = parseInt(segments[3]);
         if (isNaN(this.fullmove))
             this.fullmove = "-";
     }
@@ -988,7 +1011,7 @@ export class Board {
         // set proper turn
         let turn = Piece.ofColor(this.turn, Piece.white) ? "w" : "b";
 
-        FEN += ` ${turn} ${this.fullmove}`;
+        FEN += ` ${turn} ${this.halfmoves[0]} ${this.fullmove}`;
 
         return FEN;
     }

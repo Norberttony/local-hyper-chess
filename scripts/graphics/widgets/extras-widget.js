@@ -3,7 +3,7 @@
 
 class ExtrasWidget extends BoardWidget {
     constructor(boardgfx, location = WIDGET_LOCATIONS.BOTTOM){
-        super(boardgfx, "Extras", location);
+        super(boardgfx);
 
         const container = document.createElement("div");
         container.classList.add("board-graphics__extras");
