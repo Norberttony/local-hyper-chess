@@ -36,8 +36,6 @@ class PGNData {
     setHeader(hdr, value){
         this.headers[hdr] = value;
 
-        console.log(hdr, value);
-
         if (hdr == "FEN"){
             this.startedWTP = value.split(" ")[1] == "w";
         }else if (hdr == "Variant" && value == "Standard"){

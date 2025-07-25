@@ -41,7 +41,7 @@ class EngineWidget extends BoardWidget {
     }
 
     enable(){
-        if (this.boardgfx.widgets.NetworkWidget.active)
+        if (this.boardgfx.widgetNames.has("NetworkWidget") && this.boardgfx.widgets.NetworkWidget.active)
             return;
         this.container.style.display = "";
     }
@@ -52,7 +52,7 @@ class EngineWidget extends BoardWidget {
     }
 
     start(){
-        if (this.boardgfx.widgets.NetworkWidget.active)
+        if (this.boardgfx.widgetNames.has("NetworkWidget") && this.boardgfx.widgets.NetworkWidget.active)
             return;
 
         this.activeElem.checked = true;
@@ -62,7 +62,6 @@ class EngineWidget extends BoardWidget {
         this.engine.start();
 
         this.engine.read((data) => {
-            console.log(data);
             const words = data.trim().split(" ");
 
             // get eval
@@ -75,7 +74,7 @@ class EngineWidget extends BoardWidget {
                 if (words[scoreIdx + 1] == "cp"){
                     this.evalElem.innerText = `${sign}${(score / 100).toFixed(1)}`;
                 }else if (words[scoreIdx + 1] == "mate"){
-                    this.evalElem.innerText = `#${sign}${Math.floor((score + 1) / 2)}`;
+                    this.evalElem.innerText = `#${sign}${(score < 0 ? -1 : 1) * Math.floor((Math.abs(score) + 1) / 2)}`;
                 }else{
                     console.error(`Did not recognize score type ${words[scoreIdx + 1]} from engine messsage ${data}`);
                 }
@@ -138,7 +137,6 @@ class EngineWidget extends BoardWidget {
     }
 
     startThinking(){
-        console.log(this.engine);
         if (this.engine.running){
             this.engine.sendCmd("stop");
             this.engine.sendCmd(`position fen ${this.boardgfx.state.getFEN()}`);
