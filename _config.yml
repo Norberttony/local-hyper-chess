@@ -1,0 +1,4 @@
+# Jekyll, which is what sets up GitHub pages, excludes node_modules by default.
+
+include:
+  - node_modules
