@@ -83,12 +83,15 @@ async function changeHash(newHash, quiet = false){
 
 // expects widgets to be a set
 function setWidgetsActive(widgets){
+    console.log(Array.from(widgets));
     for (const [ name, widget ] of Object.entries(gameState.widgets)){
-        if (widgets.has(name))
+        if (widgets.has(name)){
             widget.enable();
-        else
+            widgets.delete(name);
+        }else
             widget.disable();
     }
+    console.log(Array.from(widgets));
 }
 
 const LOBBY = {
@@ -122,6 +125,9 @@ registerMenu("view-games",
 
 registerMenu("analysis-board",
     () => {
+        // disable network widget now so that the engine widget can start
+        gameState.widgets.NetworkWidget.disable();
+
         setWidgetsActive(new Set([
             "ExtrasWidget",
             "PGNWidget",

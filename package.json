@@ -1,0 +1,23 @@
+{
+  "name": "public",
+  "version": "1.0.0",
+  "description": "The [Hyper Chess website](norberttony.github.io/local-hyper-chess/) is specifically designed for a chess variant of Ultima Chess, known as Hyper Chess. The [linked website](https://www.carusos.org/Hyperchess/hyperchess.html) provides the rules of Hyper Chess. The non-MIT rules (where the death squares formed by the king and coordinator do not persist) are used. This website allows users to analyze their hyper chess games using an engine, play against other players or against the engine, and solve puzzles.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Norberttony/local-hyper-chess.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Norberttony/local-hyper-chess/issues"
+  },
+  "homepage": "https://github.com/Norberttony/local-hyper-chess#readme",
+  "dependencies": {
+    "hyper-chess-board": "^0.0.0"
+  }
+}

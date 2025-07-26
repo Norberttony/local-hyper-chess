@@ -1,0 +1,88 @@
+
+/* PUZZLES WIDGET */
+
+.puzzles-widget {
+    display: none;
+    
+    grid-area: puzzles;
+    display: grid;
+    grid-template-areas:
+        'img title'
+        'img diff'
+        'img solved'
+        'control control'
+        'desc desc';
+    grid-template-columns: min-content auto;
+    column-gap: 10%;
+    margin-left: 3%;
+}
+
+.puzzles-widget__img-container {
+    grid-area: img;
+    width: 100%;
+    height: 100%;
+}
+
+.puzzles-widget__img {
+    object-fit: contain;
+}
+
+.puzzles-widget__title {
+    grid-area: title;
+}
+
+.puzzles-widget__diff {
+    grid-area: diff;
+}
+
+.puzzles-widget__status {
+    grid-area: solved;
+}
+
+.puzzles-widget__title, .puzzles-widget__diff, .puzzles-widget__status {
+    font-size: 30px;
+}
+
+.puzzles-widget__controls {
+    grid-area: control;
+    display: flex;
+}
+
+.puzzles-widget__rdm {
+    width: 100%;
+    margin: 0% 2%;
+}
+
+.puzzles-widget__back, .puzzles-widget__next {
+    width: 50px;
+}
+
+/* WEB PHIL WIDGET */
+
+.board-graphics__web-phil {
+    grid-area: board;
+
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+
+    width: var(--game-width);
+    height: var(--game-height);
+    margin: auto;
+
+    background-color: rgba(0, 0, 0, 0.9);
+    font-size: x-large;
+
+    z-index: 30;
+}
+
+.board-graphics__web-phil button {
+    font-size: xx-large;
+    margin-top: 20px;
+}
+
+.board-graphics__web-phil input[type="radio"] {
+    width: 20px;
+    height: 20px;
+}

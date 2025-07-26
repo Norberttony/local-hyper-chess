@@ -1,6 +1,7 @@
 
 module_loader.waitForAll()
     .then(() => {
+        initInput();
         window.gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
 
         new AnnotatorWidget(gameState);

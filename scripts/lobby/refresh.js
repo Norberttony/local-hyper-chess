@@ -3,6 +3,10 @@ const lobbyElem = document.getElementById("lobby");
 const lobbyListContainer = getFirstElemOfClass(lobbyElem, "lobby__list");
 const lobbyListElem = getFirstElemOfClass(lobbyElem, "lobby__list-items");
 
+function getFirstElemOfClass(container, className){
+    return container.getElementsByClassName(className)[0];
+}
+
 function createChallengeTemplate(id, name, isBot, color, fen){
     const challElem = document.createElement("div");
     challElem.classList.add("chall");

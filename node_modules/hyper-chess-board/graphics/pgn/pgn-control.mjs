@@ -1,0 +1,44 @@
+
+// allows the user to scroll through the PGN.
+
+
+/* mobile user holds down next/back buttons */
+
+export function addPointerHoldListener(elem, action){
+    let holdTimeout;
+
+    // times in ms, maxTime represents initial wait time for action and minTime represents
+    // the lowest possible wait time for action
+    let maxTime = 400;
+    let minTime = 250;
+    let time;
+
+    // go through "maxTimes" moves before speeding up
+    let maxTimes = 4;
+    let times;
+
+    function startHold(){
+        cancelHold();
+        time = maxTime;
+        times = 0;
+        pingHold();
+    }
+
+    function pingHold(){
+        action();
+
+        holdTimeout = setTimeout(pingHold, time);
+        if (++times == maxTimes){
+            time = Math.max(minTime, time / 1.2);
+            times = 0;
+        }
+    }
+
+    function cancelHold(){
+        clearTimeout(holdTimeout);
+    }
+
+    elem.addEventListener("pointerdown", startHold);
+    elem.addEventListener("pointerleave", cancelHold);
+    elem.addEventListener("pointerup", cancelHold);
+}

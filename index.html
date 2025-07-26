@@ -7,21 +7,20 @@
         <title>Hyper Chess</title>
 
         <link rel = "icon" type = "image/png" href = "favicon.ico"/>
+
+        <link href = "styles/primary.css"           rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/pages/invite.css"      rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/pages/lobby.css"       rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/pages/menu.css"        rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/pages/my-games.css"    rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/widgets.css"           rel = "stylesheet" type = "text/css"/>
+        <link href = "styles/style.css"             rel = "stylesheet" type = "text/css"/>
         
         <!-- board/main styles -->
-        <link href = "styles/warn-bar.css"      rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/menu.css"          rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/lobby.css"         rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/my-games.css"      rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/invite.css"        rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/peer-info.css"     rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/coords.css"        rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/board.css"         rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/pieces.css"        rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/web-phil.css"      rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/highlights.css"    rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/puzzles.css"       rel = "stylesheet" type = "text/css"/>
-        <link href = "styles/style.css"         rel = "stylesheet" type = "text/css"/>
+        <link href = "node_modules/hyper-chess-board/graphics/styles/primary.css"       rel = "stylesheet" type = "text/css"/>
+        <link href = "node_modules/hyper-chess-board/graphics/styles/board-styles.css"  rel = "stylesheet" type = "text/css"/>
+        <link href = "node_modules/hyper-chess-board/graphics/styles/piece-styles.css"  rel = "stylesheet" type = "text/css"/>
+        <link href = "node_modules/hyper-chess-board/graphics/styles/widgets.css"       rel = "stylesheet" type = "text/css"/>
 
         <!-- game scripts -->
         <script src = "scripts/game/module-loader.js"></script>
@@ -45,26 +44,7 @@
 
         <script src = "scripts/hyper-active/bot-wrapper.js"></script>
 
-        <!-- widget scripts -->
-        <script defer src = "scripts/graphics/widgets/board-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/annotator-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/audio-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/animations.js"></script>
-        <script defer src = "scripts/graphics/pgn/pgn-control.js"></script>
-        <script defer src = "scripts/graphics/pgn/variation.js"></script>
-        <script defer src = "scripts/graphics/pgn/pgn-data.js"></script>
-        <script defer src = "scripts/graphics/widgets/pgn-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/extras-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/players-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/network-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/web-phil-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/engine-widget.js"></script>
-        <script defer src = "scripts/graphics/widgets/puzzles-widget.js"></script>
-
         <!-- graphics scripts -->
-        <script defer src = "scripts/graphics/board-graphics.js"></script>
-        <script defer src = "scripts/graphics/input.js"></script>
-        <script defer src = "scripts/graphics/pool.js"></script>
         <script defer src = "scripts/graphics/graphics.js"></script>
         <script defer src = "scripts/graphics/dialog.js"></script>
         <script defer src = "scripts/graphics/resize.js"></script>
@@ -90,7 +70,7 @@
             <button id = "menu_play"        onclick = "changeHash('#lobby');">Play</button>
             <button id = "menu_my-games"    onclick = "changeHash('#my-games');">View My Games</button>
             <button id = "menu_board"       onclick = "changeHash('#board');">Analysis Board</button>
-            <button id = "menu_puzzles"     onclick = "changeHash(`#puzzles=${PUZZLE ? PUZZLE.id : 0}`);">Puzzles</button>
+            <button id = "menu_puzzles"     onclick = "changeHash(`#puzzles=${gameState.widgets.PuzzlesWidget.currentPuzzle.id}`);">Puzzles</button>
             <a href = "https://www.carusos.org/Hyperchess/hyperchess.html" target = "_blank">
                 <button>Tutorial</button>
             </a>
@@ -197,11 +177,5 @@
                 <button onclick = "shareInvite();">Share</button>
             </div>
         </div>
-
-        <div id = "warn-bar">
-            <button id = "warn-bar_close" onclick = "this.parentNode.style.display = 'none';">&#10006;</button>
-            This is a completed Hyper Chess game that was played between two anonymous players.
-        </div>
-
     </body>
 </html>

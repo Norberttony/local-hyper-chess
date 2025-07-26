@@ -1,0 +1,214 @@
+
+/* WIDGET AREAS */
+
+.board-graphics__left {
+    grid-area: left;
+}
+
+.board-graphics__top-bar {
+    grid-area: top_bar;
+}
+
+.board-graphics__bottom-bar {
+    grid-area: bottom_bar;
+}
+
+.board-graphics__right {
+    grid-area: right;
+}
+
+.board-graphics__right-black {
+    grid-area: right-black;
+}
+
+.board-graphics__right-white {
+    grid-area: right-white;
+    align-content: end;
+}
+
+.board-graphics__bottom {
+    grid-area: bottom;
+}
+
+/* ANNOTATION WIDGET */
+
+.board-graphics__annotations {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    opacity: 0.5;
+    color: rgb(0, 78, 0);
+
+    /*
+        so that annotations doesn't block mouse button 1 events; the mouse button 2 listener is
+        attached to the board element. 
+    */
+    pointer-events: none;
+}
+
+.board-graphics--flipped .board-graphics__annotations {
+    transform: rotate(180deg);
+}
+
+/* ENGINE DEBUG WIDGET */
+
+.board-graphics__engine-debug {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.engine-debug__container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.engine-debug__txt {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    resize: vertical;
+}
+
+/* ENGINE WIDGET */
+
+.engine__active {
+    width: 15px;
+    height: 15px;
+}
+
+.engine__eval {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* EXTRAS WIDGET */
+
+.board-graphics__extras > * {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.extras__pgn {
+    resize: vertical;
+    height: 140px;
+}
+
+/* PGN VIEWER WIDGET */
+
+.pgn-viewer {
+    display: grid;
+    max-height: calc(var(--game-height) / 1.5);
+    grid-template-rows: min-content 1fr min-content;
+}
+
+.pgn-viewer__pgn-list {
+    background-color: black;
+    color: #EEE;
+    min-height: 100px;
+    overflow-y: scroll;
+}
+
+.pgn-viewer__pgn-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.pgn-viewer__pgn-list::-webkit-scrollbar-track {
+    background-color: #444;
+}
+
+.pgn-viewer__pgn-list::-webkit-scrollbar-thumb {
+    background-color: #222;
+    border-radius: 50px;
+}
+
+/* PGN List Styles */
+
+.pgn-viewer__pgn-moveline {
+    width: 100%;
+    display: grid;
+
+    grid-template-columns: 20% 40% 40%;
+}
+
+.pgn-viewer__pgn-elem--type-san, .pgn-viewer__pgn-elem--type-num {
+    padding: 2px 8px;
+    font-size: 20px;
+}
+
+.pgn-viewer__pgn-elem--type-san {
+    cursor: pointer;
+}
+
+.pgn-viewer__pgn-elem--type-num {
+    text-align: right;
+    background-color: #111;
+}
+
+.pgn-viewer__pgn-elem--selected, .pgn-viewer__pgn-elem--selected:hover {
+    background-color: #444;
+}
+
+.pgn-viewer__pgn-elem--type-san:hover {
+    background-color: #222;
+}
+
+.pgn-viewer__pgn-elem--type-blank {
+    pointer-events: none;
+}
+
+.pgn-viewer__pgn-elem--type-variation {
+    width: calc(100% - 28px);
+    box-sizing: border-box;
+    margin-left: 28px;
+    border: 1px solid white;
+
+    font-size: medium;
+}
+
+.pgn-viewer__pgn-elem--type-variation-line {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pgn-viewer__pgn-elem--type-result {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    text-align: center;
+    background-color: #111;
+    font-size: x-large;
+    font-style: italic;
+    padding: 20px;
+}
+
+.pgn-viewer__pgn-control {
+    display: flex;
+    z-index: 1;
+}
+
+.pgn-viewer__pgn-control > button, .pgn-viewer__game-controls > button {
+    flex: 1;
+    user-select: none;
+}
+
+.pgn-viewer__pgn-control > button {
+    font-size: x-large;
+}
+
+/* FONT ICONS */
+.pgn-viewer__pgn-control .font-icon::before {
+    font-size: x-large;
+}
+
+.pgn-viewer__game-controls {
+    display: flex;
+}
+
+.pgn-viewer__game-controls > button {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
