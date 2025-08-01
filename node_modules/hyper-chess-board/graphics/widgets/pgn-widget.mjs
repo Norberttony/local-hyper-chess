@@ -110,6 +110,12 @@ export class PGNWidget extends BoardWidget {
         this.selectedVariation = 0;
     }
 
+    PGNUpVariation(){
+        this.selectedVariation--;
+        if (this.selectedVariation < 0)
+            this.selectedVariation = this.boardgfx.currentVariation.next.length - 1;
+    }
+
     PGNDownVariation(){
         const max = this.boardgfx.currentVariation.next.length;
         this.selectedVariation = (this.selectedVariation + 1) % max;

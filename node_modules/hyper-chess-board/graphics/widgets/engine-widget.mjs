@@ -45,8 +45,6 @@ export class EngineWidget extends BoardWidget {
     }
 
     enable(){
-        if (this.boardgfx.widgetNames.has("NetworkWidget") && this.boardgfx.widgets.NetworkWidget.active)
-            return;
         this.container.style.display = "";
     }
 
@@ -56,9 +54,6 @@ export class EngineWidget extends BoardWidget {
     }
 
     start(){
-        if (this.boardgfx.widgetNames.has("NetworkWidget") && this.boardgfx.widgets.NetworkWidget.active)
-            return;
-
         this.activeElem.checked = true;
 
         this.setName();
