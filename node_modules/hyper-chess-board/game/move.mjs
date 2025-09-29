@@ -12,9 +12,11 @@ export class Move {
         this.from = from;
         this.captures = captures;
     }
+
     clone(){
         return new Move(this.to, this.from, [...this.captures]);
     }
+
     get uci(){
         return `${squareToAlgebraic(this.from)}${squareToAlgebraic(this.to)}`;
     }

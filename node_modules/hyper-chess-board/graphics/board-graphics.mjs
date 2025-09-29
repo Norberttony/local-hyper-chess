@@ -1,7 +1,7 @@
 
 import { Board } from "../game/game.mjs";
 import { setInputTarget } from "./input.mjs";
-import { Variation, PGNData } from "./pgn/index.mjs";
+import { Variation, PGNData, extractHeaders } from "./pgn/index.mjs";
 import { getFirstElemOfClass } from "./widgets/board-widget.mjs";
 import { WIDGET_NAMES } from "./widgets/index.mjs";
 import {

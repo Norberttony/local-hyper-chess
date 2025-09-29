@@ -10,7 +10,7 @@ const module_loader = new Module_Loader();
         "extras-widget", "pgn-widget", "players-widget"
     ];
     const localWidgets = [
-        "network-widget", "players-widget", "puzzles-widget", "web-phil-widget"
+        "network-widget", "puzzles-widget", "web-phil-widget"
     ];
 
     for (const scriptName of gameScripts)

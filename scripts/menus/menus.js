@@ -167,7 +167,8 @@ registerMenu("multiplayer-game",
             "PGNWidget",
             "AnnotatorWidget",
             "AudioWidget",
-            "AnimationsWidget"
+            "AnimationsWidget",
+            "PlayersWidget"
         ]));
         gameState.allowVariations = false;
     },
