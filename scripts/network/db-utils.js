@@ -3,7 +3,7 @@
 
 const DB_URL = "https://script.google.com/macros/s/AKfycbyGAOLIi44JUnRYsrgQbORFql_Q48ykdXbcHdNftH11e5KPZRCpgF7sOVhwUf0u0QoFjw/exec";
 
-async function pollDatabase(method, params){
+export async function pollDatabase(method, params){
     const urlParams = new URLSearchParams(params);
     const url = `${DB_URL}?${urlParams}`;
 
@@ -20,17 +20,17 @@ async function pollDatabase(method, params){
     }
 }
 
-function storeUserId(gameId, refNum, userId){
+export function storeUserId(gameId, refNum, userId){
     localStorage.setItem(`${gameId}_${refNum}_userId`, userId);
 }
 
-function fetchUserId(gameId, refNum){
+export function fetchUserId(gameId, refNum){
     return localStorage.getItem(`${gameId}_${refNum}_userId`);
 }
 
 
 // takes the given table data and converts it into a dictionary.
-function tabulateData(data){
+export function tabulateData(data){
     data = tryJSON(data);
 
     const table = [];
@@ -60,7 +60,7 @@ function tryJSON(data){
     return data;
 }
 
-function getGameIdParts(gameId){
+export function getGameIdParts(gameId){
     const parts = {
         gameId: undefined,
         userId: undefined,

@@ -1,23 +1,22 @@
 
 // handles create-game logic
 
+import { StartingFEN } from "../../node_modules/hyper-chess-board/index.mjs";
+import { BoardGraphics } from "../../node_modules/hyper-chess-board/graphics/index.mjs";
+
 const createGameFormElem = document.forms["create-game__form"];
 const createGameFormPopup = document.getElementById("create-game");
 const fenTextElem = document.getElementById("create-game__fen");
 const startingFenElem = document.getElementById("create-game__use-default-fen");
-let createGameFormBoard;
 
-module_loader.waitForAll()
-    .then(() => {
-        createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
-        setCreateGameFEN(StartingFEN);
+const createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
+setCreateGameFEN(StartingFEN);
 
-        if (startingFenElem.checked){
-            createGameFormElem.fen.readOnly = true;
-            createGameFormBoard.loadFEN(StartingFEN);
-            displayCreateGameBoard();
-        }
-    });
+if (startingFenElem.checked){
+    createGameFormElem.fen.readOnly = true;
+    createGameFormBoard.loadFEN(StartingFEN);
+    displayCreateGameBoard();
+}
 
 createGameFormElem.fen.addEventListener("input", () => {
     setCreateGameFEN(createGameFormElem.fen.value);
@@ -35,7 +34,7 @@ function setCreateGameFEN(fen){
     }
 }
 
-function showCreateGamePopup(isMultiplayer){
+export function showCreateGamePopup(isMultiplayer){
     if (isMultiplayer){
         createGameFormElem.classList.remove("create-game-form--bot");
         createGameFormElem.classList.add("create-game-form--multiplayer");

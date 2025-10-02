@@ -1,10 +1,10 @@
 
-import { BoardGraphics, initInput } from "../../node_modules/hyper-chess-board/graphics/index.mjs";
+import { BoardGraphics, initInput } from "hyper-chess-board/graphics/index.mjs";
 import {
     AnnotatorWidget, AnimationWidget, AudioWidget,
     EngineWidget, PGNWidget, ExtrasWidget, PlayersWidget,
     WIDGET_LOCATIONS
-} from "../../node_modules/hyper-chess-board/graphics/widgets/index.mjs";
+} from "hyper-chess-board/graphics/widgets/index.mjs";
 
 import { NetworkWidget } from "./widgets/network-widget.mjs";
 import { PuzzlesWidget } from "./widgets/puzzles-widget.mjs";
@@ -13,6 +13,8 @@ import { WebPhilWidget } from "./widgets/web-phil-widget.mjs";
 
 // initializes the main board display
 export const gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
+
+console.log(gameState);
 
 // adds widgets to the board display
 new AnnotatorWidget(gameState);

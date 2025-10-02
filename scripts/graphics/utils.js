@@ -1,6 +1,10 @@
 
+export function getFirstElemOfClass(container, className){
+    return container.getElementsByClassName(className)[0];
+}
+
 // copies the text to the user's clipboard
-function copyToClipboard(elem, txt){
+export function copyToClipboard(elem, txt){
     // try method that most likely works...
     try {
         navigator.clipboard.writeText(txt);
@@ -24,7 +28,7 @@ function copyToClipboard(elem, txt){
     return false;
 }
 
-async function sleep(amt){
+export async function sleep(amt){
     return new Promise(async (res, rej) => {
         setTimeout(() => {
             res();

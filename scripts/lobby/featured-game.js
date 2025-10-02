@@ -1,24 +1,24 @@
 
+import { BoardGraphics } from "hyper-chess-board/graphics/index.mjs";
+import { WIDGET_LOCATIONS, PlayersWidget } from "/hyper-chess-board/graphics/widgets/index.mjs";
+
+import { NetworkWidget } from "../graphics/widgets/network-widget.mjs";
+
 const lobby_featuredGameElem            = getFirstElemOfClass(lobbyElem, "lobby__featured-game");
 const lobby_featuredTitleElem           = getFirstElemOfClass(lobbyElem, "lobby__featured-title");
 const lobby_featuredGameContainerElem = document.getElementById("lobby__featured-game-container");
 
 // populate with a board template
-let featuredGameBoard;
+const featuredGameBoard = new BoardGraphics(false);
 
 let featuredGameId;
 let isUpdatingFeaturedGame = false;
 let keepUpdatingFeaturedGame = false;
 
+lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
 
-module_loader.waitForAll()
-    .then(() => {
-        featuredGameBoard = new BoardGraphics(false);
-        lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
-
-        new PlayersWidget(featuredGameBoard);
-        new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE);
-    });
+new PlayersWidget(featuredGameBoard);
+new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE);
 
 
 async function fetchFeaturedGame(){

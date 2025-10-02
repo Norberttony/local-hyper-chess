@@ -1,5 +1,8 @@
 
-import { BoardWidget } from "../../../node_modules/hyper-chess-board/graphics/widgets/board-widget.mjs";
+import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.mjs";
+import { HyperChessBot } from "hyper-chess-board/graphics/widgets/bot-wrapper.js";
+
+import { getFirstElemOfClass } from "../utils.js";
 
 
 export class WebPhilWidget extends BoardWidget {

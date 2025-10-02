@@ -24,34 +24,18 @@
         <!-- Style styles. yup. styles that style styles. stylish. -->
         <link href = "styles/board-styles.css"  rel = "stylesheet" type = "text/css"/>
         <link href = "styles/piece-styles.css"  rel = "stylesheet" type = "text/css"/>
+
+        <!-- must be placed BEFORE any scripts!! -->
+        <script type = "importmap">
+            {
+                "imports": {
+                    "hyper-chess-board/": "./node_modules/hyper-chess-board/"
+                }
+            }
+        </script>
         
-        <script src = "scripts/menus/menus.js"></script>
-        <script defer src = "scripts/network/db-utils.js"></script>
-
-        <script src = "scripts/workers/task-manager.js"></script>
-        <script src = "scripts/workers/game-loader.js"></script>
-
-        <script src = "scripts/hyper-active/bot-wrapper.js"></script>
-
         <!-- graphics scripts -->
         <script defer type = "module" src = "scripts/graphics/graphics.js"></script>
-        <script defer src = "scripts/graphics/dialog.js"></script>
-        <script defer src = "scripts/graphics/resize.js"></script>
-        <script defer src = "scripts/graphics/utils.js"></script>
-
-        <!-- network -->
-        <script defer src = "scripts/network/cache.js"></script>
-        <script defer src = "scripts/network/create-game.js"></script>
-        <script defer src = "scripts/network/challenges.js"></script>
-        <script defer src = "scripts/network/games.js"></script>
-
-        <script defer src = "scripts/lobby/refresh.js"></script>
-
-        <script defer src = "scripts/lobby/view-games.js"></script>
-        <script defer src = "scripts/lobby/featured-game.js"></script>
-
-        <script defer src = "scripts/menus/init-hash.js"></script>
-
     </head>
     <body>
 

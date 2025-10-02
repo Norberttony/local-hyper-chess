@@ -1,5 +1,8 @@
 
-import { BoardWidget } from "../../../node_modules/hyper-chess-board/graphics/widgets/board-widget.mjs";
+import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.mjs";
+import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.mjs";
+
+import { getFirstElemOfClass } from "../utils.js";
 
 // The network widget handles continuously updating the game with recent information from the server
 
