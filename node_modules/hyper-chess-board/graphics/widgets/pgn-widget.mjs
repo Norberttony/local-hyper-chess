@@ -6,6 +6,23 @@ import { addPointerHoldListener } from "../pgn/pgn-control.mjs";
 // handles displaying any of the moves in a separate panel, splitting the PGN into variations as
 // necessary.
 
+// The PGN list structure is a little complicated as it must allow a practically infinite nesting
+// of different variations, with a way to style main variation elements.
+
+//  <div class="pgn-viewer__pgn-list">
+//      <div class="pgn-viewer__pgn-moveline">
+//          <div class="pgn-viewer__pgn-elem--type-num">1.</div>
+//          <div class="pgn-viewer__pgn-elem--type-san">Pd4</div>
+//          <div class="pgn-viewer__pgn-elem--type-san">Pf5</div>
+//      </div>
+//      <div class="pgn-viewer__pgn-moveline--type-variation">
+//          <div class="pgn-viewer__pgn-elem--type-variation-line">
+//              <div class="pgn-viewer__pgn-elem--type-san">Pe3</div>
+//              <div class="pgn-viewer__pgn-elem--type-san">Ph3</div>
+//          </div>
+//      </div>
+//  </div>
+
 export class PGNWidget extends BoardWidget {
     constructor(boardgfx, location){
         super(boardgfx);
@@ -142,10 +159,10 @@ export class PGNWidget extends BoardWidget {
         const { variation } = event.detail;
 
         // determine move number
-        const moveNum = Math.floor((variation.level + 1) / 2);
+        const moveNum = variation.fullMoveNum;
 
         // determine the player who made this move
-        const turn = variation.level % 2 == 1 ? Piece.white : Piece.black;
+        const turn = variation.turn;
 
         // create a new SAN elem for this variation
         const sanElem = newSANElem(this.boardgfx, this.pgnElem, variation.san, variation);
@@ -219,10 +236,10 @@ export class PGNWidget extends BoardWidget {
                 let previousContainer = variation.prev.next[0].element.parentNode;
 
                 if (previousContainer.classList.contains("pgn-viewer__pgn-moveline")){
+                    const nextElem = previousContainer.nextElementSibling;
                     // do we split the moveline or not?
                     if (turn == Piece.white){
                         // split!!!
-                        const nextElem = previousContainer.nextElementSibling;
                         if (nextElem && nextElem.classList.contains("pgn-viewer__pgn-elem--type-variation")){
                             nextElem.appendChild(variationLineElem);
                         }else{
@@ -237,7 +254,6 @@ export class PGNWidget extends BoardWidget {
                         variationElem.appendChild(variationLineElem);
 
                         // no split needed, just insert after moveline
-                        const nextElem = previousContainer.nextElementSibling;
                         if (nextElem)
                             this.pgnElem.insertBefore(variationElem, nextElem);
                         else

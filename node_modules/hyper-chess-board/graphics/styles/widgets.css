@@ -128,40 +128,17 @@
 
 /* PGN List Styles */
 
+/* moveline and its types contain moves (main has two, variation can have many) */
 .pgn-viewer__pgn-moveline {
     width: 100%;
-    display: grid;
+}
 
+.pgn-viewer__pgn-moveline--type-main {
+    display: grid;
     grid-template-columns: 20% 40% 40%;
 }
 
-.pgn-viewer__pgn-elem--type-san, .pgn-viewer__pgn-elem--type-num {
-    padding: 2px 8px;
-    font-size: 20px;
-}
-
-.pgn-viewer__pgn-elem--type-san {
-    cursor: pointer;
-}
-
-.pgn-viewer__pgn-elem--type-num {
-    text-align: right;
-    background-color: #111;
-}
-
-.pgn-viewer__pgn-elem--selected, .pgn-viewer__pgn-elem--selected:hover {
-    background-color: #444;
-}
-
-.pgn-viewer__pgn-elem--type-san:hover {
-    background-color: #222;
-}
-
-.pgn-viewer__pgn-elem--type-blank {
-    pointer-events: none;
-}
-
-.pgn-viewer__pgn-elem--type-variation {
+.pgn-viewer__pgn-moveline--type-variation {
     width: calc(100% - 28px);
     box-sizing: border-box;
     margin-left: 28px;
@@ -173,6 +150,33 @@
 .pgn-viewer__pgn-elem--type-variation-line {
     display: flex;
     flex-wrap: wrap;
+}
+
+/* Types of elements that can be found in the PGN move lines */
+.pgn-viewer__pgn-elem {
+    padding: 2px 8px;
+    font-size: 20px;
+}
+
+.pgn-viewer__pgn-elem--type-san {
+    cursor: pointer;
+}
+
+.pgn-viewer__pgn-elem--type-san:hover {
+    background-color: #222;
+}
+
+.pgn-viewer__pgn-elem--type-num {
+    text-align: right;
+    background-color: #111;
+}
+
+.pgn-viewer__pgn-elem--type-blank {
+    pointer-events: none;
+}
+
+.pgn-viewer__pgn-elem--selected, .pgn-viewer__pgn-elem--selected:hover {
+    background-color: #444;
 }
 
 .pgn-viewer__pgn-elem--type-result {
