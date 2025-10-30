@@ -1,5 +1,5 @@
 
-import { BoardWidget } from "./board-widget.mjs";
+import { BoardWidget } from "./board-widget.js";
 
 // Whenever a move, capture, or something important happens, a sound occurs.
 

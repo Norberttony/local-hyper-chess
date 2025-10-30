@@ -1,5 +1,5 @@
 
-import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.mjs";
+import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
 import { HyperChessBot } from "hyper-chess-board/graphics/widgets/bot-wrapper.js";
 
 import { getFirstElemOfClass } from "../utils.js";

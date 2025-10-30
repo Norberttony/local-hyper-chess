@@ -1,5 +1,5 @@
 
-import { setAllMoveHighlightsToPool, getMoveHighlightFromPool } from "./pool.mjs";
+import { setAllMoveHighlightsToPool, getMoveHighlightFromPool } from "./pool.js";
 
 // This file handles the way that the user might interact with the game board via dragging pieces.
 

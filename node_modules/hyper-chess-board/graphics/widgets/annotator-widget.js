@@ -1,5 +1,5 @@
 
-import { BoardWidget } from "./board-widget.mjs";
+import { BoardWidget } from "./board-widget.js";
 
 
 export class AnnotatorWidget extends BoardWidget {

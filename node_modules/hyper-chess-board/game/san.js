@@ -1,6 +1,6 @@
 
-import { squareToAlgebraic, squareToAlgebraicRank, squareToAlgebraicFile } from "./coords.mjs";
-import { Piece, PieceASCII } from "./piece.mjs";
+import { squareToAlgebraic, squareToAlgebraicRank, squareToAlgebraicFile } from "./coords.js";
+import { Piece, PieceASCII } from "./piece.js";
 
 export function getMoveSAN(board, move, pseudoMoves = board.generateMoves(false), withGlyphs = true){
     let SAN;

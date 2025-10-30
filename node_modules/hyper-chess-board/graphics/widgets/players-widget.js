@@ -1,5 +1,5 @@
 
-import { BoardWidget, WIDGET_LOCATIONS } from "./board-widget.mjs";
+import { BoardWidget, WIDGET_LOCATIONS } from "./board-widget.js";
 
 // technically takes up two locations at once but oh well
 

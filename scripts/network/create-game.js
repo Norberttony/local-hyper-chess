@@ -1,8 +1,8 @@
 
 // handles create-game logic
 
-import { StartingFEN } from "../../node_modules/hyper-chess-board/index.mjs";
-import { BoardGraphics } from "../../node_modules/hyper-chess-board/graphics/index.mjs";
+import { StartingFEN } from "../../node_modules/hyper-chess-board/index.js";
+import { BoardGraphics } from "../../node_modules/hyper-chess-board/graphics/index.js";
 
 const createGameFormElem = document.forms["create-game__form"];
 const createGameFormPopup = document.getElementById("create-game");

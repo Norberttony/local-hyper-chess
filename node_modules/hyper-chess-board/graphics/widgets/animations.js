@@ -1,10 +1,10 @@
 
 // handles move animations
 
-import { getFileFromSq, getRankFromSq } from "../../game/coords.mjs";
-import { Piece } from "../../game/piece.mjs";
-import { BoardWidget } from "./board-widget.mjs";
-import { getPieceFromPool, setElemLocation } from "../pool.mjs";
+import { getFileFromSq, getRankFromSq } from "../../game/coords.js";
+import { Piece } from "../../game/piece.js";
+import { BoardWidget } from "./board-widget.js";
+import { getPieceFromPool, setElemLocation } from "../pool.js";
 
 
 export class AnimationWidget extends BoardWidget {

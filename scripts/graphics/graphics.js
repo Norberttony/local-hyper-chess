@@ -1,14 +1,14 @@
 
-import { BoardGraphics, initInput } from "hyper-chess-board/graphics/index.mjs";
+import { BoardGraphics, initInput } from "hyper-chess-board/graphics/index.js";
 import {
     AnnotatorWidget, AnimationWidget, AudioWidget,
     EngineWidget, PGNWidget, ExtrasWidget, PlayersWidget,
     WIDGET_LOCATIONS
-} from "hyper-chess-board/graphics/widgets/index.mjs";
+} from "hyper-chess-board/graphics/widgets/index.js";
 
-import { NetworkWidget } from "./widgets/network-widget.mjs";
-import { PuzzlesWidget } from "./widgets/puzzles-widget.mjs";
-import { WebPhilWidget } from "./widgets/web-phil-widget.mjs";
+import { NetworkWidget } from "./widgets/network-widget.js";
+import { PuzzlesWidget } from "./widgets/puzzles-widget.js";
+import { WebPhilWidget } from "./widgets/web-phil-widget.js";
 
 
 // initializes the main board display

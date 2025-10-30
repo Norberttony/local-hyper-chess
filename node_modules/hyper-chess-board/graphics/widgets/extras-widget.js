@@ -1,5 +1,5 @@
 
-import { BoardWidget, getFirstElemOfClass } from "./board-widget.mjs";
+import { BoardWidget, getFirstElemOfClass } from "./board-widget.js";
 
 // Allows user to copy or set the FEN or PGN
 

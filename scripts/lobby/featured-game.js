@@ -1,8 +1,8 @@
 
-import { BoardGraphics } from "hyper-chess-board/graphics/index.mjs";
-import { WIDGET_LOCATIONS, PlayersWidget } from "/hyper-chess-board/graphics/widgets/index.mjs";
+import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
+import { WIDGET_LOCATIONS, PlayersWidget } from "/hyper-chess-board/graphics/widgets/index.js";
 
-import { NetworkWidget } from "../graphics/widgets/network-widget.mjs";
+import { NetworkWidget } from "../graphics/widgets/network-widget.js";
 
 const lobby_featuredGameElem            = getFirstElemOfClass(lobbyElem, "lobby__featured-game");
 const lobby_featuredTitleElem           = getFirstElemOfClass(lobbyElem, "lobby__featured-title");

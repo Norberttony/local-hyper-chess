@@ -1,11 +1,11 @@
 
 // Contains all of the code responsible for legal move generation.
 
-import { Piece } from "./piece.mjs";
-import { RawBoard } from "./raw-board.mjs";
-import { Move } from "./move.mjs";
-import { numSquaresToEdge, dirOffsets } from "./pre-game.mjs";
-import { getRankFromSq, getFileFromSq } from "./coords.mjs";
+import { Piece } from "./piece.js";
+import { RawBoard } from "./raw-board.js";
+import { Move } from "./move.js";
+import { numSquaresToEdge, dirOffsets } from "./pre-game.js";
+import { getRankFromSq, getFileFromSq } from "./coords.js";
 
 
 export class MoveGenerator extends RawBoard {

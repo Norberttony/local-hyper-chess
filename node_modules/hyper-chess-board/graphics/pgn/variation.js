@@ -1,5 +1,5 @@
 
-import { removeGlyphs, Piece } from "../../index.mjs";
+import { removeGlyphs, Piece } from "../../index.js";
 
 // the variation object operates as a linked list with a single previous node and a list of next
 // nodes.

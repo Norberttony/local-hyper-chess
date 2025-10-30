@@ -1,7 +1,7 @@
 
-import { Board } from "hyper-chess-board/index.mjs";
-import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.mjs";
-import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.mjs";
+import { Board } from "hyper-chess-board/index.js";
+import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
+import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { getFirstElemOfClass } from "../utils.js";
 import { tabulateData, pollDatabase } from "../../network/db-utils.js";

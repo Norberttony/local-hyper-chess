@@ -10,7 +10,7 @@ const loader = new Module_Loader();
 
 let board;
 
-loader.load(basePath + "/../../../node_modules/hyper-chess-board/game/game.mjs")
+loader.load(basePath + "/../../../node_modules/hyper-chess-board/game/board.js")
     .then((module) => {
         board = new module.Board();
     });

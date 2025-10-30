@@ -1,5 +1,5 @@
 
-import { PieceTypeToFEN, Piece } from "../index.mjs";
+import { PieceTypeToFEN, Piece } from "../index.js";
 
 // handles generating elements to represent the pieces. Whenever a piece is taken, its element
 // is put into a pool for later use.

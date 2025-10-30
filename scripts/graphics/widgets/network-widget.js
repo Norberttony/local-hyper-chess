@@ -1,6 +1,6 @@
 
-import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.mjs";
-import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.mjs";
+import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
+import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { getFirstElemOfClass } from "../utils.js";
 

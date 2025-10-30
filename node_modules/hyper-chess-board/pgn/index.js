@@ -1,6 +1,6 @@
 
-import { Piece } from "../game/piece.mjs";
-import { getMoveSAN } from "../game/san.mjs";
+import { Piece } from "../game/piece.js";
+import { getMoveSAN } from "../game/san.js";
 
 
 export function PGNHeadersToString(headers){

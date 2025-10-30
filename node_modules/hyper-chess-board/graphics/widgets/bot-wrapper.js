@@ -1,5 +1,5 @@
 
-import { Board } from "../../index.mjs";
+import { Board } from "../../index.js";
 
 // A wrapper class for communicating with a UCI-compliant Hyper Chess engine.
 
