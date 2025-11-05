@@ -1,10 +1,10 @@
 
-import { registerMenu, openMenuContainer, setWidgetsActive } from "./menus.js";
+import { registerMenu, openMenuContainer } from "./menus.js";
 
 registerMenu("web-phil", openWebPhil, closeWebPhil);
 
 export function openWebPhil(){
-    setWidgetsActive(new Set([
+    gameState.setActiveWidgets(new Set([
         "PGNWidget",
         "AnnotatorWidget",
         "AudioWidget",

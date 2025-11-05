@@ -1,12 +1,12 @@
 
 import { StartingFEN } from "hyper-chess-board/index.js";
-import { openMenuContainer, registerMenu, setWidgetsActive } from "./menus.js";
+import { openMenuContainer, registerMenu } from "./menus.js";
 
 
 registerMenu("puzzles", openPuzzles, closePuzzles);
 
 export function openPuzzles(){
-    setWidgetsActive(new Set([
+    gameState.setActiveWidgets(new Set([
         "PGNWidget",
         "AnnotatorWidget",
         "AudioWidget",

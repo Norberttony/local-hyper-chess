@@ -88,22 +88,10 @@ export async function changeHash(newHash, quiet = false){
     }
 }
 
-export function setWidgetsActive(widgets){
-    console.log(Array.from(widgets));
-    for (const [ name, widget ] of Object.entries(gameState.widgets)){
-        if (widgets.has(name)){
-            widget.enable();
-            widgets.delete(name);
-        }else
-            widget.disable();
-    }
-    console.log(Array.from(widgets));
-}
-
 export function setAnalysisBoard(){
     // disable network widget now so that the engine widget can start
     gameState.widgets.NetworkWidget.disable();
-    setWidgetsActive(new Set([
+    gameState.setActiveWidgets(new Set([
         "ExtrasWidget",
         "PGNWidget",
         "AnnotatorWidget",
@@ -115,7 +103,7 @@ export function setAnalysisBoard(){
 }
 
 export function setMultiplayerBoard(){
-    setWidgetsActive(new Set([
+    gameState.setActiveWidgets(new Set([
         "PGNWidget",
         "AnnotatorWidget",
         "AudioWidget",
