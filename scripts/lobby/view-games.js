@@ -1,13 +1,32 @@
 
+import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
+import { PlayersWidget, WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
+
+import { NetworkWidget } from "../graphics/widgets/network-widget.js";
+import { registerMenu, openMenuContainer } from "../menus/menus.js";
+import { gameLoader } from "../workers/game-loader.js";
+
+const myGames_containerElem = document.getElementById("my-games_container");
 const myGamesElem = document.getElementById("my-games");
 const myGames_fetchingElem = document.getElementById("my-games_fetching");
 const myGames_menuElem = document.getElementById("my-games_menu");
 const myGames_download = document.getElementById("my-games_download");
 
+registerMenu("view-games", openGames, closeGames);
+
+// to-do: more global state to get rid of
+window.downloadMyGames = downloadMyGames;
+
+function openGames(){
+    document.getElementById("menu_my-games").classList.add("active");
+    openMenuContainer(myGames_containerElem);
+    refreshViewGamesSetup();
+}
+
+function closeGames(){}
 
 let allMyGames = [];
 let allMyGamesTicket = 0;
-
 
 // when calling refreshViewGames directly, the website layout isn't recalculated or re-set until
 // everything finishes. So, it is separated by a setTimeout to allow the website to update
@@ -184,7 +203,8 @@ function binaryInsert(arr, item, cmp = (a, b) => a > b){
     return lo;
 }
 
-function downloadMyGames(games){
+function downloadMyGames(){
+    const games = allMyGames;
     let content = "";
 
     for (const g of games){

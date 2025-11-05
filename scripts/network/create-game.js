@@ -3,6 +3,7 @@
 
 import { StartingFEN } from "../../node_modules/hyper-chess-board/index.js";
 import { BoardGraphics } from "../../node_modules/hyper-chess-board/graphics/index.js";
+import { hideInvite } from "../graphics/dialog.js";
 
 const createGameFormElem = document.forms["create-game__form"];
 const createGameFormPopup = document.getElementById("create-game");

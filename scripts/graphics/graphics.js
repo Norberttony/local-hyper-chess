@@ -12,7 +12,8 @@ import { WebPhilWidget } from "./widgets/web-phil-widget.js";
 
 
 // initializes the main board display
-export const gameState = new BoardGraphics(true, true, document.getElementById("main-board"));
+const mainBoardElem = document.getElementById("main-board");
+export const gameState = new BoardGraphics(true, true, mainBoardElem);
 
 // to-do: find a better way of allowing browser of using the game state
 window.gameState = gameState;

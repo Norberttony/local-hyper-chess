@@ -38,6 +38,7 @@
         <!-- <script defer type = "module" src = "scripts/graphics/graphics.js"></script> -->
         <script defer type = "module" src = "scripts/menus/menus.js"></script>
         <script defer type = "module" src = "scripts/lobby/lobby.js"></script>
+        <script defer type = "module" src = "scripts/lobby/view-games.js"></script>
     </head>
     <body>
 
@@ -55,7 +56,7 @@
             <h1 style = "margin: 20px; font-size: xxx-large">Your games:</h1>
             <p id = "my-games_fetching" style = "font-size: xx-large"></p>
 
-            <button id = "my-games_download" onclick = "downloadMyGames(allMyGames);">Download my games</button>
+            <button id = "my-games_download" onclick = "downloadMyGames();">Download my games</button>
 
             <div id = "my-games"></div>
         </div>
@@ -96,7 +97,7 @@
                 <p id = "result-box_result">No one Wins</p>
                 <p id = "result-box_local">You <span id = "result_mewin">did not win</span> by <span id = "how_span">cheating</span></p>
                 <button onclick = "hideDialogBox();" style = "margin-top: 40px;">View Game</button><br />
-                <button id = "result-box_rematch" onclick = "offerRematch();">Offer Rematch</button>
+                <button id = "result-box_rematch" onclick = "gameState.widgets.NetworkWidget.offerRematch();">Offer Rematch</button>
             </div>
         </div>
 

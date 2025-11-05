@@ -1,7 +1,10 @@
 
 import { gameState } from "../graphics/graphics.js";
-import { StartingFEN } from "hyper-chess-board/index.js";
+import { StartingFEN, Piece } from "hyper-chess-board/index.js";
 
+import { getGameIdParts } from "../network/db-utils.js";
+
+const mainBoardElem = gameState.skeleton;
 
 const MENUS = {
     activeMenu: undefined,
@@ -84,7 +87,6 @@ async function changeHash(newHash, quiet = false){
     }
 }
 
-// expects widgets to be a set
 function setWidgetsActive(widgets){
     console.log(Array.from(widgets));
     for (const [ name, widget ] of Object.entries(gameState.widgets)){
@@ -97,35 +99,42 @@ function setWidgetsActive(widgets){
     console.log(Array.from(widgets));
 }
 
-registerMenu("view-games",
-    () => {
-        document.getElementById("menu_my-games").classList.add("active");
-        activateContainer("my-games_container");
-        // for some reason, activating this menu causes the entire UI to wait until all games
-        // are refreshed (even though it is async...?)
-        refreshViewGamesSetup();
-    },
-    () => 0
-);
+export function setAnalysisBoard(){
+    // disable network widget now so that the engine widget can start
+    gameState.widgets.NetworkWidget.disable();
+    setWidgetsActive(new Set([
+        "ExtrasWidget",
+        "PGNWidget",
+        "AnnotatorWidget",
+        "AudioWidget",
+        "AnimationsWidget",
+        "EngineWidget"
+    ]));
+    openMenuContainer(mainBoardElem);
+}
 
-registerMenu("analysis-board",
-    () => {
-        // disable network widget now so that the engine widget can start
-        gameState.widgets.NetworkWidget.disable();
+export function setMultiplayerBoard(){
+    setWidgetsActive(new Set([
+        "PGNWidget",
+        "AnnotatorWidget",
+        "AudioWidget",
+        "AnimationsWidget",
+        "PlayersWidget"
+    ]));
+    gameState.allowVariations = false;
+    openMenuContainer(mainBoardElem);
+}
 
-        setWidgetsActive(new Set([
-            "ExtrasWidget",
-            "PGNWidget",
-            "AnnotatorWidget",
-            "AudioWidget",
-            "AnimationsWidget",
-            "EngineWidget"
-        ]));
+export function closeMultiplayerBoard(){
+    gameState.allowVariations = true;
+    gameState.allowInputFrom[Piece.white] = true;
+    gameState.allowInputFrom[Piece.black] = true;
+}
 
-        activateContainer("main-board");
-    },
-    () => 0
-);
+// to-do: trying to separate out menu initialization from menu.js, maybe these should go elsewhere?
+registerMenu("analysis-board", setAnalysisBoard, () => 0);
+registerMenu("multiplayer-game", setMultiplayerBoard, closeMultiplayerBoard);
+
 
 registerMenu("puzzles",
     () => {
@@ -142,25 +151,6 @@ registerMenu("puzzles",
     () => {
         // reset the analysis board's state
         gameState.loadFEN(StartingFEN);
-    }
-);
-
-registerMenu("multiplayer-game",
-    () => {
-        activateContainer("main-board");
-        setWidgetsActive(new Set([
-            "PGNWidget",
-            "AnnotatorWidget",
-            "AudioWidget",
-            "AnimationsWidget",
-            "PlayersWidget"
-        ]));
-        gameState.allowVariations = false;
-    },
-    () => {
-        gameState.allowVariations = true;
-        gameState.allowInputFrom[Piece.white] = true;
-        gameState.allowInputFrom[Piece.black] = true;
     }
 );
 

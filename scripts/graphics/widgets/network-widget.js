@@ -3,9 +3,11 @@ import { Piece, Move } from "hyper-chess-board/index.js";
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
 import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
 
-import { getFirstElemOfClass } from "../utils.js";
+import { getFirstElemOfClass, sleep } from "../utils.js";
 import { fetchGame } from "../../network/games.js";
 import { gameLoader } from "../../workers/game-loader.js";
+import { pollDatabase } from "../../network/db-utils.js";
+import { displayResultBox } from "../dialog.js";
 
 // The network widget handles continuously updating the game with recent information from the server
 
@@ -131,7 +133,7 @@ export class NetworkWidget extends BoardWidget {
             this.boardgfx.finishedLoading();
         }
         catch(err){
-            console.error("Failed to fetch game status. Check internet connection or database.");
+            console.error("Failed to fetch game status. Check internet connection or database.", err);
             this.boardgfx.loading();
             return;
         }
@@ -302,6 +304,15 @@ export class NetworkWidget extends BoardWidget {
         if (this.active){
             this.active = false;
         }
+    }
+
+    offerRematch(){
+        pollDatabase("POST", {
+            type: "rematch",
+            gameId: this.gameId,
+            userId: this.userId,
+            rowNum: this.rowNum
+        });
     }
 
     activateGameControls(){

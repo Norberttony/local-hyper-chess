@@ -1,4 +1,5 @@
 
+import { hideInvite, hideDialogContainer, showDialogBox, hideDialogBox } from "../graphics/dialog.js";
 
 var invite_copyElem = document.getElementById("invite_copy");
 var peer_idElem = document.getElementById("peer-id");
