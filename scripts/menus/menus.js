@@ -3,6 +3,7 @@ import { gameState } from "../graphics/graphics.js";
 import { Piece } from "hyper-chess-board/index.js";
 
 import { getGameIdParts } from "../network/db-utils.js";
+import { acceptChallenge } from "../network/challenges.js";
 
 const mainBoardElem = gameState.skeleton;
 
@@ -22,7 +23,7 @@ export function registerMenu(name, start, stop){
     MENUS.menus[name] = { start, stop };
 }
 
-function openMenu(name){
+export function openMenu(name){
     const menu = MENUS.menus[name];
 
     if (!menu || menu == MENUS.activeMenu)
@@ -43,7 +44,7 @@ export function openMenuContainer(elem){
     elem.style.display = "";
 }
 
-async function changeHash(newHash, quiet = false){
+export async function changeHash(newHash, quiet = false){
     history.pushState(null, "", newHash);
 
     // deactivate active menu button
@@ -134,22 +135,3 @@ export function closeMultiplayerBoard(){
 // to-do: trying to separate out menu initialization from menu.js, maybe these should go elsewhere?
 registerMenu("analysis-board", setAnalysisBoard, () => 0);
 registerMenu("multiplayer-game", setMultiplayerBoard, closeMultiplayerBoard);
-
-registerMenu("web-phil",
-    () => {
-        setWidgetsActive(new Set([
-            "PGNWidget",
-            "AnnotatorWidget",
-            "AudioWidget",
-            "AnimationsWidget",
-            "WebPhilWidget",
-            "ExtrasWidget"
-        ]));
-
-        activateContainer("main-board");
-        gameState.allowVariations = false;
-    },
-    () => {
-        gameState.allowVariations = true;
-    }
-)

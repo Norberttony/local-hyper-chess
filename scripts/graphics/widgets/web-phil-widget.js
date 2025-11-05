@@ -1,7 +1,10 @@
 
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
 import { HyperChessBot } from "hyper-chess-board/graphics/widgets/bot-wrapper.js";
+import { Piece } from "hyper-chess-board/index.js";
 
+import { changeHash } from "../../menus/menus.js";
+import { pollDatabase, storeUserId } from "../../network/db-utils.js";
 import { getFirstElemOfClass } from "../utils.js";
 
 

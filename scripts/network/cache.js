@@ -2,26 +2,26 @@
 // The challenges in local storage are ones the user themselves created. This was done to avoid
 // users accepting their own challenges (which would break the system, since it's not possible to
 // store two different user ID's under one game ID).
-function addChallToLocalStorage(challId){
+export function addChallToLocalStorage(challId){
     const challenges = getChallengesFromLocalStorage();
     challenges.push({ challId, strikes: 3 });
 
     localStorage.setItem("user_challenges", JSON.stringify(challenges));
 }
 
-function getChallengesFromLocalStorage(){
+export function getChallengesFromLocalStorage(){
     if (!localStorage.getItem("user_challenges"))
         localStorage.setItem("user_challenges", "[]");
 
     return JSON.parse(localStorage.getItem("user_challenges"));
 }
 
-function setChallengesToLocalStorage(challenges){
+export function setChallengesToLocalStorage(challenges){
     localStorage.setItem("user_challenges", JSON.stringify(challenges));
 }
 
 // if the cache contains more than maxGames games, the oldest games are purged.
-function purgeCache(maxGames){
+export function purgeCache(maxGames){
     const cachedGames = [];
     for (const [ k, v ] of Object.entries(localStorage)){
         if (k.endsWith("_cached")){

@@ -1,6 +1,9 @@
 
 import { getFirstElemOfClass } from "../graphics/utils.js";
 import { pollDatabase } from "../network/db-utils.js";
+import { acceptChallenge } from "../network/challenges.js";
+import { getChallengesFromLocalStorage } from "../network/cache.js";
+
 
 const lobbyElem = document.getElementById("lobby");
 const lobbyListContainer = getFirstElemOfClass(lobbyElem, "lobby__list");

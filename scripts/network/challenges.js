@@ -1,8 +1,17 @@
 
-import { hideInvite, hideDialogContainer, showDialogBox, hideDialogBox } from "../graphics/dialog.js";
+import { StartingFEN } from "hyper-chess-board/index.js";
 
-var invite_copyElem = document.getElementById("invite_copy");
-var peer_idElem = document.getElementById("peer-id");
+import { hideInvite, hideDialogContainer, showDialogBox, hideDialogBox } from "../graphics/dialog.js";
+import { pollDatabase, storeUserId } from "./db-utils.js";
+import { sleep } from "../graphics/utils.js";
+import { addChallToLocalStorage } from "./cache.js";
+
+// to-do: remove global variables
+window.shareInvite = shareInvite;
+window.cancelInvite = cancelInvite;
+
+const invite_copyElem = document.getElementById("invite_copy");
+const peer_idElem = document.getElementById("peer-id");
 
 // allows copying the invite link
 invite_copyElem.addEventListener("click", () => {
@@ -14,7 +23,7 @@ invite_copyElem.addEventListener("click", () => {
 });
 
 // retrieves invite from server
-async function generateInvite(gameConfig){
+export async function generateInvite(gameConfig){
     // send request to server
     gameConfig.type = "challenge";
     const fullId = JSON.parse(await pollDatabase("POST", gameConfig));
@@ -114,7 +123,7 @@ async function checkIfAccepted(challId, userId){
 }
 
 
-async function acceptChallenge(challengeId){
+export async function acceptChallenge(challengeId){
     showDialogBox("Fetching challenge...", "Looking for an active challenge with this ID");
 
     // request from server

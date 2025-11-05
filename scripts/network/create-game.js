@@ -1,9 +1,12 @@
 
 // handles create-game logic
 
-import { StartingFEN } from "../../node_modules/hyper-chess-board/index.js";
+import { StartingFEN, Piece } from "../../node_modules/hyper-chess-board/index.js";
 import { BoardGraphics } from "../../node_modules/hyper-chess-board/graphics/index.js";
+
 import { hideInvite } from "../graphics/dialog.js";
+import { generateInvite } from "./challenges.js";
+import { openMenu } from "../menus/menus.js";
 
 const createGameFormElem = document.forms["create-game__form"];
 const createGameFormPopup = document.getElementById("create-game");
@@ -12,6 +15,10 @@ const startingFenElem = document.getElementById("create-game__use-default-fen");
 
 const createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
 setCreateGameFEN(StartingFEN);
+
+// to-do: remove global variables
+window.showCreateGamePopup = showCreateGamePopup;
+window.hideCreateGamePopup = hideCreateGamePopup;
 
 if (startingFenElem.checked){
     createGameFormElem.fen.readOnly = true;
