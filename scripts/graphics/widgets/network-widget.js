@@ -1,8 +1,11 @@
 
+import { Piece, Move } from "hyper-chess-board/index.js";
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
 import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { getFirstElemOfClass } from "../utils.js";
+import { fetchGame } from "../../network/games.js";
+import { gameLoader } from "../../workers/game-loader.js";
 
 // The network widget handles continuously updating the game with recent information from the server
 

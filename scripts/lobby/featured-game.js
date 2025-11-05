@@ -1,8 +1,12 @@
 
 import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
-import { WIDGET_LOCATIONS, PlayersWidget } from "/hyper-chess-board/graphics/widgets/index.js";
+import { WIDGET_LOCATIONS, PlayersWidget } from "hyper-chess-board/graphics/widgets/index.js";
 
+import { getFirstElemOfClass } from "../graphics/utils.js";
 import { NetworkWidget } from "../graphics/widgets/network-widget.js";
+import { pollDatabase } from "../network/db-utils.js";
+
+const lobbyElem = document.getElementById("lobby");
 
 const lobby_featuredGameElem            = getFirstElemOfClass(lobbyElem, "lobby__featured-game");
 const lobby_featuredTitleElem           = getFirstElemOfClass(lobbyElem, "lobby__featured-title");
@@ -11,9 +15,10 @@ const lobby_featuredGameContainerElem = document.getElementById("lobby__featured
 // populate with a board template
 const featuredGameBoard = new BoardGraphics(false);
 
+// to-do: more global state
+window.goToFeaturedGame = goToFeaturedGame;
+
 let featuredGameId;
-let isUpdatingFeaturedGame = false;
-let keepUpdatingFeaturedGame = false;
 
 lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
 
@@ -21,9 +26,7 @@ new PlayersWidget(featuredGameBoard);
 new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE);
 
 
-async function fetchFeaturedGame(){
-    await module_loader.waitForAll();
-
+export async function fetchFeaturedGame(){
     featuredGameBoard.loading();
     const featured = JSON.parse(await pollDatabase("GET", { type: "featuredGame" }));
 
@@ -48,6 +51,6 @@ function goToFeaturedGame(){
     changeHash(`#game=${featuredGameId}`);
 }
 
-function stopUpdatingFeaturedGame(){
+export function stopUpdatingFeaturedGame(){
     featuredGameBoard.widgets.NetworkWidget.disable();
 }

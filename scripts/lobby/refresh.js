@@ -1,7 +1,12 @@
 
+import { getFirstElemOfClass } from "../graphics/utils.js";
+import { pollDatabase } from "../network/db-utils.js";
+
 const lobbyElem = document.getElementById("lobby");
 const lobbyListContainer = getFirstElemOfClass(lobbyElem, "lobby__list");
 const lobbyListElem = getFirstElemOfClass(lobbyElem, "lobby__list-items");
+
+let refreshInterval;
 
 function createChallengeTemplate(id, name, isBot, color, fen){
     const challElem = document.createElement("div");
@@ -23,6 +28,21 @@ function createChallengeTemplate(id, name, isBot, color, fen){
 <span>${fen == StartingFEN ? "Starting position" : "FEN: " + fen}</span>
 `;
     return challElem;
+}
+
+export function startRefreshingChallenges(){
+    // already refreshing?
+    if (refreshInterval)
+        return;
+
+    refreshInterval = setInterval(refreshChallenges, 60000);
+}
+
+export function stopRefreshingChallenges(){
+    if (refreshInterval){
+        clearInterval(refreshInterval);
+        refreshInterval = undefined;
+    }
 }
 
 async function refreshChallenges(){

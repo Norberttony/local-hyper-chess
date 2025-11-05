@@ -15,15 +15,15 @@ var panel_goToBoardElem = document.getElementById("panel_go-to-board");
 var invite_popup_containerElem = document.getElementById("invite-popup-container");
 var invite_popupElem = document.getElementById("invite-popup");
 
-function showDialogContainer(){
+export function showDialogContainer(){
     dialog_box_containerElem.style.display = "flex";
 }
 
-function hideDialogContainer(){
+export function hideDialogContainer(){
     dialog_box_containerElem.style.display = "none";
 }
 
-function showDialogBox(title, desc){
+export function showDialogBox(title, desc){
     hideResultBox();
 
     showDialogContainer();
@@ -35,7 +35,7 @@ function showDialogBox(title, desc){
     }
 }
 
-function hideDialogBox(){
+export function hideDialogBox(){
     hideDialogContainer();
 
     dialog_boxElem.style.display = "none";

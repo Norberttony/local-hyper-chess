@@ -1,14 +1,19 @@
 
+import { gameState } from "../graphics/graphics.js";
+import { StartingFEN } from "hyper-chess-board/index.js";
+
+
 const MENUS = {
     activeMenu: undefined,
-    containers: [ "main-board", "lobby", "my-games_container" ],
     menus: {}
 };
+
+window.changeHash = changeHash;
 
 
 // adds a menu to the collection.
 // start performs initialization for the menu item and stop performs de-initialization.
-function registerMenu(name, start, stop){
+export function registerMenu(name, start, stop){
     if (MENUS.menus[name])
         throw new Error(`Registering another menu with the same name ${name}`);
     MENUS.menus[name] = { start, stop };
@@ -29,12 +34,10 @@ function openMenu(name){
     MENUS.activeMenu = menu;
 }
 
-function activateContainer(id){
-    for (const id of MENUS.containers){
-        document.getElementById(id).style.display = "none";
-    }
-
-    document.getElementById(id).style.display = "";
+export function openMenuContainer(elem){
+    for (const elem of document.getElementsByClassName("menu-container"))
+        elem.style.display = "none";
+    elem.style.display = "";
 }
 
 async function changeHash(newHash, quiet = false){
@@ -93,24 +96,6 @@ function setWidgetsActive(widgets){
     }
     console.log(Array.from(widgets));
 }
-
-const LOBBY = {
-    interval: undefined
-};
-
-registerMenu("lobby",
-    () => {
-        activateContainer("lobby");
-        refreshChallenges();
-        LOBBY.interval = setInterval(refreshChallenges, 6000);
-        fetchFeaturedGame();
-    },
-    () => {
-        if (LOBBY.interval)
-            clearInterval(LOBBY.interval);
-        stopUpdatingFeaturedGame();
-    }
-);
 
 registerMenu("view-games",
     () => {

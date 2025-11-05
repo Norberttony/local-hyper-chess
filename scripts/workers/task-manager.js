@@ -1,5 +1,5 @@
 
-class TaskManager {
+export class TaskManager {
     constructor(workerPath, workersAmt = 1){
         this.workerPath = workerPath;
         this.workersAmt = workersAmt;

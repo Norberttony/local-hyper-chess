@@ -1,7 +1,8 @@
 
-import { Board } from "hyper-chess-board/index.js";
+import { Board, Piece, removeGlyphs } from "hyper-chess-board/index.js";
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
 import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
+import { showDialogBox, hideDialogBox } from "../dialog.js";
 
 import { getFirstElemOfClass } from "../utils.js";
 import { tabulateData, pollDatabase } from "../../network/db-utils.js";
@@ -45,7 +46,7 @@ export class PuzzlesWidget extends BoardWidget {
         this.puzzlesImgElem    = getFirstElemOfClass(puzzles, "puzzles-widget__img");
 
         this.puzzlesSolved = (localStorage.getItem("puzzles_solved") || "").split("");
-        this.currentPuzzle;
+        this.currentPuzzle = { id: 0 };
 
         // fetches puzzles
         this.puzzles = (async () => {

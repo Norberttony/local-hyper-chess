@@ -35,7 +35,9 @@
         </script>
         
         <!-- graphics scripts -->
-        <script defer type = "module" src = "scripts/graphics/graphics.js"></script>
+        <!-- <script defer type = "module" src = "scripts/graphics/graphics.js"></script> -->
+        <script defer type = "module" src = "scripts/menus/menus.js"></script>
+        <script defer type = "module" src = "scripts/lobby/lobby.js"></script>
     </head>
     <body>
 
@@ -49,7 +51,7 @@
             </a>
         </nav>
 
-        <div id = "my-games_container" style = "display: none;">
+        <div id = "my-games_container" class = "menu-container" style = "display: none;">
             <h1 style = "margin: 20px; font-size: xxx-large">Your games:</h1>
             <p id = "my-games_fetching" style = "font-size: xx-large"></p>
 
@@ -58,7 +60,7 @@
             <div id = "my-games"></div>
         </div>
 
-        <div id = "lobby" class = "lobby" style = "display: none;">
+        <div id = "lobby" class = "menu-container lobby" style = "display: none;">
             <button class = "lobby__create-button" onclick = "showCreateGamePopup(true);">Click here to create your own challenge</button>
             <p>Or</p>
             <button class = "lobby__play-phil" onclick = "showCreateGamePopup(false);">Play against a bot</button>
@@ -83,7 +85,7 @@
             </div>
         </div>
 
-        <div id = "main-board" class = "board-graphics board-graphics--board-blue board-graphics--pieces-cburnett"></div>
+        <div id = "main-board" class = "menu-container board-graphics board-graphics--board-blue board-graphics--pieces-cburnett"></div>
 
         <div id = "dialog-box-container">
             <div id = "dialog-box">

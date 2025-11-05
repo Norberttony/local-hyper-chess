@@ -1,6 +1,9 @@
 
+import { pollDatabase } from "./db-utils.js";
+
+
 // fetches the game from the database
-async function fetchGame(gameId, rowNum, userId){
+export async function fetchGame(gameId, rowNum, userId){
 
     // check the cache
     const cacheId = `${gameId}_${rowNum}_cached`;
