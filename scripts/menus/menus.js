@@ -1,6 +1,6 @@
 
 import { gameState } from "../graphics/graphics.js";
-import { StartingFEN, Piece } from "hyper-chess-board/index.js";
+import { Piece } from "hyper-chess-board/index.js";
 
 import { getGameIdParts } from "../network/db-utils.js";
 
@@ -87,7 +87,7 @@ async function changeHash(newHash, quiet = false){
     }
 }
 
-function setWidgetsActive(widgets){
+export function setWidgetsActive(widgets){
     console.log(Array.from(widgets));
     for (const [ name, widget ] of Object.entries(gameState.widgets)){
         if (widgets.has(name)){
@@ -134,25 +134,6 @@ export function closeMultiplayerBoard(){
 // to-do: trying to separate out menu initialization from menu.js, maybe these should go elsewhere?
 registerMenu("analysis-board", setAnalysisBoard, () => 0);
 registerMenu("multiplayer-game", setMultiplayerBoard, closeMultiplayerBoard);
-
-
-registerMenu("puzzles",
-    () => {
-        setWidgetsActive(new Set([
-            "PGNWidget",
-            "AnnotatorWidget",
-            "AudioWidget",
-            "AnimationsWidget",
-            "PuzzlesWidget"
-        ]));
-
-        activateContainer("main-board");
-    },
-    () => {
-        // reset the analysis board's state
-        gameState.loadFEN(StartingFEN);
-    }
-);
 
 registerMenu("web-phil",
     () => {
