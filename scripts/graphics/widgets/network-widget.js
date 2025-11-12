@@ -216,7 +216,7 @@ export class NetworkWidget extends BoardWidget {
         if (gameInfo.result){
             this.boardgfx.dispatchEvent("result", {
                 result: gameInfo.result,
-                turn: this.boardgfx.state.turn,
+                turn: this.boardgfx.turn,
                 termination: gameInfo.termination
             });
         }
@@ -264,7 +264,6 @@ export class NetworkWidget extends BoardWidget {
         if (color == "none"){
             delete this.color;
             this.activatePreGameControls();
-            
         }else{
             this.color = color[0];
             this.activateGameControls();
@@ -275,7 +274,7 @@ export class NetworkWidget extends BoardWidget {
         const moveObjects = await gameLoader.doTask({ fen, moves: movesString });
         for (const m of moveObjects){
             const move = new Move(m.to, m.from, m.captures);
-            this.boardgfx.makeMove(move, m.san);
+            this.boardgfx.playMove(move, m.san);
         }
         this.boardgfx.applyChanges();
 

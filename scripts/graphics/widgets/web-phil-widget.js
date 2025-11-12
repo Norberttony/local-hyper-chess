@@ -32,10 +32,10 @@ export class WebPhilWidget extends BoardWidget {
                     this.boardgfx.dispatchEvent("result", {
                         result,
                         termination: "resignation",
-                        turn: this.boardgfx.state.turn,
+                        turn: this.boardgfx.turn,
                         winner
                     });
-                    this.boardgfx.state.setResult(result, "resignation", winner);
+                    this.boardgfx.setResult(result, "resignation", winner);
                 }
             });
         }
@@ -78,14 +78,14 @@ export class WebPhilWidget extends BoardWidget {
             return;
     
         this.playing = true;
-        this.startingFEN = this.boardgfx.state.getFEN();
+        this.startingFEN = this.boardgfx.getFEN();
         this.gameMoves = [];
     
         this.bot.start();
-        this.bot.setFEN(this.boardgfx.state.getFEN());
+        this.bot.setFEN(this.boardgfx.getFEN());
     
         // if not user's turn, it's web phil's turn!
-        if (this.userColor != this.boardgfx.state.turn)
+        if (this.userColor != this.boardgfx.turn)
             this.bot.thinkFor(this.thinkTime).then(data => this.#botPlaysMove(data));
     }
 
@@ -110,7 +110,7 @@ export class WebPhilWidget extends BoardWidget {
         if (!this.boardgfx.currentVariation.isMain() || this.boardgfx.currentVariation.next.length > 0){
             this.boardgfx.addMoveToEnd(san);
         }else{
-            this.boardgfx.makeMove(this.boardgfx.state.getMoveOfSAN(san));
+            this.boardgfx.playMove(this.boardgfx.getMoveOfSAN(san));
             this.boardgfx.applyChanges(false);
         }
     }

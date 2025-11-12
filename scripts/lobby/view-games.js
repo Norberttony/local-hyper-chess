@@ -145,7 +145,7 @@ function initViewGameBoard(gameInfo, boardgfx, gameId, rowNum, userId){
         changeHash(`#game=${gameId}_${rowNum}`);
     });
 
-    let toPlay = boardgfx.state.turn;
+    let toPlay = boardgfx.turn;
 
     // gameInfo will be used in sorting.
     const sortGI = Object.assign({}, gameInfo);

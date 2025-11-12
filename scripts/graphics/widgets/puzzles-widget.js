@@ -129,8 +129,8 @@ export class PuzzlesWidget extends BoardWidget {
         this.boardgfx.loadFEN(puzzle.fen);
 
         // disallow moving for enemy side
-        this.userSide = this.boardgfx.state.turn;
-        this.oppSide = this.boardgfx.state.turn == Piece.white ? Piece.black : Piece.white;
+        this.userSide = this.boardgfx.turn;
+        this.oppSide = this.boardgfx.turn == Piece.white ? Piece.black : Piece.white;
         this.boardgfx.allowInputFrom[this.userSide] = true;
         this.boardgfx.allowInputFrom[this.oppSide] = false;
 
@@ -308,9 +308,9 @@ export class PuzzlesWidget extends BoardWidget {
 
     playMove(san){
         setTimeout(() => {
-            const move = gameState.state.getMoveOfSAN(san);
-            gameState.makeMove(move);
-            gameState.applyChanges();
+            const move = this.boardgfx.getMoveOfSAN(san);
+            this.boardgfx.playMove(move);
+            this.boardgfx.applyChanges();
         }, 800);
     }
 }
