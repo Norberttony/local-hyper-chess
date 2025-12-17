@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/Norberttony/local-hyper-chess#readme",
   "dependencies": {
-    "hyper-chess-board": "^0.1.2"
+    "hyper-chess-board": "^0.2.1"
   }
 }

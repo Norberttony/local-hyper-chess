@@ -1,6 +1,5 @@
-
 import { gameState } from "../graphics/graphics.js";
-import { Piece } from "hyper-chess-board/index.js";
+import { Side } from "hyper-chess-board/index.js";
 
 import { getGameIdParts } from "../network/db-utils.js";
 import { acceptChallenge } from "../network/challenges.js";
@@ -116,8 +115,8 @@ export function setMultiplayerBoard(){
 
 export function closeMultiplayerBoard(){
     gameState.allowVariations = true;
-    gameState.allowInputFrom[Piece.white] = true;
-    gameState.allowInputFrom[Piece.black] = true;
+    gameState.allowInputFrom[Side.White] = true;
+    gameState.allowInputFrom[Side.Black] = true;
 }
 
 // to-do: trying to separate out menu initialization from menu.js, maybe these should go elsewhere?

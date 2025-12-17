@@ -1,18 +1,17 @@
-
-import { Piece, Move } from "hyper-chess-board/index.js";
+import { Side, Move } from "hyper-chess-board/index.js";
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
-import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { getFirstElemOfClass, sleep } from "../utils.js";
 import { fetchGame } from "../../network/games.js";
 import { gameLoader } from "../../workers/game-loader.js";
 import { pollDatabase } from "../../network/db-utils.js";
 import { displayResultBox } from "../dialog.js";
+import { getResultTag } from "hyper-chess-board/pgn/index.js";
 
 // The network widget handles continuously updating the game with recent information from the server
 
 export class NetworkWidget extends BoardWidget {
-    constructor(boardgfx, location = WIDGET_LOCATIONS.RIGHT){
+    constructor(boardgfx, location = "Right"){
         super(boardgfx);
 
         this.location = location;
@@ -27,7 +26,7 @@ export class NetworkWidget extends BoardWidget {
 
         this.lastUpdate = new Date();
 
-        if (location != WIDGET_LOCATIONS.NONE){
+        if (location != "None"){
             const container = document.createElement("div");
 
             const gameButtons = document.createElement("div");
@@ -42,7 +41,7 @@ export class NetworkWidget extends BoardWidget {
             const outputElem = document.createElement("output");
             container.appendChild(outputElem);
 
-            boardgfx.getWidgetElem(location).appendChild(container);
+            boardgfx.getWidgetContainer(location).appendChild(container);
 
             this.resignButton = getFirstElemOfClass(gameButtons, "pgn-viewer__resign");
             this.drawButton = getFirstElemOfClass(gameButtons, "pgn-viewer__draw");
@@ -254,12 +253,12 @@ export class NetworkWidget extends BoardWidget {
         this.boardgfx.setFlip(color == "black");
         
         // only allow input from user's side
-        this.boardgfx.allowInputFrom[Piece.white] = false;
-        this.boardgfx.allowInputFrom[Piece.black] = false;
+        this.boardgfx.allowInputFrom[Side.White] = false;
+        this.boardgfx.allowInputFrom[Side.Black] = false;
         if (color == "black")
-            this.boardgfx.allowInputFrom[Piece.black] = true;
+            this.boardgfx.allowInputFrom[Side.Black] = true;
         else if (color == "white")
-            this.boardgfx.allowInputFrom[Piece.white] = true;
+            this.boardgfx.allowInputFrom[Side.White] = true;
 
         if (color == "none"){
             delete this.color;
@@ -364,7 +363,9 @@ export class NetworkWidget extends BoardWidget {
 
         this.active = false;
     
-        const { result, turn, termination, winner } = event.detail;
+        const { termination, winner } = event.detail;
+
+        const result = getResultTag(winner);
     
         // an on-board result will either be / or #, whereas a result from the server will either
         // be 1-0, 0-1, or 1/2-1/2. It is a bit confusing and likely needs reworking, but... this works
@@ -378,8 +379,8 @@ export class NetworkWidget extends BoardWidget {
                 termination: termination
             });
     
-            this.boardgfx.allowInputFrom[Piece.white] = true;
-            this.boardgfx.allowInputFrom[Piece.black] = true;
+            this.boardgfx.allowInputFrom[Side.White] = true;
+            this.boardgfx.allowInputFrom[Side.Black] = true;
         }
     
         let resultText;

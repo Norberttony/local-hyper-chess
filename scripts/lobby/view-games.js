@@ -1,6 +1,6 @@
 
 import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
-import { PlayersWidget, WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
+import { PlayersWidget } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { NetworkWidget } from "../graphics/widgets/network-widget.js";
 import { registerMenu, openMenuContainer } from "../menus/menus.js";
@@ -65,7 +65,7 @@ async function refreshViewGames(ticket){
             const boardgfx = new BoardGraphics(false, false);
             const boardElem = boardgfx.skeleton;
 
-            const network = new NetworkWidget(boardgfx, WIDGET_LOCATIONS.NONE);
+            const network = new NetworkWidget(boardgfx, "None");
             new PlayersWidget(boardgfx);
 
             myGamesElem.appendChild(boardElem);

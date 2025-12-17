@@ -103,6 +103,7 @@
 .pgn-viewer {
     display: grid;
     max-height: calc(var(--game-height) / 1.5);
+    min-height: 0px;
     grid-template-rows: min-content 1fr min-content;
 }
 

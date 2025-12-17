@@ -1,12 +1,11 @@
-
-// handles create-game logic
-
-import { StartingFEN, Piece } from "../../node_modules/hyper-chess-board/index.js";
-import { BoardGraphics } from "../../node_modules/hyper-chess-board/graphics/index.js";
+import { StartingFEN, Side } from "hyper-chess-board/index.js";
+import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
 
 import { hideInvite } from "../graphics/dialog.js";
 import { generateInvite } from "./challenges.js";
 import { openMenu } from "../menus/menus.js";
+
+// handles create-game logic
 
 const createGameFormElem = document.forms["create-game__form"];
 const createGameFormPopup = document.getElementById("create-game");
@@ -79,10 +78,10 @@ createGameFormElem.addEventListener("submit", (event) => {
         if (col == "random")
             col = Math.random() > 0.5 ? "white" : "black";
 
-        col = col == "white" ? Piece.white : Piece.black;
+        col = col == "white" ? Side.White : Side.Black;
 
         gameState.loadFEN(fen);
-        gameState.setFlip(col == Piece.black);
+        gameState.setFlip(col == Side.Black);
         gameState.widgets.WebPhilWidget.userColor = col;
         gameState.widgets.WebPhilWidget.start();
         

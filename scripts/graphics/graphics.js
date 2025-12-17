@@ -1,9 +1,7 @@
-
 import { BoardGraphics, initInput } from "hyper-chess-board/graphics/index.js";
 import {
     AnnotatorWidget, AnimationWidget, AudioWidget,
-    EngineWidget, PGNWidget, ExtrasWidget, PlayersWidget,
-    WIDGET_LOCATIONS
+    EngineWidget, PGNWidget, ExtrasWidget, PlayersWidget
 } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { NetworkWidget } from "./widgets/network-widget.js";
@@ -22,10 +20,10 @@ window.gameState = gameState;
 new AnnotatorWidget(gameState);
 new AnimationWidget(gameState);
 new AudioWidget(gameState);
-new EngineWidget(gameState, WIDGET_LOCATIONS.RIGHT);
-new PGNWidget(gameState, WIDGET_LOCATIONS.RIGHT);
-new NetworkWidget(gameState, WIDGET_LOCATIONS.RIGHT);
-new ExtrasWidget(gameState, WIDGET_LOCATIONS.BOTTOM);
+new EngineWidget(gameState, "Right");
+new PGNWidget(gameState, "Right");
+new NetworkWidget(gameState, "Right");
+new ExtrasWidget(gameState, "Bottom");
 new PuzzlesWidget(gameState);
 const players = new PlayersWidget(gameState);
 const webPhil = new WebPhilWidget(gameState);

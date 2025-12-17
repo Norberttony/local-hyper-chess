@@ -1,12 +1,9 @@
-
-import { Board, Piece, removeGlyphs } from "hyper-chess-board/index.js";
+import { Board, Side, removeGlyphs } from "hyper-chess-board/index.js";
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
-import { WIDGET_LOCATIONS } from "hyper-chess-board/graphics/widgets/index.js";
 import { showDialogBox, hideDialogBox } from "../dialog.js";
 
 import { getFirstElemOfClass } from "../utils.js";
 import { tabulateData, pollDatabase } from "../../network/db-utils.js";
-
 
 const PUZZLE = {
     checkSrc:   "images/puzzles/checkmark.svg",
@@ -37,7 +34,7 @@ export class PuzzlesWidget extends BoardWidget {
             <div class = "puzzles-widget__diff">Intermediate</div>
             <div class = "puzzles-widget__status">Unsolved</div>`;
 
-        boardgfx.getWidgetElem(WIDGET_LOCATIONS.RIGHT).appendChild(puzzles);
+        boardgfx.getWidgetContainer("Right").appendChild(puzzles);
 
         this.puzzlesElem       = puzzles;
         this.puzzlesTitleElem  = getFirstElemOfClass(puzzles, "puzzles-widget__title");
@@ -130,12 +127,12 @@ export class PuzzlesWidget extends BoardWidget {
 
         // disallow moving for enemy side
         this.userSide = this.boardgfx.turn;
-        this.oppSide = this.boardgfx.turn == Piece.white ? Piece.black : Piece.white;
+        this.oppSide = this.boardgfx.turn == Side.White ? Side.Black : Side.White;
         this.boardgfx.allowInputFrom[this.userSide] = true;
         this.boardgfx.allowInputFrom[this.oppSide] = false;
 
         // flip the board to the user's perspective
-        this.boardgfx.setFlip(this.userSide == Piece.black);
+        this.boardgfx.setFlip(this.userSide == Side.Black);
 
         this.moveIndex = 0; // index of currently expected move
 
@@ -298,8 +295,8 @@ export class PuzzlesWidget extends BoardWidget {
 
     stop(){
         this.boardgfx.skeleton.removeEventListener("single-scroll", this.singleScrollListener);
-        this.boardgfx.allowInputFrom[Piece.white] = true;
-        this.boardgfx.allowInputFrom[Piece.black] = true;
+        this.boardgfx.allowInputFrom[Side.White] = true;
+        this.boardgfx.allowInputFrom[Side.Black] = true;
     }
 
     save(){

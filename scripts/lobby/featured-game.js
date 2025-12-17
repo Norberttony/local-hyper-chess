@@ -1,6 +1,6 @@
 
 import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
-import { WIDGET_LOCATIONS, PlayersWidget } from "hyper-chess-board/graphics/widgets/index.js";
+import { PlayersWidget } from "hyper-chess-board/graphics/widgets/index.js";
 
 import { getFirstElemOfClass } from "../graphics/utils.js";
 import { NetworkWidget } from "../graphics/widgets/network-widget.js";
@@ -23,7 +23,7 @@ let featuredGameId;
 lobby_featuredGameContainerElem.appendChild(featuredGameBoard.skeleton);
 
 new PlayersWidget(featuredGameBoard);
-new NetworkWidget(featuredGameBoard, WIDGET_LOCATIONS.NONE);
+new NetworkWidget(featuredGameBoard, "None");
 
 
 export async function fetchFeaturedGame(){

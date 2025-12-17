@@ -10,7 +10,7 @@ const loader = new Module_Loader();
 
 let board;
 
-loader.load(basePath + "/../../../node_modules/hyper-chess-board/game/board.js")
+loader.load(basePath + "/../../../node_modules/hyper-chess-board/dist/game/board.js")
     .then((module) => {
         board = new module.Board();
     });
@@ -25,7 +25,13 @@ onmessage = async (event) => {
     
     const moveObjects = [];
     for (const m of moves.split(" ")){
-        const move = board.getMoveOfSAN(m);
+        let move;
+        try {
+            move = board.getMoveOfSAN(m);
+        }
+        catch(err){
+            continue;
+        }
         if (move){
             board.makeMove(move);
             moveObjects.push(move);

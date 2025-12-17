@@ -1,19 +1,19 @@
-
 import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
-import { HyperChessBot } from "hyper-chess-board/graphics/widgets/bot-wrapper.js";
-import { Piece } from "hyper-chess-board/index.js";
+import { WebBotProcess } from "hyper-chess-board/engine/web/web-bot-process.js";
+import { UCIBotProtocol } from "hyper-chess-board/engine/protocols/uci-protocol.js";
+import { Side } from "hyper-chess-board/index.js";
 
 import { changeHash } from "../../menus/menus.js";
 import { pollDatabase, storeUserId } from "../../network/db-utils.js";
 import { getFirstElemOfClass } from "../utils.js";
-
 
 export class WebPhilWidget extends BoardWidget {
     constructor(boardgfx){
         super(boardgfx);
 
         this.thinkTime = 1000;
-        this.bot = new HyperChessBot("./scripts/hyper-active/main.js");
+        this.bot = new WebBotProcess("./scripts/hyper-active/main.js");
+        this.prot = new UCIBotProtocol(this.bot);
         this.playing = false;
         this.botName = "Web Phil";
 
@@ -27,8 +27,8 @@ export class WebPhilWidget extends BoardWidget {
             this.resignButton = resignButton;
             resignButton.addEventListener("click", () => {
                 if (this.playing){
-                    const result = this.userColor == Piece.white ? "0-1" : "1-0";
-                    const winner = this.userColor == Piece.white ? Piece.black : Piece.white;
+                    const result = this.userColor == Side.White ? "0-1" : "1-0";
+                    const winner = this.userColor == Side.White ? Side.Black : Side.White;
                     this.boardgfx.dispatchEvent("result", {
                         result,
                         termination: "resignation",
@@ -76,43 +76,52 @@ export class WebPhilWidget extends BoardWidget {
     start(){
         if (this.playing)
             return;
-    
+
         this.playing = true;
         this.startingFEN = this.boardgfx.getFEN();
         this.gameMoves = [];
-    
+
         this.bot.start();
-        this.bot.setFEN(this.boardgfx.getFEN());
-    
+        this.prot.setFEN(this.boardgfx.getFEN());
+
         // if not user's turn, it's web phil's turn!
         if (this.userColor != this.boardgfx.turn)
-            this.bot.thinkFor(this.thinkTime).then(data => this.#botPlaysMove(data));
+            this.#botThink();
     }
 
     stop(){
         if (!this.playing)
             return;
-    
+
         this.playing = false;
         this.bot.stop();
-    
+
         // clean up game state config
         this.boardgfx.allowVariations = true;
-        this.boardgfx.allowInputFrom[Piece.white] = true;
-        this.boardgfx.allowInputFrom[Piece.black] = true;
+        this.boardgfx.allowInputFrom[Side.White] = true;
+        this.boardgfx.allowInputFrom[Side.Black] = true;
     }
 
-    #botPlaysMove(san){
+    #botPlaysMove(san, lan){
         if (!this.playing)
             return;
 
         this.gameMoves.push(san);
+        this.prot.playMove(lan);
         if (!this.boardgfx.currentVariation.isMain() || this.boardgfx.currentVariation.next.length > 0){
             this.boardgfx.addMoveToEnd(san);
         }else{
             this.boardgfx.playMove(this.boardgfx.getMoveOfSAN(san));
             this.boardgfx.applyChanges(false);
         }
+    }
+
+    #botThink(){
+        this.prot.thinkForMoveTime(this.thinkTime).then(lan => {
+            const move = this.boardgfx.getMoveOfLAN(lan);
+            const san = this.boardgfx.getMoveSAN(move);
+            this.#botPlaysMove(san, lan);
+        });
     }
 
     // =========================== //
@@ -123,7 +132,7 @@ export class WebPhilWidget extends BoardWidget {
         if (!this.playing)
             return;
     
-        const { prevVariation, variation, userInput } = event.detail;
+        const { variation, userInput } = event.detail;
     
         if (!userInput)
             return;
@@ -133,22 +142,21 @@ export class WebPhilWidget extends BoardWidget {
             return;
 
         this.gameMoves.push(variation.san);
-    
-        this.bot.playMove(variation.san);
-        this.bot.thinkFor(this.thinkTime).then(data => this.#botPlaysMove(data));
+        this.prot.playMove(variation.move.lan);
+        this.#botThink();
     }
 
     async onResult(event){
         if (!this.playing)
             return;
 
-        const { result, turn, termination } = event.detail;
+        const { result, termination } = event.detail;
 
         if (this.gameMoves.length >= 20){
             const dbInfo = {
                 type: "bot-game",
                 fen: this.startingFEN,
-                botColor: this.userColor == Piece.white ? "black" : "white",
+                botColor: this.userColor == Side.White ? "black" : "white",
                 result,
                 plyCount: this.gameMoves.length,
                 moves: this.gameMoves.join(" ") + " " + result + " " + termination
