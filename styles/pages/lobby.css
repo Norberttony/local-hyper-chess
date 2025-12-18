@@ -79,8 +79,8 @@
         'board'
         'bottom_bar';
     grid-template-rows: min-content auto min-content;
-    --game-width: 75vmin;
-    --game-height: 75vmin;
+    --game-width: round(75vmin, 8px);
+    --game-height: round(75vmin, 8px);
 }
 
 

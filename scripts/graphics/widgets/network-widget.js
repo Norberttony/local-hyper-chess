@@ -214,7 +214,7 @@ export class NetworkWidget extends BoardWidget {
         // any not-on-board result may have occurred
         if (gameInfo.result){
             this.boardgfx.dispatchEvent("result", {
-                result: gameInfo.result,
+                result: getResultTag(gameInfo.result.winner),
                 turn: this.boardgfx.turn,
                 termination: gameInfo.termination
             });
@@ -314,7 +314,7 @@ export class NetworkWidget extends BoardWidget {
     }
 
     activateGameControls(){
-        if (this.location){
+        if (this.location != "None"){
             this.resignButton.removeAttribute("disabled");
             this.drawButton.removeAttribute("disabled");
             this.takebackButton.removeAttribute("disabled");
@@ -322,7 +322,7 @@ export class NetworkWidget extends BoardWidget {
     }
 
     activatePreGameControls(){
-        if (this.location && this.active){
+        if (this.location != "None" && this.active){
             this.resignButton.setAttribute("disabled", "true");
             this.drawButton.setAttribute("disabled", "true");
             this.takebackButton.setAttribute("disabled", "true");
@@ -367,8 +367,6 @@ export class NetworkWidget extends BoardWidget {
 
         const result = getResultTag(winner);
     
-        // an on-board result will either be / or #, whereas a result from the server will either
-        // be 1-0, 0-1, or 1/2-1/2. It is a bit confusing and likely needs reworking, but... this works
         if (result){
             pollDatabase("POST", {
                 gameId: this.gameId,

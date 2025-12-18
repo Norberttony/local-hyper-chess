@@ -65,8 +65,9 @@ body {
 @media (min-aspect-ratio: 1/1){
     #main-board {
         --zoom: 85;
-        --game-width: calc(var(--zoom) * 1vh);
-        --game-height: calc(var(--zoom) * 1vh);
+        /* Rounding to 8px to avoid weird anti-aliasing effects */
+        --game-width: round(calc(var(--zoom) * 1vh), 8px);
+        --game-height: round(calc(var(--zoom) * 1vh), 8px);
     }
     #main-board .board-graphics__files, #main-board .board-graphics__ranks {
         font-size: 2vh;

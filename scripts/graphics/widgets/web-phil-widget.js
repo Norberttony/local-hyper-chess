@@ -2,6 +2,7 @@ import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js"
 import { WebBotProcess } from "hyper-chess-board/engine/web/web-bot-process.js";
 import { UCIBotProtocol } from "hyper-chess-board/engine/protocols/uci-protocol.js";
 import { Side } from "hyper-chess-board/index.js";
+import { getResultTag } from "hyper-chess-board/pgn/index.js";
 
 import { changeHash } from "../../menus/menus.js";
 import { pollDatabase, storeUserId } from "../../network/db-utils.js";
@@ -27,15 +28,13 @@ export class WebPhilWidget extends BoardWidget {
             this.resignButton = resignButton;
             resignButton.addEventListener("click", () => {
                 if (this.playing){
-                    const result = this.userColor == Side.White ? "0-1" : "1-0";
                     const winner = this.userColor == Side.White ? Side.Black : Side.White;
                     this.boardgfx.dispatchEvent("result", {
-                        result,
                         termination: "resignation",
                         turn: this.boardgfx.turn,
                         winner
                     });
-                    this.boardgfx.setResult(result, "resignation", winner);
+                    this.boardgfx.setResult("resignation", winner);
                 }
             });
         }
@@ -150,7 +149,9 @@ export class WebPhilWidget extends BoardWidget {
         if (!this.playing)
             return;
 
-        const { result, termination } = event.detail;
+        const { winner, termination } = event.detail;
+
+        const result = getResultTag(winner);
 
         if (this.gameMoves.length >= 20){
             const dbInfo = {

@@ -85,6 +85,8 @@ async function refreshViewGames(ticket){
                     // is removed entirely.
                     if (msg == "Error: ID has an illegal reference")
                         localStorage.removeItem(k);
+
+                    throw msg;
                 });
         }
     }
