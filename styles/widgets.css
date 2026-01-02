@@ -1,9 +1,15 @@
+/* EXTRAS WIDGET */
+
+.extras__pgn, .extras__fen {
+    font-size: medium;
+    padding: 5px;
+    margin-top: 20px;
+    margin-bottom: 7px;
+}
 
 /* PUZZLES WIDGET */
 
 .puzzles-widget {
-    display: none;
-    
     grid-area: puzzles;
     display: grid;
     grid-template-areas:
@@ -14,7 +20,6 @@
         'desc desc';
     grid-template-columns: min-content auto;
     column-gap: 10%;
-    margin-left: 3%;
 }
 
 .puzzles-widget__img-container {
