@@ -1,8 +1,4 @@
-import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
-import { WebBotProcess } from "hyper-chess-board/engine/web/web-bot-process.js";
-import { UCIBotProtocol } from "hyper-chess-board/engine/protocols/uci-protocol.js";
-import { Side } from "hyper-chess-board/index.js";
-import { getResultTag } from "hyper-chess-board/pgn/index.js";
+import { Side, getResultTag, BoardWidget, WebBotProcess, UCIBotProtocol } from "hyper-chess-board";
 
 import { changeHash } from "../../menus/menus.js";
 import { pollDatabase, storeUserId } from "../../network/db-utils.js";
@@ -77,11 +73,11 @@ export class WebPhilWidget extends BoardWidget {
             return;
 
         this.playing = true;
-        this.startingFEN = this.boardgfx.getFEN();
+        this.startingFen = this.boardgfx.getFen();
         this.gameMoves = [];
 
         this.bot.start();
-        this.prot.setFEN(this.boardgfx.getFEN());
+        this.prot.setFen(this.boardgfx.getFen());
 
         // if not user's turn, it's web phil's turn!
         if (this.userColor != this.boardgfx.turn)
@@ -110,15 +106,15 @@ export class WebPhilWidget extends BoardWidget {
         if (!this.boardgfx.currentVariation.isMain() || this.boardgfx.currentVariation.next.length > 0){
             this.boardgfx.addMoveToEnd(san);
         }else{
-            this.boardgfx.playMove(this.boardgfx.getMoveOfSAN(san));
+            this.boardgfx.playMove(this.boardgfx.getMoveOfSan(san));
             this.boardgfx.applyChanges(false);
         }
     }
 
     #botThink(){
         this.prot.thinkForMoveTime(this.thinkTime).then(lan => {
-            const move = this.boardgfx.getMoveOfLAN(lan);
-            const san = this.boardgfx.getMoveSAN(move);
+            const move = this.boardgfx.getMoveOfLan(lan);
+            const san = this.boardgfx.getMoveSan(move);
             this.#botPlaysMove(san, lan);
         });
     }
@@ -156,7 +152,7 @@ export class WebPhilWidget extends BoardWidget {
         if (this.gameMoves.length >= 20){
             const dbInfo = {
                 type: "bot-game",
-                fen: this.startingFEN,
+                fen: this.startingFen,
                 botColor: this.userColor == Side.White ? "black" : "white",
                 result,
                 plyCount: this.gameMoves.length,

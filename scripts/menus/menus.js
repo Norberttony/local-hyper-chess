@@ -1,6 +1,5 @@
 import { gameState } from "../graphics/graphics.js";
-import { Side } from "hyper-chess-board/index.js";
-
+import { Side } from "hyper-chess-board";
 import { getGameIdParts } from "../network/db-utils.js";
 import { acceptChallenge } from "../network/challenges.js";
 
@@ -81,7 +80,7 @@ export async function changeHash(newHash, quiet = false){
         }else if (newHash.startsWith("#board,pgn=")){
             const pgn = decodeURIComponent(newHash.replace("#board,pgn=", ""));
             changeHash("#board", true);
-            gameState.loadPGN(pgn);
+            gameState.loadPgn(pgn);
             return;
         }
     }
@@ -92,7 +91,7 @@ export function setAnalysisBoard(){
     gameState.widgets.NetworkWidget.disable();
     gameState.setActiveWidgets(new Set([
         "ExtrasWidget",
-        "PGNWidget",
+        "PgnWidget",
         "AnnotatorWidget",
         "AudioWidget",
         "AnimationsWidget",
@@ -103,7 +102,7 @@ export function setAnalysisBoard(){
 
 export function setMultiplayerBoard(){
     gameState.setActiveWidgets(new Set([
-        "PGNWidget",
+        "PgnWidget",
         "AnnotatorWidget",
         "AudioWidget",
         "AnimationsWidget",

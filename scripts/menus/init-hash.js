@@ -9,7 +9,7 @@ else
 {
     const pgn = sessionStorage.getItem("analysisBoardPGN");
     if (pgn && window.location.hash.startsWith("#board"))
-        gameState.loadPGN(pgn);
+        gameState.loadPgn(pgn);
 }
 
 // if user changes hash in URL

@@ -1,6 +1,4 @@
-import { StartingFEN, Side } from "hyper-chess-board/index.js";
-import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
-
+import { StartingFen, Side, BoardGraphics } from "hyper-chess-board";
 import { hideInvite } from "../graphics/dialog.js";
 import { generateInvite } from "./challenges.js";
 import { openMenu } from "../menus/menus.js";
@@ -13,7 +11,7 @@ const fenTextElem = document.getElementById("create-game__fen");
 const startingFenElem = document.getElementById("create-game__use-default-fen");
 
 const createGameFormBoard = new BoardGraphics(false, false, document.getElementById("create-game__board"));
-setCreateGameFEN(StartingFEN);
+setCreateGameFen(StartingFen);
 
 // to-do: remove global variables
 window.showCreateGamePopup = showCreateGamePopup;
@@ -21,22 +19,22 @@ window.hideCreateGamePopup = hideCreateGamePopup;
 
 if (startingFenElem.checked){
     createGameFormElem.fen.readOnly = true;
-    createGameFormBoard.loadFEN(StartingFEN);
+    createGameFormBoard.loadFen(StartingFen);
     displayCreateGameBoard();
 }
 
 createGameFormElem.fen.addEventListener("input", () => {
-    setCreateGameFEN(createGameFormElem.fen.value);
+    setCreateGameFen(createGameFormElem.fen.value);
 });
 
 function displayCreateGameBoard(){
     createGameFormBoard.display();
 }
 
-function setCreateGameFEN(fen){
+function setCreateGameFen(fen){
     createGameFormElem.fen.value = fen;
     if (!startingFenElem.checked){
-        createGameFormBoard.loadFEN(fen);
+        createGameFormBoard.loadFen(fen);
         displayCreateGameBoard();
     }
 }
@@ -55,13 +53,13 @@ export function showCreateGamePopup(isMultiplayer){
     createGameFormPopup.style.display = "block";
 
     // load current board FEN into the viewer
-    setCreateGameFEN(fenTextElem.value);
+    setCreateGameFen(fenTextElem.value);
 }
 
 createGameFormElem.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const fen = startingFenElem.checked ? StartingFEN : createGameFormElem.fen.value;
+    const fen = startingFenElem.checked ? StartingFen : createGameFormElem.fen.value;
     if (createGameFormElem.classList.contains("create-game-form--multiplayer")){
         const gameConfig = {
             color: createGameFormElem.color.value,
@@ -80,7 +78,7 @@ createGameFormElem.addEventListener("submit", (event) => {
 
         col = col == "white" ? Side.White : Side.Black;
 
-        gameState.loadFEN(fen);
+        gameState.loadFen(fen);
         gameState.setFlip(col == Side.Black);
         gameState.widgets.WebPhilWidget.userColor = col;
         gameState.widgets.WebPhilWidget.start();
@@ -97,10 +95,10 @@ function hideCreateGamePopup(){
 startingFenElem.addEventListener("change", () => {
     if (startingFenElem.checked){
         createGameFormElem.fen.readOnly = true;
-        createGameFormBoard.loadFEN(StartingFEN);
+        createGameFormBoard.loadFen(StartingFen);
         displayCreateGameBoard();
     }else{
         createGameFormElem.fen.readOnly = false;
-        setCreateGameFEN(createGameFormElem.fen.value);
+        setCreateGameFen(createGameFormElem.fen.value);
     }
 });

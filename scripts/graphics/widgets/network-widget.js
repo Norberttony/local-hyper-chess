@@ -1,12 +1,9 @@
-import { Side, Move } from "hyper-chess-board/index.js";
-import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
-
+import { Side, Move, getResultTag, BoardWidget } from "hyper-chess-board";
 import { getFirstElemOfClass, sleep } from "../utils.js";
 import { fetchGame } from "../../network/games.js";
 import { gameLoader } from "../../workers/game-loader.js";
 import { pollDatabase } from "../../network/db-utils.js";
 import { displayResultBox } from "../dialog.js";
-import { getResultTag } from "hyper-chess-board/pgn/index.js";
 
 // The network widget handles continuously updating the game with recent information from the server
 
@@ -249,7 +246,7 @@ export class NetworkWidget extends BoardWidget {
             this.boardgfx.setNames("Anonymous (white)", "Anonymous (black)");
         }
 
-        this.boardgfx.loadFEN(fen);
+        this.boardgfx.loadFen(fen);
         this.boardgfx.setFlip(color == "black");
         
         // only allow input from user's side

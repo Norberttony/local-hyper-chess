@@ -28,7 +28,7 @@ function createChallengeTemplate(id, name, isBot, color, fen){
 <span class = "chall_id">${id}</span>
 <span class = "chall_name">${name}${isBotElem}</span>
 <span class = "chall_color">You play as ${color}</span>
-<span>${fen == StartingFEN ? "Starting position" : "FEN: " + fen}</span>
+<span>${fen == StartingFen ? "Starting position" : "FEN: " + fen}</span>
 `;
     return challElem;
 }

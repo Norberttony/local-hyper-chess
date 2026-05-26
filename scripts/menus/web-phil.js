@@ -5,7 +5,7 @@ registerMenu("web-phil", openWebPhil, closeWebPhil);
 
 export function openWebPhil(){
     gameState.setActiveWidgets(new Set([
-        "PGNWidget",
+        "PgnWidget",
         "AnnotatorWidget",
         "AudioWidget",
         "AnimationsWidget",

@@ -1,7 +1,5 @@
-
-import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
-import { PlayersWidget } from "hyper-chess-board/graphics/widgets/index.js";
-
+import { BoardGraphics } from "hyper-chess-board";
+import { PlayersWidget } from "hyper-chess-board";
 import { getFirstElemOfClass } from "../graphics/utils.js";
 import { NetworkWidget } from "../graphics/widgets/network-widget.js";
 import { pollDatabase } from "../network/db-utils.js";

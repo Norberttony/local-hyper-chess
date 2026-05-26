@@ -21,13 +21,13 @@ onmessage = async (event) => {
     if (!board)
         await loader.waitForAll();
 
-    board.loadFEN(fen);
+    board.loadFen(fen);
     
     const moveObjects = [];
     for (const m of moves.split(" ")){
         let move;
         try {
-            move = board.getMoveOfSAN(m);
+            move = board.getMoveOfSan(m);
         }
         catch(err){
             continue;

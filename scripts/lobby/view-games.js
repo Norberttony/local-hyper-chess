@@ -1,7 +1,5 @@
-
-import { BoardGraphics } from "hyper-chess-board/graphics/index.js";
-import { PlayersWidget } from "hyper-chess-board/graphics/widgets/index.js";
-
+import { BoardGraphics } from "hyper-chess-board";
+import { PlayersWidget } from "hyper-chess-board";
 import { NetworkWidget } from "../graphics/widgets/network-widget.js";
 import { registerMenu, openMenuContainer } from "../menus/menus.js";
 import { gameLoader } from "../workers/game-loader.js";
@@ -218,7 +216,7 @@ function downloadMyGames(){
         pgn.setHeader("Site", `${window.location.origin}${window.location.pathname}#game=${g.id}`);
         pgn.setHeader("Result", g.result);
 
-        if (g.fen != StartingFEN)
+        if (g.fen != StartingFen)
             pgn.setHeader("FEN", g.fen);
 
         if (g.names){

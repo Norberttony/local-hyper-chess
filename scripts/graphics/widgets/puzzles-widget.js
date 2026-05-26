@@ -1,7 +1,5 @@
-import { Board, Side, removeGlyphs } from "hyper-chess-board/index.js";
-import { BoardWidget } from "hyper-chess-board/graphics/widgets/board-widget.js";
+import { Board, Side, removeGlyphs, BoardWidget } from "hyper-chess-board";
 import { showDialogBox, hideDialogBox } from "../dialog.js";
-
 import { getFirstElemOfClass } from "../utils.js";
 import { tabulateData, pollDatabase } from "../../network/db-utils.js";
 
@@ -123,7 +121,7 @@ export class PuzzlesWidget extends BoardWidget {
         this.puzzlesDiffElem.innerText = puzzle.difficulty;
 
         // load FEN
-        this.boardgfx.loadFEN(puzzle.fen);
+        this.boardgfx.loadFen(puzzle.fen);
 
         // disallow moving for enemy side
         this.userSide = this.boardgfx.turn;
@@ -146,17 +144,17 @@ export class PuzzlesWidget extends BoardWidget {
         const board = new Board();
         let id = 2;
         for (const { fen, solution } of this.puzzles){
-            board.loadFEN(fen);
+            board.loadFen(fen);
 
             try {
                 for (const branch of solution){
                     if (typeof branch == "string"){
                         const san = branch;
-                        const move = board.getMoveOfSAN(san);
+                        const move = board.getMoveOfSan(san);
                         board.makeMove(move);
                     }else{
                         for (const san of branch)
-                            board.getMoveOfSAN(san);
+                            board.getMoveOfSan(san);
                     }
                 }
             }catch(err){
@@ -247,13 +245,13 @@ export class PuzzlesWidget extends BoardWidget {
             this.puzzlesImgElem.src = PUZZLE.xSrc;
 
             // try to match as much of the PGN to the correct PGN
-            const triedPGN = variation.toText(true).split(" ");
+            const triedPgn = variation.toText(true).split(" ");
 
             // get the move index based on the number of correct PGNs
             let triedMoveIndex = 0;
-            for (const correctSAN of puzzle.solution){
-                if (correctSAN == triedPGN[0]){
-                    triedPGN.shift();
+            for (const correctSan of puzzle.solution){
+                if (correctSan == triedPgn[0]){
+                    triedPgn.shift();
                     triedMoveIndex++;
                 }else{
                     break;
@@ -261,7 +259,7 @@ export class PuzzlesWidget extends BoardWidget {
             }
 
             // find the first mistake the user made
-            const firstMistake = triedPGN.shift();
+            const firstMistake = triedPgn.shift();
 
             // go through the refutation line
             let refutationLine = puzzle.responses[triedMoveIndex][firstMistake];
@@ -270,14 +268,14 @@ export class PuzzlesWidget extends BoardWidget {
                 return;
 
             let refutationOffset = 0;
-            for (let i = 0; i < triedPGN.length; i++){
+            for (let i = 0; i < triedPgn.length; i++){
                 let refutation = refutationLine[refutationOffset];
-                if (typeof refutation == "string" && refutation == triedPGN[i]){
+                if (typeof refutation == "string" && refutation == triedPgn[i]){
                     // good, keep going
                     refutationOffset++;
-                }else if (typeof refutation == "object" && refutation[triedPGN[i]]){
+                }else if (typeof refutation == "object" && refutation[triedPgn[i]]){
                     // we've reached a variation within the refutation line
-                    refutationLine = refutation[triedPGN[i]];
+                    refutationLine = refutation[triedPgn[i]];
                     refutationOffset = 0;
                 }else{
                     // no response for this variation.
@@ -305,7 +303,7 @@ export class PuzzlesWidget extends BoardWidget {
 
     playMove(san){
         setTimeout(() => {
-            const move = this.boardgfx.getMoveOfSAN(san);
+            const move = this.boardgfx.getMoveOfSan(san);
             this.boardgfx.playMove(move);
             this.boardgfx.applyChanges();
         }, 800);

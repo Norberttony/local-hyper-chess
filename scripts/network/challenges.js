@@ -1,6 +1,4 @@
-
-import { StartingFEN } from "hyper-chess-board/index.js";
-
+import { StartingFen } from "hyper-chess-board";
 import { hideInvite, hideDialogContainer, showDialogBox, hideDialogBox } from "../graphics/dialog.js";
 import { pollDatabase, storeUserId } from "./db-utils.js";
 import { sleep } from "../graphics/utils.js";
@@ -43,7 +41,7 @@ export async function generateInvite(gameConfig){
 
     peer_idElem.value = `https://norberttony.github.io/local-hyper-chess#chall=${challId}`;
 
-    gameState.loadFEN(StartingFEN);
+    gameState.loadFen(StartingFen);
     gameState.display();
 
     document.getElementById("invite-popup-container").style.display = "flex";
