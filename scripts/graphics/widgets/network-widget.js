@@ -1,4 +1,7 @@
-import { Side, Move, getResultTag, BoardWidget } from "hyper-chess-board";
+import {
+    Side, Move, getResultMarker,
+    BoardWidget, WidgetLocation,
+} from "hyper-chess-board";
 import { getFirstElemOfClass, sleep } from "../utils.js";
 import { fetchGame } from "../../network/games.js";
 import { gameLoader } from "../../workers/game-loader.js";
@@ -8,7 +11,7 @@ import { displayResultBox } from "../dialog.js";
 // The network widget handles continuously updating the game with recent information from the server
 
 export class NetworkWidget extends BoardWidget {
-    constructor(boardgfx, location = "Right"){
+    constructor(boardgfx, location = WidgetLocation.Right){
         super(boardgfx);
 
         this.location = location;
@@ -211,7 +214,7 @@ export class NetworkWidget extends BoardWidget {
         // any not-on-board result may have occurred
         if (gameInfo.result){
             this.boardgfx.dispatchEvent("result", {
-                result: getResultTag(gameInfo.result.winner),
+                result: getResultMarker(gameInfo.result.winner),
                 turn: this.boardgfx.turn,
                 termination: gameInfo.termination
             });
@@ -280,7 +283,7 @@ export class NetworkWidget extends BoardWidget {
             this.boardgfx.applyChanges();
             this.activatePreGameControls();
         }
-        this.boardgfx.pgnData.setHeader("Event", "Hyper Chess Online Game");
+        this.boardgfx.pgn.headers["Event"] = "Hyper Chess Online Game";
 
         this.boardgfx.finishedLoading();
 
@@ -362,7 +365,7 @@ export class NetworkWidget extends BoardWidget {
     
         const { termination, winner } = event.detail;
 
-        const result = getResultTag(winner);
+        const result = getResultMarker(winner);
     
         if (result){
             pollDatabase("POST", {
@@ -406,9 +409,9 @@ export class NetworkWidget extends BoardWidget {
             document.getElementById("result-box_local").style.display = "none";
         else
             document.getElementById("result-box_local").style.display = "";
-    
-        this.boardgfx.pgnData.setHeader("Termination", termination);
-    
+
+        this.boardgfx.pgn.headers["Termination"] = termination;
+
         displayResultBox(resultText, mewin, termination);
         this.activatePreGameControls();
     }

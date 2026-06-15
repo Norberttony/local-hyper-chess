@@ -1,4 +1,7 @@
-import { Board, Side, removeGlyphs, BoardWidget } from "hyper-chess-board";
+import {
+    Board, Side, removeGlyphs,
+    BoardWidget, WidgetLocation,
+} from "hyper-chess-board";
 import { showDialogBox, hideDialogBox } from "../dialog.js";
 import { getFirstElemOfClass } from "../utils.js";
 import { tabulateData, pollDatabase } from "../../network/db-utils.js";
@@ -32,7 +35,7 @@ export class PuzzlesWidget extends BoardWidget {
             <div class = "puzzles-widget__diff">Intermediate</div>
             <div class = "puzzles-widget__status">Unsolved</div>`;
 
-        boardgfx.getWidgetContainer("Right").appendChild(puzzles);
+        boardgfx.getWidgetContainer(WidgetLocation.Right).appendChild(puzzles);
 
         this.puzzlesElem       = puzzles;
         this.puzzlesTitleElem  = getFirstElemOfClass(puzzles, "puzzles-widget__title");

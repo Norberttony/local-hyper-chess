@@ -6,8 +6,8 @@ import { pollDatabase } from "../network/db-utils.js";
 
 const lobbyElem = document.getElementById("lobby");
 
-const lobby_featuredGameElem            = getFirstElemOfClass(lobbyElem, "lobby__featured-game");
-const lobby_featuredTitleElem           = getFirstElemOfClass(lobbyElem, "lobby__featured-title");
+const lobby_featuredGameElem          = getFirstElemOfClass(lobbyElem, "lobby__featured-game");
+const lobby_featuredTitleElem         = getFirstElemOfClass(lobbyElem, "lobby__featured-title");
 const lobby_featuredGameContainerElem = document.getElementById("lobby__featured-game-container");
 
 // populate with a board template
@@ -33,7 +33,9 @@ export async function fetchFeaturedGame(){
         lobby_featuredTitleElem.innerText = featured.title;
 
         const [ gameId, rowNum ] = featured.id.split("_");
-        await featuredGameBoard.widgets.NetworkWidget.setNetworkId(gameId, rowNum, undefined, false);
+        await featuredGameBoard.widgets.NetworkWidget.setNetworkId(
+            gameId, rowNum, undefined, false
+        );
 
         // jump to the end to show the live game
         featuredGameBoard.jumpToVariation(featuredGameBoard.mainVariation);

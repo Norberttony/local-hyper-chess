@@ -1,5 +1,6 @@
-import { Side, getResultTag, BoardWidget, WebBotProcess, UCIBotProtocol } from "hyper-chess-board";
-
+import {
+    Side, getResultMarker, BoardWidget, WebBotProcess, UCIBotProtocol,
+} from "hyper-chess-board";
 import { changeHash } from "../../menus/menus.js";
 import { pollDatabase, storeUserId } from "../../network/db-utils.js";
 import { getFirstElemOfClass } from "../utils.js";
@@ -147,7 +148,7 @@ export class WebPhilWidget extends BoardWidget {
 
         const { winner, termination } = event.detail;
 
-        const result = getResultTag(winner);
+        const result = getResultMarker(winner);
 
         if (this.gameMoves.length >= 20){
             const dbInfo = {
